@@ -25,3 +25,4 @@ parameters:
 
     bootstrapFiles:
         - backend/vendor/autoload.php
+        - vendor/autoload.php

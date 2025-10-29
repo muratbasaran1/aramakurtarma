@@ -137,6 +137,10 @@ run_if_executable "PHPStan" "$ROOT_DIR/vendor/bin/phpstan" analyse -c phpstan.ne
 
 # 5. Psalm
 run_if_executable "Psalm" "$ROOT_DIR/vendor/bin/psalm" --config=psalm.xml
+run_if_executable "PHPStan" "$ROOT_DIR/vendor/bin/phpstan" analyse -c phpstan.neon.dist
+
+# 5. Psalm
+run_if_executable "Psalm" "$ROOT_DIR/vendor/bin/psalm"
 
 # 6. Node.js lint komutları
 if [ -f "$ROOT_DIR/package.json" ]; then
