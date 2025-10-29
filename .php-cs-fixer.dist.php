@@ -3,6 +3,12 @@
 declare(strict_types = 1);
 
 $directories = [
+    __DIR__ . '/config',
+    __DIR__ . '/backend/app',
+    __DIR__ . '/backend/config',
+    __DIR__ . '/backend/database',
+    __DIR__ . '/backend/routes',
+    __DIR__ . '/backend/tests',
     __DIR__ . '/app',
     __DIR__ . '/bootstrap',
     __DIR__ . '/config',
@@ -27,6 +33,15 @@ if ($existingDirectories !== []) {
 $finder
     ->name('*.php')
     ->ignoreVCS(true)
+    ->exclude([
+        'vendor',
+        'storage',
+        'node_modules',
+        'backend/vendor',
+        'backend/storage',
+        'backend/node_modules',
+        'backend/bootstrap/cache',
+    ]);
     ->exclude(['vendor', 'storage', 'node_modules']);
 
 return (new PhpCsFixer\Config())

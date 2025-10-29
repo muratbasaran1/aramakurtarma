@@ -1,0 +1,45 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Illuminate\Foundation\Http;
+
+use Illuminate\Http\Request;
+use Illuminate\Validation\Validator;
+
+abstract class FormRequest extends Request
+{
+    /**
+     * @return array<string, mixed>
+     */
+    public function rules(): array
+    {
+        return [];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function validated(): array
+    {
+        return [];
+    }
+
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    public function boolean(string $key, bool $default = false): bool
+    {
+        return $default;
+    }
+
+    public function withValidator(Validator $validator): void
+    {
+    }
+
+    protected function prepareForValidation(): void
+    {
+    }
+}

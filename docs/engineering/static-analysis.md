@@ -10,6 +10,7 @@ belgesindeki kalite kapılarıyla entegredir.
 | --- | --- | --- |
 | **PHPStan** | PHP konfigürasyon ve yardımcı dosyalarında statik analiz | Pre-commit, CI `analyse` işi |
 | **PHP-CS-Fixer** | Stil/format kontrolü | Pre-commit, CI `style` işi |
+| **Psalm (opsiyonel)** | Kök `config/` + `backend/app/` (multi-tenant çekirdek) üzerinde güvenlik hassas veri akış analizi | Haftalık güvenlik taraması |
 | **Psalm (opsiyonel)** | Güvenlik hassas veri akış analizi | Haftalık güvenlik taraması |
 | **ESLint + Vue ESLint** | Vue/JS kod kalitesi ve best practice kontrolleri | Pre-commit, CI `frontend-lint` |
 | **Stylelint** | Tailwind ve genel CSS kuralları | Pre-commit |
@@ -18,6 +19,7 @@ belgesindeki kalite kapılarıyla entegredir.
 ## Konfigürasyon Dosyaları
 
 - **`phpstan.neon.dist`:** Larastan bağımlılığı olmadan `config/` dizininde seviye 5 analizi çalıştırır; `build/phpstan/` dizininde geçici dosyalar üretir.
+- **`psalm.xml`:** Faz 4, 7 ve 18’e ait hassas akışları aylık denetimler için `errorLevel=3` hassasiyetinde tarar; Laravel Eloquent bağımlılıkları için `stubs/laravel-model.stubphp` kullanılır ve kapsam kök `config/` dosyalarıyla birlikte `backend/app/` altındaki multi-tenant bağlamı içerir. Laravel’in factory jenerik anotasyonları için `TooManyTemplateParams` uyarıları bilgi seviyesine indirgenmiştir; gerçek hatalar için factory dosyalarındaki PHPDoc blokları güncel tutulmalıdır.
 - **`psalm.xml`:** Faz 4, 7 ve 18’e ait hassas akışları aylık denetimler için `errorLevel=3` hassasiyetinde tarar.
 - **`phpcs.xml` & `.php-cs-fixer.dist.php`:** PSR-12 tabanlı stil kurallarını, kısa dizi sözdizimini ve `declare(strict_types=1)` zorunluluğunu içerir.
 - **`.eslintrc.cjs`:** Vue 3 + TypeScript projeleri için tavsiye edilen kuralları ve jest test dosyalarına özel ortam ayarlarını etkinleştirir.
@@ -28,6 +30,7 @@ belgesindeki kalite kapılarıyla entegredir.
 - `./tools/run-quality-suite.sh` komutu, yukarıdaki araçların tamamını ardışık olarak çalıştırır.
 - Script mevcut olmayan araçları atlayarak ⚠️ uyarısı üretir; ayrıntılı kullanım için `docs/engineering/quality-suite.md` rehberini inceleyin.
 - Geliştiriciler PR açmadan önce scripti çalıştırmalı, başarısız olan adımlar için düzeltme yaptıktan sonra yeniden denemelidir.
+- Script, PHP araçları eksikse `composer install --no-ansi --no-interaction --no-progress --prefer-dist`, frontend lint araçları eksikse `npm install --no-audit --progress false` komutlarını otomatik tetikler.
 
 ## Pipeline Entegrasyonu
 

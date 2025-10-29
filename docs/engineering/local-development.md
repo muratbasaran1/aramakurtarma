@@ -20,6 +20,37 @@ Bu rehber, TUDAK Afet Yönetim Sistemi üzerinde çalışan ekiplerin yerel geli
    cd afet-yonetim-sistemi
    ```
 2. **Ortam dosyalarını hazırlayın**
+   - Depo kökündeki `.env.example` dosyasını inceleyip ihtiyaçlarınıza göre güncelleyin.
+   - Laravel uygulaması için `cp backend/.env.example backend/.env` komutunu çalıştırın ve gizli değerleri doldurun.
+   - `config/environment/example.yaml` içindeki tenant/sunucu örneklerini kendi ortamınıza uyarlayın.
+3. **PHP bağımlılıklarını yükleyin (kalite araçları)**
+   ```bash
+   composer install --no-ansi --no-interaction --no-progress --prefer-dist
+   ```
+4. **PHP bağımlılıklarını yükleyin (Laravel backend)**
+   ```bash
+   composer --working-dir=backend install --no-ansi --no-interaction --no-progress --prefer-dist
+   ```
+5. **Frontend bağımlılıkları**
+   ```bash
+   npm install --no-audit --progress false
+   ```
+   > `./tools/run-quality-suite.sh` script’i bu adımı otomatik tetikler; yerel kurulumda bekleme süresini azaltmak için ilk çalıştırmadan önce manuel olarak uygulamanız önerilir.
+   ```bash
+   cd backend
+   npm install
+   ```
+   > Laravel Vite varlıklarını derlemek için backend dizininde yer alan bağımlılıkları da kurmayı unutmayın.
+6. **Uygulama anahtarını oluşturun**
+   ```bash
+   cd backend
+   php artisan key:generate
+   ```
+7. **Veritabanını hazırlayın**
+   ```bash
+   php artisan migrate --seed
+   ```
+8. **Queues & websocket servislerini başlatın** (gerektiğinde)
    - `.env.example` dosyasını `.env.local` olarak kopyalayın.
    - `config/environment/example.yaml` içindeki tenant/sunucu örneklerini kendi ortamınıza uyarlayın.
 3. **PHP bağımlılıklarını yükleyin**
@@ -43,10 +74,22 @@ Bu rehber, TUDAK Afet Yönetim Sistemi üzerinde çalışan ekiplerin yerel geli
    php artisan horizon
    php artisan websockets:serve
    ```
+   > Tüm artisan komutları `backend/` dizininde çalıştırılmalıdır. Farklı `.env` varyantları kullanıyorsanız `php artisan <komut> --env=<dosya>` seçeneğini ekleyin.
 
 ## 3. Günlük Geliştirme Akışı
 | Adım | Komut | Açıklama |
 | --- | --- | --- |
+| Kalite suite | `./tools/run-quality-suite.sh` | İkili taraması, PHP lint/analiz ve frontend lint işlemlerini tek komutta yürütür; eksik vendor araçlarını otomatik olarak hem kök hem de `backend/` dizininde `composer install` ile yükler. |
+| PHP testleri | `cd backend && php artisan test` *(planlanıyor)* veya ilgili `phpunit`/`pest` komutu | Modül bazlı testleri çalıştırarak regresyon riskini azaltın. |
+| Laravel sunucusu | `cd backend && php artisan serve` | API ve Blade arayüzünü yerelde doğrulamak için. |
+| Frontend derlemesi | `npm run dev` | Vite tabanlı geliştirme sunucusunu açar. |
+| Queue işleyicisi | `cd backend && php artisan queue:work` | Offline kuyruk senaryolarını doğrulamak için. |
+
+## 4. Kontrol Listesi
+- [ ] `./tools/check-binary-files.sh` ile PR öncesi ikili dosya taraması yapıldı.
+- [ ] `composer install` ve `composer --working-dir=backend install` komutları sonrası `composer diagnose` çıktısı uyarısız.
+- [ ] `npm audit --production` kritik bulgu üretmiyor; varsa `docs/engineering/dependency-management.md` politikalarına göre işlem yapıldı.
+- [ ] `backend/.env` veya türetilmiş `.env.local` dosyalarında hassas bilgiler commit edilmedi (gitignore kontrolü).
 | Kalite suite | `./tools/run-quality-suite.sh` | İkili taraması, PHP lint/analiz ve frontend lint işlemlerini tek komutta yürütür; eksik vendor araçlarını otomatik olarak `composer install` ile yükler. |
 | PHP testleri | `composer test` *(planlanıyor)* veya ilgili `phpunit`/`pest` komutu | Modül bazlı testleri çalıştırarak regresyon riskini azaltın. |
 | Laravel sunucusu | `php artisan serve --env=.env.local` | API ve Blade arayüzünü yerelde doğrulamak için. |
@@ -72,6 +115,7 @@ Bu rehber, TUDAK Afet Yönetim Sistemi üzerinde çalışan ekiplerin yerel geli
 - Yapılan güncellemeler README’deki [Mühendislik Uygulama Yönetişimi](../../README.md#mühendislik-uygulama-yönetişimi) bölümüne ve `docs/governance/devam-et-yapi-rehberi.md` tablosuna yansıtılmalıdır.
 
 ## 7. Referanslar
+- `docs/engineering/env-management.md`
 - `docs/engineering/tooling-configuration.md`
 - `docs/engineering/quality-suite.md`
 - `docs/engineering/pr-checklist.md`

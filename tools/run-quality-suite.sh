@@ -81,6 +81,44 @@ if [ "$needs_composer_install" -eq 1 ]; then
   fi
 fi
 
+BACKEND_DIR="$ROOT_DIR/backend"
+if [ -d "$BACKEND_DIR" ] && [ -f "$BACKEND_DIR/composer.json" ]; then
+  needs_backend_install=0
+  if [ ! -d "$BACKEND_DIR/vendor" ]; then
+    needs_backend_install=1
+  elif [ ! -f "$BACKEND_DIR/vendor/autoload.php" ]; then
+    needs_backend_install=1
+  fi
+
+  if [ "$needs_backend_install" -eq 1 ]; then
+    if command -v composer >/dev/null 2>&1; then
+      run_step "Backend Composer bağımlılık kurulumu" composer --working-dir="$BACKEND_DIR" install --no-ansi --no-interaction --no-progress --prefer-dist
+    else
+      echo
+      echo "⚠️  Backend Composer bağımlılık kurulumu atlandı: composer komutu bulunamadı"
+    fi
+  fi
+fi
+
+# Frontend lint araçları için npm bağımlılıklarını gerekirse kur
+if [ -f "$ROOT_DIR/package.json" ]; then
+  needs_npm_install=0
+  if [ ! -d "$ROOT_DIR/node_modules" ]; then
+    needs_npm_install=1
+  elif [ ! -x "$ROOT_DIR/node_modules/.bin/eslint" ] || [ ! -x "$ROOT_DIR/node_modules/.bin/stylelint" ]; then
+    needs_npm_install=1
+  fi
+
+  if [ "$needs_npm_install" -eq 1 ]; then
+    if command -v npm >/dev/null 2>&1; then
+      run_step "npm bağımlılık kurulumu" npm install --no-audit --progress false
+    else
+      echo
+      echo "⚠️  npm bağımlılık kurulumu atlandı: npm komutu bulunamadı"
+    fi
+  fi
+fi
+
 # 1. İkili dosya taraması (varsa)
 if [ -x "$ROOT_DIR/tools/check-binary-files.sh" ]; then
   run_step "İkili dosya taraması" "$ROOT_DIR/tools/check-binary-files.sh"
@@ -95,6 +133,10 @@ run_if_executable "PHP-CS-Fixer (dry-run)" "$ROOT_DIR/vendor/bin/php-cs-fixer" f
 run_if_executable "PHP_CodeSniffer" "$ROOT_DIR/vendor/bin/phpcs" --standard=phpcs.xml
 
 # 4. PHPStan
+run_if_executable "PHPStan" "$ROOT_DIR/vendor/bin/phpstan" analyse -c phpstan.neon.dist --memory-limit=512M
+
+# 5. Psalm
+run_if_executable "Psalm" "$ROOT_DIR/vendor/bin/psalm" --config=psalm.xml
 run_if_executable "PHPStan" "$ROOT_DIR/vendor/bin/phpstan" analyse -c phpstan.neon.dist
 
 # 5. Psalm

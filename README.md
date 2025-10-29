@@ -3,6 +3,8 @@
 Bu dokümantasyon, TUDAK Afet Yönetim Sistemi için faz bazlı geliştirme planını ve güvenlik kritik kuralları özetler. Her faz, sistemin sürdürülebilir, güvenli ve ölçeklenebilir şekilde ilerlemesini sağlamak için belirlenmiştir.
 
 ## İçindekiler
+ - [Genel Bakış](#genel-bakış)
+ - [Kod Tabanı Yapısı](#kod-tabanı-yapısı)
 - [Genel Bakış](#genel-bakış)
 - [Kılavuz İlkeler](#kılavuz-ilkeler)
 - [Roller ve Sorumluluklar](#roller-ve-sorumluluklar)
@@ -100,6 +102,7 @@ Bu dokümantasyon, TUDAK Afet Yönetim Sistemi için faz bazlı geliştirme plan
 - [Kod Kalite Konfigürasyonları](#kod-kalite-konfigürasyonları)
 - [PR Öncesi Kontrol Listesi](#pr-öncesi-kontrol-listesi)
 - [Toplu Kalite Kontrol Suite](#toplu-kalite-kontrol-suite)
+- [Ortam Değişkeni Yönetimi](#ortam-değişkeni-yönetimi)
 - [Yerel Geliştirme Rehberi](#yerel-geliştirme-rehberi)
 - [Bağımlılık Yönetimi Politikası](#bağımlılık-yönetimi-politikası)
 - [Kod İnceleme Standartları](#kod-inceleme-standartları)
@@ -160,6 +163,18 @@ Bu dokümantasyon, TUDAK Afet Yönetim Sistemi için faz bazlı geliştirme plan
 TUDAK Afet Yönetim Sistemi, kurumların afet öncesi hazırlık, afet anı koordinasyonu ve afet sonrası iyileştirme süreçlerini uçtan uca yönetebilmesi için tasarlanmış çok katmanlı bir platformdur. Bu belge, sistemin geliştirme yol haritasını, fazlar arası bağımlılıklarını ve güvenlik kritik işleyiş kurallarını tek bir kaynakta toplar.
 
 Belge, düzenli olarak güncellenen “tek gerçek kaynak” (single source of truth) niteliğindedir. Yeni ihtiyaçlar veya değişiklikler, burada tanımlı RFC süreci üzerinden değerlendirilir. Tüm ekipler için zorunlu referans dökümandır.
+
+## Kod Tabanı Yapısı
+
+| Yol | Açıklama | Notlar |
+| --- | --- | --- |
+| `backend/` | Laravel 11 tabanlı çekirdek API ve arka uç uygulaması. | Artisan komutları bu dizinde çalıştırılır; bağımlılıklar `composer --working-dir=backend install` ile kurulur. |
+| `config/` | Faz 0 kararlarına ait paylaşılan PHP konfigürasyonları ve özellik bayrakları. | Kod kalite araçları bu dizini ve `backend/` kodunu birlikte analiz eder. |
+| `docs/` | Yönetişim, mühendislik, runbook ve operasyon rehberleri. | Her güncelleme `CHANGELOG.md` ve [Belge Versiyon Geçmişi](#belge-versiyon-geçmişi) tablosuna işlenir. |
+| `tools/` | `check-binary-files.sh` ve `run-quality-suite.sh` gibi otomasyon script’leri. | Suite hem kök hem de `backend/` için Composer bağımlılıklarını doğrular, ardından lint/test adımlarını çalıştırır. |
+| `.env.example` & `backend/.env.example` | Ortak ortam değişkeni şablonları. | `cp backend/.env.example backend/.env` komutuyla yerel yapılandırma başlatılır. |
+
+> **Hızlı başlangıç:** Yerel geliştirme adımları için [docs/engineering/local-development.md](docs/engineering/local-development.md) rehberini takip edin; PR hazırlığında `./tools/run-quality-suite.sh` komutu kalite kontrollerini tek seferde koşturur.
 
 ## Kılavuz İlkeler
 
@@ -1596,6 +1611,23 @@ _(Güncelleme: 2024-07-01)_
 - Mevcut olmayan araçları ⚠️ uyarısıyla raporlar, hatalı adımlar için `exit 1` döndürür.
 - `docs/engineering/pr-checklist.md` içindeki manuel adımları otomasyonla destekler.
 - `vendor/bin/` altında PHP araçları bulunmazsa `composer install --no-ansi --no-interaction --no-progress --prefer-dist` komutunu otomatik tetikler.
+- `package.json` bulunan projelerde `node_modules` eksikse `npm install --no-audit --progress false` komutunu çalıştırarak ESLint/Stylelint için gerekli paketleri hazırlar.
+
+**Uygulama Notları:** Script depo kökünde çalıştırılmalı, eksik vendor veya frontend bağımlılıkları otomatik kurulduktan sonra başarısız kontroller düzeltilip tekrar koşturulmalıdır. Çıktı özetleri kod inceleme yorumlarında paylaşılır ve gerektiğinde `docs/tests/` kayıtlarına referans verilir.
+
+
+## Ortam Değişkeni Yönetimi
+
+**Amaç:** `.env` şablonlarının, ortam YAML dosyalarının ve gizli anahtar operasyonlarının faz kararlarıyla uyumlu ve izlenebilir şekilde yürütülmesini sağlamak.
+
+**Kapsam (`.env.example` & `docs/engineering/env-management.md`):**
+- Yerel kurulumlar için güncel varsayılanları içeren `.env.example` dosyası ve geliştiriciye özel `.env.local` yönergeleri.
+- `config/environment/*.yaml` dosyalarıyla paylaşılan ayarların tanımlanması ve gizli değerlerin dışarıda tutulması.
+- Rotasyon, audit ve paylaşım ilkeleri; `docs/governance/devam-et-yapi-rehberi.md` kaydı ile değişiklik izlenebilirliği.
+
+**Kontrol Listesi:** Ortam dosyasını güncellemeden önce `git diff -- .env.example` ile farkları gözden geçirin, `php artisan config:cache` komutuyla eksik değişkenleri test edin, kritik servisler için `TRACKING_PING_INTERVAL_*` gibi parametrelerin Faz 4/7 gereksinimleriyle uyumlu olduğunu doğrulayın.
+
+**Hata Önleme:** Kimlik bilgileri asla depo içine commit edilmez; rotasyon sonrası `security/chain-of-custody.md` ve `docs/threat-program/lessons-learned.md` kayıtları güncellenir. Yanlış yapılandırma tespit edilirse `runbook/incident-response.md` ve `runbook/data-restore.md` talimatları izlenir.
 
 **Uygulama Notları:** Script depo kökünde çalıştırılmalı, başarısız kontroller düzeltilip tekrar koşturulmalıdır. Çıktı özetleri kod inceleme yorumlarında paylaşılır ve gerektiğinde `docs/tests/` kayıtlarına referans verilir.
 
@@ -2548,6 +2580,16 @@ _(Güncelleme: 2024-07-16)_
 | v0.21 | 2024-07-24 | PHP kalite araçları için Composer bağımlılıklarının eklenmesi ve konfigürasyon kapsamının dinamikleştirilmesi | Teknik Liderlik |
 | v0.22 | 2024-07-25 | Kalite suite’in Composer bağımlılıklarını otomatik kuracak şekilde güncellenmesi ve ilgili rehberlerin revizyonu | Teknik Liderlik |
 | v0.23 | 2024-07-26 | Yerel geliştirme rehberinin yayımlanması ve mühendislik/Devam Et kayıtlarının güncellenmesi | Teknik Liderlik |
+| v0.24 | 2024-07-27 | Ortam değişkeni şablonunun eklenmesi ve ortam yönetimi rehberinin yayımlanması | Teknik Liderlik |
+| v0.25 | 2024-07-28 | Frontend lint bağımlılıklarının tanımlanması ve kalite suite’in npm kurulumunu otomatikleştirmesi | Teknik Liderlik |
+| v0.26 | 2024-07-29 | Laravel backend iskeletinin eklenmesi, kalite suite ve rehberlerin backend Composer akışına uyarlanması | Teknik Liderlik |
+| v0.27 | 2024-07-30 | Çoklu tenant çekirdek şemasının (tenant, birim, kullanıcı, olay, görev, envanter) ve örnek tohum verisinin eklenmesi | Teknik Liderlik |
+| v0.28 | 2024-07-31 | Tenant context/middleware altyapısının eklenmesi, modellerin otomatik tenant kapsamı ve SQLite test yapılandırmasının tamamlanması | Teknik Liderlik |
+| v0.29 | 2024-08-01 | Psalm kapsamının `backend/app/` dizinini içerecek şekilde genişletilmesi ve statik analiz rehberlerinin güncellenmesi | Teknik Liderlik |
+| v0.30 | 2024-08-02 | Görev oluşturma/güncelleme API uçlarının eklenmesi, doğrulama kuralları ve test kapsamının genişletilmesi | Teknik Liderlik |
+| v0.30 | 2024-08-02 | Tenant slug doğrulamasıyla güçlendirilmiş API rotaları, `forTenantQuery` yardımcıları ve güncellenen kalite stubları | Teknik Liderlik |
+| v0.31 | 2024-08-02 | Olay oluşturma API ucu, GeoJSON doğrulaması ve tenant bazlı benzersiz kod kontrolleri ile test kapsamının genişletilmesi | Teknik Liderlik |
+| v0.32 | 2024-08-02 | Tenant olay güncelleme API'sinin eklenmesi, validasyon testleri ve backend dokümantasyonunun güncellenmesi | Teknik Liderlik |
 
 > _Not: Yeni bir sürüm yayımlandığında bu tabloya satır eklenmeli ve ilgili bölümlerde revizyon tarihi güncellenmelidir._
 

@@ -1,4 +1,33 @@
 <?xml version="1.0"?>
+<psalm errorLevel="3" resolveFromConfigFile="true" composerAutoloader="backend/vendor/autoload.php">
+    <projectFiles>
+        <directory name="config"/>
+        <directory name="backend/app"/>
+        <directory name="backend/app/Tenant"/>
+        <ignoreFiles>
+            <directory name="vendor"/>
+            <directory name="backend/vendor"/>
+            <directory name="backend/config"/>
+            <directory name="backend/routes"/>
+            <directory name="backend/bootstrap"/>
+        </ignoreFiles>
+    </projectFiles>
+
+    <stubs>
+        <file name="stubs/belongs-to-tenant.stubphp"/>
+        <file name="stubs/laravel-model.stubphp"/>
+        <file name="stubs/laravel-http-resources.stubphp"/>
+        <file name="stubs/laravel-form-request.stubphp"/>
+        <file name="stubs/laravel-request.stubphp"/>
+        <file name="stubs/laravel-json-response.stubphp"/>
+    </stubs>
+
+    <issueHandlers>
+        <LessSpecificReturnType errorLevel="info"/>
+        <MissingParamType errorLevel="info"/>
+        <UndefinedClass errorLevel="info"/>
+        <UndefinedFunction errorLevel="info"/>
+        <TooManyTemplateParams errorLevel="info"/>
 <psalm errorLevel="3" resolveFromConfigFile="true">
     <projectFiles>
         <directory name="config"/>

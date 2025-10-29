@@ -4,10 +4,17 @@
 
     <file>config</file>
     <file>.php-cs-fixer.dist.php</file>
+    <file>backend/app</file>
+    <file>backend/config</file>
+    <file>backend/database</file>
+    <file>backend/routes</file>
 
     <exclude-pattern>vendor</exclude-pattern>
     <exclude-pattern>storage</exclude-pattern>
     <exclude-pattern>node_modules</exclude-pattern>
+    <exclude-pattern>backend/vendor</exclude-pattern>
+    <exclude-pattern>backend/storage</exclude-pattern>
+    <exclude-pattern>backend/node_modules</exclude-pattern>
 
     <arg name="basepath" value="."/>
     <arg name="extensions" value="php"/>

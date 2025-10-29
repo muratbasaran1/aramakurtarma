@@ -5,6 +5,17 @@ node_modules/
 npm-debug.log
 yarn-error.log
 
+# Laravel backend uygulaması için geçici dosyalar
+backend/vendor/
+backend/node_modules/
+backend/storage/
+backend/bootstrap/cache/*.php
+backend/bootstrap/cache/*.json
+backend/.env
+backend/.phpunit.result.cache
+backend/public/storage
+backend/storage/*.key
+
 # Laravel 4 specific
 bootstrap/compiled.php
 app/storage/

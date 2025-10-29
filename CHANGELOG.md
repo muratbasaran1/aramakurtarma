@@ -74,3 +74,41 @@ Bu dosya, uygulama ve dokümantasyon değişikliklerinin özetini tutmak için k
 ### 2024-07-26
 - `docs/engineering/local-development.md` ile yerel geliştirme kurulum adımları, günlük komutlar ve sorun giderme notları standartlaştırıldı.
 - README, mühendislik indeksleri ve Devam Et yapı rehberi yeni yerel geliştirme rehberine referans verecek şekilde güncellendi.
+### 2024-07-27
+- `.env.example` şablonu depoya eklendi; ortam değişkenleri için standart değerler ve entegrasyon placeholder'ları tanımlandı.
+- `docs/engineering/env-management.md` rehberi yayımlanarak `.env`/YAML yapılandırmaları, rotasyon ve audit süreçleri belgelenmiş oldu.
+- README, mühendislik indeksleri ve Devam Et rehberi yeni ortam yönetimi yönergelerini referanslayacak şekilde güncellendi; sürüm tablosuna v0.24 kaydı eklendi.
+
+### 2024-07-28
+- `package.json` ve `package-lock.json` ile ESLint/Stylelint bağımlılıkları tanımlandı, `npm run lint` komutu tek noktadan erişilebilir hale getirildi.
+- `tools/run-quality-suite.sh` script’i `npm install --no-audit --progress false` komutunu otomatik tetikleyerek frontend lint araçlarını hazırlar hale getirildi.
+- README, kalite suite, tooling ve PR rehberleri yeni otomasyon akışını belgeledi; Devam Et rehberine frontend bağımlılık kaydı eklendi ve sürüm tablosuna v0.25 işlendi.
+
+### 2024-07-29
+- `backend/` dizininde Laravel 11 tabanlı uygulama iskeleti oluşturuldu; `.env` şablonları ve gitignore kuralları backend yapısına göre güncellendi.
+- Kod kalite konfigürasyonları, run-quality suite script’i ve PR/local development/env yönetimi rehberleri backend Composer kurulumlarını otomatikleyecek şekilde revize edildi.
+- README, Devam Et rehberi ve sürüm geçmişi yeni kod tabanı yapısını ve kalite akışını yansıtacak şekilde güncellendi.
+### 2024-07-30
+- Tenant, unit, user, incident, task ve inventory tablolarını içeren çoklu tenant çekirdek şema oluşturuldu; uzamsal alanlar için SQLite fallback’leri tanımlandı.
+- Eloquent modelleri, ilişkiler ve factory/seed zinciri güncellenerek faz 2–3 akışları için örnek veri üretimi sağlandı.
+- Backend README’si proje bağlamına uyarlanarak şema özeti, kurulum adımları ve sonraki faz planlarıyla genişletildi.
+### 2024-07-31
+- TenantContext ve EnsureTenant middleware’i eklenerek HTTP isteklerinin tenant bazlı ayrıştırılması ve modellerin otomatik tenant kapsamı sağlandı.
+- BelongsToTenant trait’i ile incident, task, inventory, unit ve user modelleri global tenant filtresi ve otomatik `tenant_id` atanmasıyla güçlendirildi.
+- PHPUnit konfigürasyonu SQLite bellek veritabanına geçirildi, tenant kapsamı testleri yazıldı ve backend README/ana README güncellendi.
+
+### 2024-08-01
+- `psalm.xml` kapsamı `backend/app/` dizinini içerecek şekilde genişletildi; Laravel stubları güncel tenant kodunun taranmasını destekleyecek şekilde genişletildi.
+- Factory jenerik uyarıları bilgi seviyesine çekildi, yeni stub tanımları ve dokümantasyon güncellemeleriyle Psalm çıktıları güçlendirildi.
+- Statik analiz rehberleri ve Devam Et yapı tablosu Psalm kapsamındaki değişiklikleri yansıtacak biçimde revize edildi.
+
+### 2024-08-02
+- Çoklu tenant sorguları için `BelongsToTenant::forTenantQuery` yardımcı metodu eklendi; controller akışları yeni yardımcıyı kullanacak şekilde güncellendi ve tenant slug doğrulaması merkezî hale getirildi.
+- Laravel bootstrap yapılandırması API rotalarını etkinleştirecek şekilde genişletildi; Psalm/PHPStan stubları dinamik sorgu kapatma (closure) ve JsonResource koleksiyonlarını destekleyecek biçimde güçlendirildi.
+- Backend README’si ve statik analiz araçları yeni tenant yardımcıları ve genişletilen stubları açıklayacak şekilde güncellendi; kalite süitine eklenen bellek limiti ayarı korunarak taramalar başarılı çalıştırıldı.
+- Tenant API’sine olay oluşturma ucu (`POST /api/tenants/{tenant}/incidents`) eklendi; GeoJSON doğrulaması ve benzersiz kod kontrolünü içeren `StoreIncidentRequest` oluşturuldu, backend README ve testler güncellendi.
+- `PATCH /api/tenants/{tenant}/incidents/{incident}` ucu eklenerek olay başlığı, durum, öncelik ve GeoJSON alanlarının tenant doğrulamasıyla güncellenmesi sağlandı; `UpdateIncidentRequest` kapatma zamanı kurallarını ve kod benzersizliğini denetler hale getirildi.
+- Çoklu tenant olay güncelleme akışı için feature testleri yazıldı; çapraz tenant erişimlerinin 404 dönmesi garanti altına alındı ve backend README ile ana README sürüm tablosu yeni özelliği referanslayacak şekilde güncellendi.
+- Görev API’sine `POST /api/tenants/{tenant}/tasks` ve `PATCH /api/tenants/{tenant}/tasks/{task}` uçları eklendi; GeoJSON LineString rotası, çift onay zorunluluğu ve tarih tutarlılığı `StoreTaskRequest`/`UpdateTaskRequest` ile doğrulanıyor.
+- TaskController güncellenerek rota dönüştürme yardımcıları ve tenant izolasyonu güçlendirildi; Task modeli `STATUSES` sabiti ve `route` cast’i ile tutarlı veri üretir hale getirildi.
+- Görev API feature testleri oluşturma, güncelleme ve doğrulama ihlali senaryolarını kapsayacak şekilde genişletildi; backend README, CHANGELOG ve ana README sürüm tablosu yeni yetenekleri belgeledi.
