@@ -18,6 +18,7 @@ Bu dokümantasyon, TUDAK Afet Yönetim Sistemi için faz bazlı geliştirme plan
 - [Saha Eğitim ve Tatbikat Takvimi](#saha-eğitim-ve-tatbikat-takvimi)
 - [Risk ve Bağımlılık Matrisi](#risk-ve-bağımlılık-matrisi)
 - [Servis Seviyesi Hedefleri (SLO & SLA)](#servis-seviyesi-hedefleri-slo--sla)
+- [Gözlemlenebilirlik Metrik Kataloğu & İnceleme Programı](#gözlemlenebilirlik-metrik-kataloğu--inceleme-programı)
 - [Denetim & Uyum Takvimi](#denetim--uyum-takvimi)
 - [İletişim Kanalları & Eskalasyon Tablosu](#iletişim-kanalları--eskalasyon-tablosu)
 - [Operasyonel Runbooklar](#operasyonel-runbooklar)
@@ -25,6 +26,8 @@ Bu dokümantasyon, TUDAK Afet Yönetim Sistemi için faz bazlı geliştirme plan
 - [Konfigürasyon Yönetimi & Ortam Standartları](#konfigürasyon-yönetimi--ortam-standartları)
 - [Veri Yaşam Döngüsü ve Arşivleme](#veri-yaşam-döngüsü-ve-arşivleme)
 - [Monitoring & Alerting Playbook](#monitoring--alerting-playbook)
+- [On-call & Vardiya Yönetimi](#on-call--vardiya-yönetimi)
+- [Kaos Mühendisliği & Dayanıklılık Testleri](#kaos-mühendisliği--dayanıklılık-testleri)
 - [Dokümantasyon Bakım Ritmi](#dokümantasyon-bakım-ritmi)
 - [Yönetim Kurulları & Toplantı Ritmi](#yönetim-kurulları--toplantı-ritmi)
 - [Bilgi Güvenliği Yetkinlik Matrisi](#bilgi-güvenliği-yetkinlik-matrisi)
@@ -91,6 +94,14 @@ Bu dokümantasyon, TUDAK Afet Yönetim Sistemi için faz bazlı geliştirme plan
 - [Mikroservis & API Rate Limit Politikası](#mikroservis--api-rate-limit-politikası)
 - [Açık Veri & Paydaş İşbirliği Çerçevesi](#açık-veri--paydaş-işbirliği-çerçevesi)
 - [Çevik Seremoni & Sprint Yönetimi](#çevik-seremoni--sprint-yönetimi)
+- [Mühendislik Uygulama Yönetişimi](#mühendislik-uygulama-yönetişimi)
+- [Kodlama Standartları](#kodlama-standartları)
+- [Statik Analiz & Otomatik Kontroller](#statik-analiz--otomatik-kontroller)
+- [Kod Kalite Konfigürasyonları](#kod-kalite-konfigürasyonları)
+- [Bağımlılık Yönetimi Politikası](#bağımlılık-yönetimi-politikası)
+- [Kod İnceleme Standartları](#kod-inceleme-standartları)
+- [Branching & Release Gate Politikaları](#branching--release-gate-politikaları)
+- [CI/CD Kalite Kapıları & İzleme](#cicd-kalite-kapıları--izleme)
 - [Bilgi Güvenliği Metrikleri & Raporlama](#bilgi-güvenliği-metrikleri--raporlama)
 - [Yönetişim Risk & Uyum Raporlama Döngüsü](#yönetişim-risk--uyum-raporlama-döngüsü)
 - [Sürdürülebilir Tedarik İlkeleri](#sürdürülebilir-tedarik-ilkeleri)
@@ -107,6 +118,7 @@ Bu dokümantasyon, TUDAK Afet Yönetim Sistemi için faz bazlı geliştirme plan
 - [Açık Kaynak & Lisans Uyumluluğu Programı](#açık-kaynak--lisans-uyumluluğu-programı)
 - [Dijital İkiz & Senaryo Modelleme Yönetişimi](#dijital-ikiz--senaryo-modelleme-yönetişimi)
 - [Kriz Sonrası İyileştirme & Rehabilitasyon Çerçevesi](#kriz-sonrası-iyileştirme--rehabilitasyon-çerçevesi)
+- [Devam Et Yapıları Rehberi](#devam-et-yapıları-rehberi)
 - [Faz 0 — Kararlar (Temel Direkler)](#faz-0--kararlar-temel-direkler)
 - [Faz 1 — Güvenlik & Altyapı](#faz-1--güvenlik--altyapı)
 - [Faz 2 — Veri & Migrasyon (Şema Sertleştirme)](#faz-2--veri--migrasyon-şema-sertleştirme)
@@ -134,9 +146,11 @@ Bu dokümantasyon, TUDAK Afet Yönetim Sistemi için faz bazlı geliştirme plan
 - [Faz 24 — Büyük Veri & Analitik](#faz-24--büyük-veri--analitik)
 - [Faz 25 — Uluslararasılaştırma & Çok Dilli (i18n) ve Çoklu Tenant](#faz-25--uluslararasılaştırma--çok-dilli-i18n-ve-çoklu-tenant)
 - [Faz 26 — Stratejik Yönetim & Politika](#faz-26--stratejik-yönetim--politika)
-- [Sistem Genelinde Hareketsizlik Güvenlik Kuralı](#sistem-genelinde-hareketsizlik-güvenlik-kuralı)
+- [Hareketsizlik Güvenlik Kuralı (Sistem Geneli Kullanım)](#hareketsizlik-güvenlik-kuralı-sistem-geneli-kullanım)
 - [Güncelleme Prosedürü](#güncelleme-prosedürü)
 - [Terimler Sözlüğü](#terimler-sözlüğü)
+- [Belge Versiyon Geçmişi](#belge-versiyon-geçmişi)
+- [Referanslar & Kaynaklar](#referanslar--kaynaklar)
 
 ## Genel Bakış
 
@@ -326,6 +340,15 @@ Risk listesi aylık olarak gözden geçirilir; yeni riskler için RFC açılır 
 
 SLA’ler dış paydaşlara karşı taahhüttür; ihlal durumunda kritik olay süreci tetiklenir. SLO’lar ise iç ekiplerin sürekli iyileştirme hedeflerini temsil eder ve her çeyrek başında gözden geçirilir. Yeni fazlar devreye alındığında SLO tabloları genişletilir.
 
+## Gözlemlenebilirlik Metrik Kataloğu & İnceleme Programı
+
+- **Metrik Kataloğu:** `observability/metrics-catalog.md` dosyası, metrik kaynaklarını, sahiplerini ve tetiklediği runbook’ları listeler. Yeni metrikler RFC onayı almadan kataloğa eklenemez.
+- **SLO Kayıt Defteri:** `observability/slo-register.md`, her inceleme döngüsündeki gerçekleşen değerleri ve alınan aksiyonları saklar; sapma olduğunda ilgili runbook’a referans verilmesi zorunludur.
+- **İnceleme Notları:** Haftalık ve çeyreklik alarm gözden geçirmeleri `observability/reviews/` dizinine kaydedilir; takip öğeleri sprint planlarına taşınır.
+- **Kapasite Günlüğü Eşleşmesi:** Kapasite artışları veya throttle değişiklikleri `observability/capacity-journal.md` üzerinde izlenir ve inceleme notlarında bağlantı verilir.
+
+> _Önemli: İnceleme döngülerinde alınan tüm kararlar changelog’a ve README sürüm geçmişine yansıtılmalıdır._
+
 ## Denetim & Uyum Takvimi
 
 | Dönem | Denetim Tipi | Kapsam | Sorumlu Takım | Çıktı |
@@ -357,10 +380,14 @@ Her kritik operasyon için güncel runbook’lar `docs/runbook/` dizininde muhaf
 | Runbook | Amaç | Başlangıç Tetikleyicisi | İlgili Faz Çıktıları |
 | --- | --- | --- | --- |
 | `runbook/incident-response.md` | Güvenlik ihlali veya kritik altyapı kesintisinde uygulanacak adımlar | Sentry kritik alarmı, WAF ihlal kaydı | Faz 1, Faz 11, Faz 22 |
+| `runbooks/incident-response/credential-compromise.md` | Kimlik bilgisi sızıntısı ve yetkisiz erişim senaryolarında yapılacaklar | SIEM MFA başarısızlığı, dark web uyarısı | Faz 1, Faz 22 |
 | `runbook/offline-edge-recovery.md` | Edge node veya offline kuyruk arızasında sahayı ayakta tutmak | Edge heartbeat kaybı ≥ 3 ping, kuyruk doluluk ≥ %90 | Faz 4, Faz 9, Faz 14 |
+| `runbooks/maintenance/patch-window.md` | Planlı yama ve bakım penceresinin işletilmesi | Aylık bakım takvimi, güvenlik bülteni | Faz 11, Faz 22 |
 | `runbook/opscenter-degradation.md` | OpsCenter performans sorunlarında degrade moduna geçiş | Harita yanıt süresi KPI sapması, BBOX sorgu hataları | Faz 6, Faz 12, Faz 20 |
+| `runbooks/opscenter/alarm-console-escalation.md` | Alarm konsolu üzerinden gelen bildirimlerin yönlendirilmesi | Hareketsizlik, geofence, SOS, ping kaybı alarmı | Faz 4, Faz 6, Faz 7 |
 | `runbook/data-restore.md` | Veri kaybı veya yanlış migrasyon sonrası geri yükleme | Yedekleme tutarsızlığı, migration guard hatası | Faz 2, Faz 11 |
 | `runbook/rule-engine-hotfix.md` | Kural motoru zincir hatalarında acil düzeltme | Bildirim kuyruğu başarısızlık oranı ≥ %2 | Faz 4, Faz 7 |
+| `runbooks/tracking/no-motion-alert.md` | Hareketsizlik alarmı tespit edildiğinde uygulanacak plan | `tracking.no_motion` tetikleyicisi | Faz 4, Faz 6, Faz 7 |
 
 Tüm runbook’lar yılda iki kez masa başı tatbikatında denenir; tatbikat notları Denetim & Uyum Takvimi ile ilişkilendirilerek saklanır.
 
@@ -413,6 +440,70 @@ Sistem gözlemlenebilirliği aşağıdaki katmanlarda yapılandırılmıştır. 
 
 Her alarmın değerlendirme adımı 5 dakikayı aşamaz; aksi halde olay otomatik olarak bir üst şiddet seviyesine taşınır. Alarm kapatma notları SLO raporlarıyla entegre edilir.
 
+**Artefaktlar ve Başvuru Dokümanları**
+
+- `observability/README.md` — Gözlemlenebilirlik mimarisinin sahiplik modeli ve inceleme döngüleri.
+- `observability/alerts/opscenter.yml` — OpsCenter, kural motoru ve hareketsizlik alarmı için Prometheus kuralları.
+- `observability/service-health-checklist.md` — Vardiya başı sağlık kontrolleri ve raporlama yönergeleri.
+- `observability/dashboards/opscenter.json` — Grafana panel tanımı; eşik değerleri runbook bağlantılarıyla ilişkilidir.
+- `observability/capacity-journal.md` — Benchmark ve load test sonuçlarına karşı kapasite trendlerini kaydeder.
+- `observability/metrics-catalog.md` — Kritik metriklerin sahipliği, hedefleri ve runbook eşleşmeleri.
+- `observability/slo-register.md` — SLO performansı ve aksiyon kayıtları.
+
+## On-call & Vardiya Yönetimi
+
+24/7 operasyon kabiliyetini sürdürebilmek için on-call ekipleri Faz 1 güvenlik gereksinimleri, Faz 6 OpsCenter süreçleri ve Faz 11 devops otomasyonuyla uyumlu olacak şekilde vardiya planlarına ayrılır. Her vardiya, operasyonel sağlık kontrolleriyle başlar ve devralınan açık iş öğeleri kapatılmadan bitirilemez.
+
+### Vardiya Kapasitesi ve Sorumluluklar
+
+| Rol | Kapsam | Faz Bağlantısı | Mesai Dışı Kapama Kuralı |
+| --- | --- | --- | --- |
+| OpsCenter Komutanı | Alarm konsolu, saha koordinasyonu, tenant bildirimleri | Faz 4, Faz 6, Faz 7 | OpsCenter alarm kuyruğu sıfırlanmadan vardiya devredilemez. |
+| DevOps Gözcüsü | CI/CD, altyapı, kuyruk izleme ve rollback hazırlığı | Faz 1, Faz 9, Faz 11 | Deploy planı + rollback checklist’i güncellenmeli; kritik pipeline hatası çözülmeli. |
+| Güvenlik Gözcüsü | 2FA, WAF, kural motoru ve tehdit akışları | Faz 1, Faz 7, Faz 22 | Açık güvenlik alarmı veya teyitsiz ihbar kaldırılamaz; rapor `security/threat-intel-register.md`’ye işlenir. |
+| Tenant İletişim Temsilcisi | İl/kurum bazlı duyurular, vatandaş portalı koordinasyonu | Faz 5, Faz 17, Faz 25 | Açık iletişim talebi kapatılmalı; kamu açıklamaları `communications/public/` arşivine eklenmeli. |
+
+### Handover Akışı
+
+1. **Gözlemlenebilirlik özeti:** `observability/metrics-catalog.md` ve açık SLO ihlalleri gözden geçirilir.
+2. **Aktif olaylar:** OpsCenter olay panosundaki Seviye ≥2 kayıtlar devralınır, notlar `ops/weekly-ops-briefing.md` ile eşleşir.
+3. **Planlanmış bakım & deneyler:** DevOps on-call, `resilience/` deney takvimini ve `config/` değişiklik planlarını kontrol eder.
+4. **Vardiya kapanışı:** Handover şablonu doldurulur, kritik notlar hem Slack/Matrix kanalına hem de arşiv klasörüne eklenir.
+
+### Artefaktlar
+
+- `ops/oncall/README.md` — On-call politikaları, rotasyon ve sorumluluk zinciri.
+- `ops/oncall/handoff-template.md` — Vardiya teslim formu; çıktı runbook referanslarıyla birlikte kaydedilir.
+- `ops/oncall/rotation-schedule.csv` — Tenant ve uzmanlık bazlı örnek rotasyon planı.
+- `observability/service-health-checklist.md` — Vardiya başlangıcı sağlık kontrolleri için referans.
+
+## Kaos Mühendisliği & Dayanıklılık Testleri
+
+Dayanıklılık programı, Faz 4 canlı takip, Faz 6 OpsCenter, Faz 9 offline/edge ve Faz 22 siber dayanıklılık hedefleriyle uyumlu olarak planlanır. Amaç, kritik hizmetlerin felaket senaryolarında kabul edilebilir seviyede kalmasını ölçmektir.
+
+### Program Prensipleri
+
+- **Güvenli Planlama:** Denemeler yalnızca staging veya izole tenant ortamlarında yürütülür; üretimde yapılacak tatbikatlar için Yönetim Kurulu onayı gerekir.
+- **Hipotez Bazlı Yaklaşım:** Her deney hipotez, etki alanı, geri döndürme planı ve ölçüm metrikleriyle tanımlanır (`resilience/experiments/chaos-template.md`).
+- **Gözlem Entegrasyonu:** Sonuçlar SLO raporları ve `observability/capacity-journal.md` ile eşleştirilir; başarısız deneyler runbook güncellemesine yol açar.
+- **İyileştirme Takibi:** Bulgular `tech-debt/backlog.csv` ve `governance/iteration-kanban.md` üzerinde aksiyona dönüştürülür.
+
+### 2024 Program Çıkartmaları
+
+| Tarih | Deney | Hedeflenen Sonuç | İyileştirme Kararı |
+| --- | --- | --- | --- |
+| 2024-07-14 | `network-partition` (WebSocket + offline kuyruk) | OpsCenter alarmı ≤ 2 dk içinde degrade moda geçmeli, hareketsizlik alarmı kuyrukta kaybolmamalı. | Edge retry politikasında `max_retries=5` → `8`; ops runbook’una manuel SMS fallback eklendi. |
+| 2024-08 (plan) | `database-failover` (MySQL bölünmesi) | Migration guard hatasız devre dışı kalmalı; OpsCenter veri snapshot’ı 5 dk içinde güncellenmeli. | Açık | 
+
+### Artefaktlar
+
+- `resilience/README.md` — Dayanıklılık programı kapsamı, rol dağılımı ve onay süreci.
+- `resilience/reliability-roadmap.md` — Çeyreklik hedefler, bağımlılıklar ve runbook güncelleme planı.
+- `resilience/experiments/chaos-template.md` — Deney başlatma şablonu; hipotez, risk azaltma ve metrik bölümleri içerir.
+- `resilience/experiments/2024-07-network-partition.md` — İlk ağ bölünmesi tatbikatı raporu.
+- `runbook/opscenter-degradation.md` & `runbook/offline-edge-recovery.md` — Deney çıktılarıyla güncellenen operasyonel planlar.
+- `observability/reviews/` — Alarm ve metrik gözden geçirme çıktıları.
+
 ## Dokümantasyon Bakım Ritmi
 
 Belge ve destekleyici dokümanlar yaşayan artefaktlardır. Tutarlılığı sağlamak için aşağıdaki bakım ritmi uygulanır:
@@ -435,7 +526,7 @@ Faz yönetişimi, karar alma ve operasyonel koordinasyonu sağlamak için kurula
 | Teknik Mimari Kurulu | Teknik Lider, Modül Lead’leri, DevOps | 2 haftada bir | RFC değerlendirme, altyapı değişiklikleri | Faz 0, 1, 11 | `architecture/rfc-decisions.csv` |
 | Güvenlik & Uyumluluk Konseyi | Güvenlik Ekibi, Hukuk, Denetim | Çeyreklik | Zafiyet sonuçları, KVKK aksiyonları, pentest planı | Faz 1, 21, 22 | `security/compliance-report-{q}.pdf` |
 | Operasyon Koordinasyon Masası | OpsCenter Lideri, Saha Operasyonları, Mobil Takım | Haftalık | SLA/SLO istatistikleri, runbook güncellemeleri | Faz 4, 6, 14 | `ops/weekly-ops-briefing.md` |
-| Paydaş & Entegrasyon Forumu | Kurumlar Arası Entegrasyon Ekibi, Dış Paydaş Temsilcileri | İki ayda bir | API sözleşmeleri, veri paylaşım protokolleri | Faz 19, 20 | `integration/partner-matrix.xlsx` |
+| Paydaş & Entegrasyon Forumu | Kurumlar Arası Entegrasyon Ekibi, Dış Paydaş Temsilcileri | İki ayda bir | API sözleşmeleri, veri paylaşım protokolleri | Faz 19, 20 | `integration/partner-matrix.csv` |
 
 Toplantılar, gündemden sapma olmaması için maksimum 60 dakika sürer. Kritik kararlar toplantı sonrası 24 saat içinde karar kaydına işlenmezse geçerlilik kazanmaz.
 
@@ -452,7 +543,7 @@ Roller için zorunlu güvenlik eğitimleri ve sertifikasyonlar aşağıdaki tabl
 | OpsCenter Operatörü | Kimlik Doğrulama Prosedürleri | Sosyal Mühendislik Farkındalığı | 12 ay | OpsCenter quiz sonuçları |
 | Saha Personeli | Mobil Cihaz Güvenliği, KVKK | Offline Veri Sızdırma Önlemleri | 12 ay | Yoklama & eğitim logları |
 
-Eğitim kayıtları `hr/training-tracker.xlsx` dosyasında tutulur ve Denetim & Uyum Takvimi sırasında örnekleme yapılır. Eksik veya süresi geçmiş eğitimlerde ilgili yöneticiye 5 iş günü içinde kapanış planı bildirilir.
+Eğitim kayıtları `hr/training-tracker.csv` dosyasında tutulur ve Denetim & Uyum Takvimi sırasında örnekleme yapılır. Eksik veya süresi geçmiş eğitimlerde ilgili yöneticiye 5 iş günü içinde kapanış planı bildirilir.
 
 ## Çok Katmanlı Haberleşme Protokolleri
 
@@ -631,7 +722,7 @@ Program performansı, Operasyonel KPI tablosundaki metriklerle entegre edilir; h
 
 Tedarikçiler, dış servis sağlayıcıları ve lisans sözleşmeleri merkezi bir kayıt altında takip edilir. Finansal uyum, Faz 18 lojistik ve Faz 26 stratejik panellerine veri sağlar.
 
-- **Sözleşme Envanteri:** `docs/contracts/registry.xlsx` dosyasında tüm sözleşmeler, SLA maddeleri, yenileme tarihleri ve sorumlu sahip listelenir.
+- **Sözleşme Envanteri:** `docs/contracts/registry.csv` dosyasında tüm sözleşmeler, SLA maddeleri, yenileme tarihleri ve sorumlu sahip listelenir.
 - **Bütçe İzleme:** Felaket bütçesi, sürüm başına tahmini harcama ve beklenmeyen giderler için `%5` tampon ayrı tutulur. Çeyrek bazında finans raporu yönetim kuruluna sunulur.
 - **Uyum Kontrolleri:** Sözleşmelerdeki veri işleme hükümleri DPIA çıktılarıyla uyumlu değilse hukuk birimi düzeltme ek protokolleri hazırlar.
 - **Yenileme Hatırlatıcıları:** Sözleşme bitiş tarihinden 90, 60 ve 30 gün önce otomatik bildirimler Faz 7 kural motoru üzerinden gönderilir; yenilenmeyen sözleşmeler risk matrise eklenir.
@@ -908,10 +999,12 @@ Sistem, veri erişimi ve otomasyon kararlarında etik dengeyi korumak için faz 
 
 | Süreç | Periyot | Sorumlu | Çıktı |
 | --- | --- | --- | --- |
-| Etik kurul toplantısı | Aylık | Ürün Sahibi, Güvenlik Ekibi, Hukuk Danışmanı | Karar kayıtları, kural güncelleme talepleri |
+| Etik kurul toplantısı | Aylık | Ürün Sahibi, Güvenlik Ekibi, Hukuk Danışmanı | Karar kayıtları, kural güncelleme talepleri (`docs/ethics/README.md`) |
 | İç denetim (erişim logları) | 2 ayda bir | İç Denetim Birimi | KVKK uyum raporu, erişim ihlali aksiyonları |
 | Yapay zekâ etik incelemesi | Sürüm öncesi | AI Governance Ekibi | Model risk sınıflandırması, onay/ret kararı |
 | Sosyal etki değerlendirmesi | Yılda bir | Yönetim Kurulu | Paydaş geri bildirim özetleri |
+
+- **Ajanda Yönetimi:** Kurul sekreteri toplantıların durumunu ve artefakt listesini `docs/ethics/review-schedule.md` dosyasında günceller; boş karar alanı bırakılamaz.
 
 - **Yetki Yönetimi:** Faz 1 ve Faz 21 çıktıları, etik kurul kararlarına göre güncellenir. Örn. kritik belgeler için erişim süreleri kısaltılabilir.
 - **İzlenebilirlik:** Tüm denetim tutanakları `governance/audit/` altında saklanır, değişiklikler imzalı commit’lerle takip edilir.
@@ -927,6 +1020,8 @@ Afet operasyonları yüksek stres içerdiğinden, saha ve merkez ekiplerinin ref
 4. **Eğitim:** Yılda iki kez travma sonrası destek modülleri düzenlenir; katılım `training/attendance.csv` dosyasında izlenir.
 5. **Geri Bildirim Döngüsü:** Refah anketleri `ops-feedback` tenant’ı üzerinden toplanır; sonuçlar Faz 8 analitik raporlarına dahil edilir.
 
+> **Destek Artefaktları:** Detaylı protokoller `docs/wellbeing/README.md` ve `hr/wellbeing-program.md` dosyalarında, günlük kontrol listesi ise `hr/wellbeing-checklist.csv` içinde tutulur.
+
 ## Topluluk ve Geri Bildirim Platformu
 
 Sistem, vatandaşlar ve gönüllüler için şeffaf bir iletişim alanı sağlayarak güveni artırmayı hedefler.
@@ -936,6 +1031,8 @@ Sistem, vatandaşlar ve gönüllüler için şeffaf bir iletişim alanı sağlay
 - **Şeffaflık Panosu:** Onaylanan ihbar ve çözüm süreleri, Faz 20 dashboard’unda anonimleştirilmiş olarak yayınlanır. Veri paylaşımı Faz 21 uyum kriterlerine göre yapılır.
 - **Katılım Teşviki:** Gönüllü katkıları için rozet sistemi uygulanır; rozet kazanımı, eğitim ve tatbikat katılımıyla ilişkilendirilir (Faz 16).
 - **API Paylaşımı:** Kamu kurumları için özel anahtarla erişilen veri setleri sağlanır; rate limit ve audit kayıtları Faz 10 ve Faz 19 kurallarıyla uyumludur.
+
+> **Yönetişim Kaynakları:** Topluluk süreçlerinin ayrıntıları `docs/community/README.md` dosyasında, saha buluşmaları ise `community/engagement-log.csv` kaydında izlenir.
 
 ## Saha Teknoloji Kitleri & Lojistik Destek
 
@@ -1418,6 +1515,114 @@ _(Güncelleme: 2024-07-01)_
 **Hata Önleme:** Sprint tamamlanma kabulü, Faz Geçiş Kontrol Formu maddeleri karşılanmadan yapılmaz; aksi hâlde release dondurulur.
 
 
+## Mühendislik Uygulama Yönetişimi
+
+**Amaç:** Faz 0 teknoloji kararları, Faz 11 DevOps süreçleri ve Faz 12 test kapsamının günlük mühendislik operasyonlarına tutarlı şekilde uygulanmasını sağlamak.
+
+**Kapsam:**
+- `docs/engineering/README.md` klasör haritası, sorumluluklar ve kullanım notlarını içerir.
+- Kod inceleme, dal stratejisi ve pipeline kapıları gibi rehberler sprint planları ve release hazırlıkları sırasında zorunlu referans olarak kullanılır.
+- Takımlar, yeni araç veya süreç değişikliklerinde RFC süreci ve `CHANGELOG.md` kaydıyla izlenebilirlik sağlar.
+
+**Hata Önleme:** Rehberlerdeki güncel olmayan noktalar için aylık engineering check-up oturumları yapılır; tespit edilen boşluklar `docs/rfc/` üzerinden güncellenir.
+
+
+## Kodlama Standartları
+
+**Amaç:** PHP, Vue/Blade ve altyapı kodlarında tutarlı stil, güvenlik ve tenant izolasyonu kurallarını koruyarak teknik borcu azaltmak.
+
+**Kapsam (`docs/engineering/coding-standards.md`):**
+- PSR-12 + Laravel yönergeleri, domain bazlı dizinleme ve form request tabanlı validasyon kuralları.
+- Vue/Tailwind bileşen yapısı, erişilebilirlik (WCAG AA) gereksinimleri ve harita entegrasyon helper’ları.
+- Kod yorumları, PHPDoc etiketi ve audit/metrik entegrasyonu için zorunlu yönergeler.
+
+**Kontrol Listesi:** Pre-commit aşamasında `php-cs-fixer` ve `eslint` çalıştırıldığını doğrulayın; kod incelemesinde tenant filtrasyonu ve localization çağrıları kontrol edilir.
+
+**Hata Önleme:** Standart dışı istisnalar RFC onayı almadan kabul edilmez; sprint retrospektiflerinde tespit edilen sapmalar `docs/engineering/code-review.md` kontrol listesine eklenir.
+
+
+## Statik Analiz & Otomatik Kontroller
+
+**Amaç:** Kod tabanında erken hata tespiti ve güvenlik zafiyetlerinin otomatik araçlarla yakalanmasını sağlamak.
+
+**Araçlar (`docs/engineering/static-analysis.md`):** PHPStan/Larastan, ESLint, Stylelint, Trivy ve Composer Audit.
+
+**Pipeline Uygulaması:**
+- Pre-commit hook’ları `composer analyse` ve `npm run lint` komutlarını zorunlu kılar.
+- CI pipeline’ı `analyse`, `frontend-lint` ve `security-audit` aşamalarını çalıştırır; kritik bulgular release’i bloklar.
+- Haftalık konteyner taramaları çıktıları `security/vuln-register.csv` dosyasına, aylık Psalm taramaları ise `security/threat-hunt/` kayıtlarına işlenir.
+
+**İzleme:** Statik analiz bulgu trendi `observability/metrics-catalog.md` içinde takip edilir; false-positive istisnaları aylık engineering oturumlarında değerlendirilir.
+
+
+## Kod Kalite Konfigürasyonları
+
+**Amaç:** Kod kalite araçlarının depo seviyesinde tutarlı şekilde çalışmasını sağlamak, dokümantasyon ile gerçek yapılandırmalar arasındaki boşluğu kapatmak.
+
+**Konfigürasyonlar (`docs/engineering/tooling-configuration.md`):**
+- `.php-cs-fixer.dist.php`: PSR-12 tabanlı stil kurallarını ve `declare(strict_types=1)` zorunluluğunu uygular.
+- `phpcs.xml`: CI tarafında zorunlu kod standartları ve Slevomat tip ipuçlarını denetler.
+- `phpstan.neon.dist`: Larastan uzantılarıyla seviye 8 statik analizi yönetir; sonuçları `build/phpstan/` altında saklar.
+- `psalm.xml`: Güvenlik kritik modüllerde hassas veri akışını takip eder.
+- `.eslintrc.cjs`: Vue 3 + TypeScript bileşenleri için ESLint yapılandırmasını standartlaştırır.
+- `stylelint.config.cjs`: Tailwind ağırlıklı CSS için sınıf isimlendirme ve erişilebilirlik kurallarını denetler.
+
+**Uygulama Notları:**
+- `composer.json` ve `package.json` script’leri yukarıdaki dosyalarla eşleşen komutları içermeli, pre-commit ve CI pipeline’ları aynı kuralları tetiklemelidir.
+- Yeni modül/dizin eklenirken lint kapsamı gözden geçirilerek gerekli durumlarda ilgili konfigürasyon güncellenir.
+- Kural istisnaları RFC onayı olmadan yapılandırma dosyalarına eklenemez; gerekçeler kod inceleme notlarında kayıt altına alınır.
+
+
+## Bağımlılık Yönetimi Politikası
+
+**Amaç:** Composer, npm ve sistem paketlerinin güvenli, izlenebilir ve zamanında güncellenmesini sağlayarak operasyonel riskleri azaltmak.
+
+**Politika Başlıkları (`docs/engineering/dependency-management.md`):**
+- Envanterleme: `composer.lock`, `package-lock.json` ve konteyner OS paket listelerinin periyodik kontrolü.
+- Güncelleme döngüsü: Patch ≤48 saat, minor aylık bakım penceresi, major sürümler için RFC + rollback planı.
+- Güvenlik kontrolleri: `composer audit`, `npm audit --production`, hash doğrulaması ve lisans uyumu.
+
+**Kayıt Gereksinimleri:** Upgrade kararları `docs/changelog/` altında belgelenir; riskli durumlar `governance/risk-register.csv` ve `tech-debt/backlog.csv` dosyalarına işlenir.
+
+**Hata Önleme:** Patch süreleri aşıldığında otomatik eskalasyon uygulanır; kritik zafiyetlerde 24 saat içinde hotfix planı hazırlanarak ilgili runbook’lar güncellenir.
+
+
+## Kod İnceleme Standartları
+
+**Amaç:** Güvenlik kritik modüller de dahil olmak üzere tüm kod katkılarının belirlenen kalite ve kontrol listelerine uygun şekilde gözden geçirilmesini sağlamak.
+
+**Öne Çıkan Maddeler (`docs/engineering/code-review.md`):**
+- İnceleme ön koşulları: test sonuçları, dokümantasyon revizyonu ve güvenlik etki değerlendirmesi.
+- Kontrol listesi: iş gereksinimi, güvenlik, kod kalitesi, test kapsamı ve performans/gözlemlenebilirlik.
+- Onay kriterleri: en az iki rol onayı, açık `blocking` bulgu bırakmama ve runbook/CHANGELOG güncellemelerinin doğrulanması.
+
+**İzleme:** İnceleme metrikleri `observability/metrics-catalog.md`de kayıt altına alınır; sapmalar retrospektiflerde değerlendirilir.
+
+
+## Branching & Release Gate Politikaları
+
+**Amaç:** Paralel faz geliştirmelerini güvenli yönetmek, release hazırlıklarını şeffaflaştırmak ve rollback süreçlerini hızlandırmak.
+
+**Öne Çıkan Maddeler (`docs/engineering/branching-model.md`):**
+- `main`, `develop`, `feature/`, `release/` ve `hotfix/` dal tiplerinin kullanım kuralları.
+- Sprint başında `develop` ↔ `main` senkronizasyonu ve release dalı açıldıktan sonra kapsam dondurma.
+- Rollback planı: son stabil etiket üzerinden dönüş, ardından `hotfix/` dalı ile kalıcı düzeltme.
+
+**Denetim:** Dal koruma kuralları zorunludur; dal temizliği aylık yapılır ve sonuçlar `sprint-goals.md` ile ilişkilendirilir.
+
+
+## CI/CD Kalite Kapıları & İzleme
+
+**Amaç:** Faz 11–12 kapsamında tanımlanan pipeline kalite kontrollerini standartlaştırarak üretim ortamının güvenilirliğini artırmak.
+
+**Öne Çıkan Maddeler (`docs/engineering/deployment-gates.md`):**
+- Pre-commit’ten üretim yayınına kadar beş aşamalı kalite kapısı (statik analiz, test, performans, güvenlik, QA, release hazırlığı).
+- Başarısızlık durumları için aksiyon tablosu ve ilgili kayıt sistemlerine (risk kaydı, postmortem, runbook) yönlendirme.
+- Monitoring entegrasyonu: release sonuçlarının `observability/metrics-catalog.md` ve `ops/weekly-ops-briefing.md` ile takibi.
+
+**Süreklilik:** Kalite kapıları yılda iki kez gözden geçirilir; yeni araçların entegrasyonunda bu bölüm ve ilgili belgeler güncellenir.
+
+
 ## Bilgi Güvenliği Metrikleri & Raporlama
 
 **Amaç:** Güvenlik duruşunu ölçülebilir göstergelerle yönetmek ve yönetim kurullarına düzenli rapor sunmak.
@@ -1429,7 +1634,7 @@ _(Güncelleme: 2024-07-01)_
 - **Pentest Bulgu Eğilimi:** Yüksek seviye bulgu sayısında çeyreklik azalma.
 
 **Raporlama Döngüsü:**
-- Aylık güvenlik brifingi, `reports/security-dashboard.pdf` olarak arşivlenir.
+- Aylık güvenlik brifingi, `reports/security-dashboard.md` olarak arşivlenir.
 - Çeyreklik olarak yönetim kuruluna trend analizi sunulur; sapmalar için düzeltici aksiyonlar atanır.
 
 **Hata Önleme:** Metrik sapmalarında Faz 22 güvenlik programı kapsamında kök neden analizi zorunludur; aksiyon kapanışı 30 günü aşamaz.
@@ -1444,7 +1649,7 @@ _(Güncelleme: 2024-07-01)_
 - **Çeyreklik:** Uyum raporu yayınlanır; Faz 21 gereksinimleri ve denetim bulguları karşılaştırılır.
 - **Yıllık:** Stratejik yönetim paneli (Faz 26) için bütünleşik risk raporu hazırlanır.
 
-**Artefaktlar:** `governance/risk-register.xlsx`, `compliance/quarterly-report.md`, `audit/findings-tracker.csv`.
+**Artefaktlar:** `governance/risk-register.csv`, `compliance/quarterly-report.md`, `audit/findings-tracker.csv`.
 
 **Hata Önleme:** Yüksek riskler için 2 hafta içinde aksiyon planı yayımlanmazsa otomatik yönetim eskalasyonu tetiklenir.
 
@@ -1549,6 +1754,8 @@ _(Güncelleme: 2024-07-01)_
 
 **Hata Önleme:** Sigorta şartları değiştiğinde en fazla 30 gün içinde politika güncellemesi yapılmazsa otomatik eskalasyon finans direktörüne gider; teminat kapsamı dışı kalan kritik riskler için RFC zorunludur.
 
+**Detaylı Rehber:** [`docs/governance/cyber-insurance.md`](docs/governance/cyber-insurance.md)
+
 ## Delil Zinciri & Adli Bilişim Protokolleri
 
 **Amaç:** Kritik güvenlik olaylarında dijital delillerin toplanması, saklanması ve analizinde bütünlüğü korumak.
@@ -1568,6 +1775,8 @@ _(Güncelleme: 2024-07-01)_
 4. Hukuk ekibi ile paylaşılmadan önce KVKK etkileri değerlendirilir (DPIA bölümü).
 
 **Hata Önleme:** Delil zinciri kaydı eksik olan hiçbir dosya soruşturmada kullanılamaz; eksikler 24 saat içinde tamamlanmazsa olay CRITICAL seviyeye yükseltilir.
+
+**Detaylı Rehber:** [`security/chain-of-custody.md`](security/chain-of-custody.md)
 
 ## Vatandaş Veri Hakları & KVKK Başvuru Süreci
 
@@ -1612,12 +1821,12 @@ _(Güncelleme: 2024-07-01)_
 - **Edge Senaryosu:** Faz 9 offline kuyruk için 12 saat veri tamponlama.
 
 **Program:**
-1. Çeyreklik test planı DevOps ekibi tarafından hazırlanır.
+1. Çeyreklik test planı DevOps ekibi tarafından hazırlanır; detaylı kapsama `docs/tests/matrix.md` dosyasında takip edilir.
 2. Testler otomatik CI/CD pipeline’ında ayrı ortamda tetiklenir.
-3. Sonuçlar Performans & Kapasite İzleme bölümünde tanımlı eşiklerle karşılaştırılır.
+3. Sonuçlar Performans & Kapasite İzleme bölümünde tanımlı eşiklerle karşılaştırılır ve `analytics/benchmark/` klasöründe raporlanır.
 4. Limit aşımı varsa kapasite artırımı veya optimizasyon backlog’a alınır.
 
-**Raporlama:** Benchmark sonuçları `reports/performance/` dizinine kaydedilir; trend analizi Stratejik Yönetim fazıyla paylaşılır.
+**Raporlama:** Benchmark sonuçları `reports/performance/` dizinine kaydedilir, özetler `analytics/benchmark/README.md` rehberine göre tutulur ve trend analizi Stratejik Yönetim fazıyla paylaşılır.
 
 **Hata Önleme:** Test ortamı üretim ile uyumlu değilse test geçersiz sayılır; kritik sapmalarda otomatik olarak yayın pipeline’ı durdurulur.
 
@@ -1666,7 +1875,7 @@ _(Güncelleme: 2024-07-02)_
 **Hata Önleme:** Lisans çakışması tespit edilirse paket karantinaya alınır, alternatif belirlenene kadar deployment durdurulur; ihlal tekrarında bağımlılık listesi manuel denetime tabi tutulur.
 
 ## Dijital İkiz & Senaryo Modelleme Yönetişimi
-_(Güncelleme: 2024-07-02)_
+_(Güncelleme: 2024-07-09)_
 
 **Amaç:** OpsCenter, lojistik ve saha operasyonları için dijital ikiz ortamlarını doğruluk, güvenlik ve performans kriterleriyle yönetmek.
 
@@ -1704,6 +1913,23 @@ _(Güncelleme: 2024-07-02)_
 **Başarı Metrikleri:** Ortalama saha onarım süresi, psikososyal destek yanıt oranı, kritik kaynak teslimatında gecikme yüzdesi.
 
 **Hata Önleme:** Rehabilitasyon görevleri 48 saat içinde atanmazsa otomatik eskalasyon çalışır; ihtiyaç fazlası stok tespit edilirse Faz 18 talep/arz eşleştirme motoru yeniden dengeleme önerisi üretir.
+
+## Devam Et Yapıları Rehberi
+_(Güncelleme: 2024-07-16)_
+
+**Amaç:** “Devam et” talimatlarıyla eklenen yönetişim artefaktlarının klasör yapısını tek noktadan açıklamak ve ilgili faz referanslarına hızlı erişim sağlamaktır.
+
+**Özet:** Ayrıntılı rehber `docs/governance/devam-et-yapi-rehberi.md` dosyasında yer alır. Aşağıdaki tabloda ana kategoriler özetlenmiştir:
+
+| Kategori | İçerik Odakları | İlgili Dizinler |
+| --- | --- | --- |
+| Operasyonel Runbook’lar | Olay müdahalesi, offline toparlanma, alarm eskalasyonu | `runbook/`, `runbooks/`
+| Gözlemlenebilirlik | Metrikler, alarm kuralları, gözden geçirme kayıtları | `observability/`
+| Dijital İkiz & Tatbikat | Senaryolar, veri katalogları, doğrulama checklist’leri | `digital-twin/`
+| Güvenlik & Tehdit Programı | Tehdit akışları, zafiyet kayıtları, yüksek risk playbook’ları | `docs/threat-program/`, `security/`
+| Uyum ve Denetim | ISO/finans raporları, eğitim kanıtları, bulgu takibi | `compliance/`, `docs/audit/`
+
+**Kullanım:** Yeni bir kayıt eklendiğinde ilgili klasörün README’sindeki standartlara uyun, yapılan değişikliği `CHANGELOG.md` ve [Belge Versiyon Geçmişi](#belge-versiyon-geçmişi) tablolarına işleyin.
 
 ## Faz 0 — Kararlar (Temel Direkler)
 **Amaç:** Projenin ileride parçalanmaması ve tüm geliştiricilerin aynı standartta çalışması için teknolojik, mimari ve güvenlik kararlarını sabitlemek.
@@ -1990,6 +2216,11 @@ _(Güncelleme: 2024-07-02)_
 **Ne İşe Yarar:**
 - Regresyonu önler; performans sınırlarını ölçer.
 
+**Artefaktlar:**
+- `docs/tests/README.md` — test katmanları, kabul kriterleri ve raporlama döngüsü.
+- `docs/tests/matrix.md` — faz → senaryo eşleştirmesi ve en güncel rapor bağlantıları.
+- `analytics/benchmark/2024-07-10-opscenter.md` — OpsCenter benchmark örneği ve kapasite aksiyon planı.
+
 **Hata Önleme:**
 - Yeşil olmadan prod yok; testler sonuçlarını release notuna yazar.
 
@@ -2248,4 +2479,39 @@ _(Güncelleme: 2024-07-02)_
 | **Dry-run** | Kural motorunda aksiyon üretmeden tetikleri test etme modu. |
 | **Idempotency-Key** | Offline/edge senaryolarında mükerrer yazımı engelleyen istek kimliği. |
 | **ICS** | Incident Command System standart form seti (201/202/204/205/206). |
+
+## Belge Versiyon Geçmişi
+
+| Sürüm | Tarih | Kapsam | Onaylayan |
+| --- | --- | --- | --- |
+| v0.1 | 2024-06-15 | İlk faz dokümantasyonu ve temel teknolojik kararların aktarılması | Ürün Sahibi |
+| v0.2 | 2024-06-28 | Yönetişim çerçevesi, RFC süreci ve operasyon runbooklarının eklenmesi | Teknik Lider |
+| v0.3 | 2024-07-02 | SLA/SLO hedefleri, denetim takvimleri ve kriz iletişim planının genişletilmesi | Operasyon Direktörü |
+| v0.4 | 2024-07-05 | Güvenlik, uyum, veri yönetişimi ve saha süreçlerinin kapsamlı olarak entegrasyonu | Güvenlik Komitesi |
+| v0.5 | 2024-07-06 | Dokümantasyonu destekleyen dizin iskeletleri ve kayıt şablonlarının oluşturulması | Teknik Operasyon Ekibi |
+| v0.6 | 2024-07-07 | Knowledge base, veri paylaşım, uyum ve güvenlik kayıtları için tam klasör yapısının ve örnek dosyaların yayımlanması | Yönetişim Kurulu |
+| v0.7 | 2024-07-08 | Operasyonel runbook’ların faz referanslı, ölçülebilir prosedürlerle genişletilmesi | Operasyon Direktörü |
+| v0.8 | 2024-07-09 | Dijital ikiz veri seti/ senaryo şablonları ve alarm odaklı runbook genişletmeleri | Güvenlik & Ops Kurulu |
+| v0.9 | 2024-07-10 | Test yönetişimi, kapsama matrisi ve OpsCenter benchmark raporlarının yayımlanması | QA & Performans Ekibi |
+| v0.10 | 2024-07-11 | Etik kurul ajandası, personel refah artefaktları ve topluluk katılım kayıtlarının eklenmesi | İnsan & Topluluk Konseyi |
+| v0.11 | 2024-07-12 | Gözlemlenebilirlik programı, alarm kuralları ve servis sağlık checklist’lerinin yayımlanması | Observability Ekibi |
+| v0.12 | 2024-07-13 | Metrik kataloğu, SLO kayıt defteri ve inceleme döngüsü artefaktlarının eklenmesi | Observability Ekibi |
+| v0.13 | 2024-07-14 | On-call vardiya yönetişimi ile kaos mühendisliği dayanıklılık programının yayımlanması | Operasyon & Dayanıklılık Kurulu |
+| v0.13.1 | 2024-07-15 | ICS yayın takvimi dosyalarının metin olarak işlenmesi ve PR otomasyonundaki ikili dosya hatasının giderilmesi | Yapılandırma Sahibi |
+| v0.14 | 2024-07-16 | “Devam et” talimatlarıyla oluşturulan klasör yapılarını açıklayan rehberin yayımlanması | Yönetişim Kurulu |
+| v0.15 | 2024-07-17 | Siber sigorta program rehberi ve delil zinciri işletim kılavuzunun eklenmesi, yönetişim rehberinin güncellenmesi | Risk & Güvenlik Ekibi |
+| v0.16 | 2024-07-18 | Mühendislik uygulama rehberlerinin yayımlanması ve yönetişim bölümlerinin güncellenmesi | Teknik Liderlik |
+| v0.17 | 2024-07-19 | Kodlama standartları, statik analiz ve bağımlılık yönetimi politikalarının dokümante edilmesi | Teknik Liderlik |
+| v0.18 | 2024-07-20 | Kod kalite araç konfigürasyonlarının eklenmesi ve ilgili rehber bağlantılarının güncellenmesi | Teknik Liderlik |
+| v0.18.1 | 2024-07-21 | İkili placeholder dosyaların CSV/Markdown formatına taşınması ve yönetişim kayıtlarının güncellenmesi | Teknik Liderlik |
+
+> _Not: Yeni bir sürüm yayımlandığında bu tabloya satır eklenmeli ve ilgili bölümlerde revizyon tarihi güncellenmelidir._
+
+## Referanslar & Kaynaklar
+
+- `docs/changelog/` dizinindeki sürüm notları (her sprint sonrası güncellenir).
+- `docs/rfc/` altında tutulan karar kayıtları ve onaylanmış mimari öneriler.
+- Operasyonel runbook’lar için `runbooks/` dizini ve OpsCenter iç rehberleri.
+- Güvenlik ve uyum takipleri için Sentry, Prometheus/Grafana ve denetim rapor depoları.
+- Harici standartlar: AFAD yönetmelikleri, INSARAG kılavuzları, KVKK rehberleri.
 

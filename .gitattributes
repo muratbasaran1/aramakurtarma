@@ -1,0 +1,2 @@
+# Treat calendar exports as text so automation tools handle diffs properly
+*.ics text eol=lf

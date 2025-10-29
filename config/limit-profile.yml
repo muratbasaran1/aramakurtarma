@@ -1,0 +1,12 @@
+default:
+  requests_per_minute: 120
+  burst: 240
+opscenter:
+  websocket_connections: 10000
+  bbox_queries_per_minute: 60
+offline_queue:
+  max_retries: 8
+  backoff_seconds:
+    - 30
+    - 60
+    - 120
