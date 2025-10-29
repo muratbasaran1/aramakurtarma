@@ -1,0 +1,59 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Illuminate\Http\Resources\Json;
+
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+
+class JsonResource
+{
+    public function __construct(protected mixed $resource = null)
+    {
+    }
+
+    public static function collection(mixed $resource): AnonymousResourceCollection
+    {
+        return new AnonymousResourceCollection($resource);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function resolve(?Request $request = null): array
+    {
+        return $this->toArray($request ?? Request::createFromGlobals());
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function toArray(Request $request): array
+    {
+        return [];
+    }
+
+    public function when(bool $condition, mixed $value, mixed $default = null): mixed
+    {
+        return $condition ? (\is_callable($value) ? $value() : $value) : ($default instanceof \Closure ? $default() : $default);
+    }
+
+    public function whenLoaded(string $relationship, mixed $value = null, mixed $default = null): mixed
+    {
+        if ($value === null) {
+            return true;
+        }
+
+        return \is_callable($value) ? $value() : $value;
+    }
+
+    public function response(?Request $request = null): JsonResponse
+    {
+        return new JsonResponse($this->resolve($request));
+    }
+}
+
+class AnonymousResourceCollection extends JsonResource
+{
+}

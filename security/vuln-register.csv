@@ -1,0 +1,2 @@
+id,title,severity,status,opened_on,owner
+VULN-0001,OpsCenter rate limit eksikliği,medium,mitigated,2024-06-12,Security Team
