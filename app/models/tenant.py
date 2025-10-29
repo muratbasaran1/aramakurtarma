@@ -19,3 +19,18 @@ class Tenant(Base):
 
     users: Mapped[list["User"]] = relationship(back_populates="tenant", cascade="all, delete-orphan")
     incidents: Mapped[list["Incident"]] = relationship(back_populates="tenant", cascade="all, delete-orphan")
+    resource_requests: Mapped[list["ResourceRequest"]] = relationship(
+        back_populates="tenant", cascade="all, delete-orphan"
+    )
+    deployments: Mapped[list["IncidentDeployment"]] = relationship(
+        back_populates="tenant", cascade="all, delete-orphan"
+    )
+    deployment_reports: Mapped[list["DeploymentReport"]] = relationship(
+        back_populates="tenant", cascade="all, delete-orphan"
+    )
+    relief_deliveries: Mapped[list["ReliefDelivery"]] = relationship(
+        back_populates="tenant", cascade="all, delete-orphan"
+    )
+    recovery_plans: Mapped[list["RecoveryPlan"]] = relationship(
+        back_populates="tenant", cascade="all, delete-orphan"
+    )

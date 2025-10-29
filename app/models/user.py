@@ -27,3 +27,21 @@ class User(Base):
 
     incidents: Mapped[list["Incident"]] = relationship(back_populates="reporter")
     tasks: Mapped[list["Task"]] = relationship(back_populates="assignee")
+    incident_updates: Mapped[list["IncidentUpdate"]] = relationship(
+        back_populates="author"
+    )
+    resource_requests: Mapped[list["ResourceRequest"]] = relationship(
+        back_populates="requested_by"
+    )
+    deployments: Mapped[list["IncidentDeployment"]] = relationship(
+        back_populates="leader"
+    )
+    deployment_reports: Mapped[list["DeploymentReport"]] = relationship(
+        back_populates="author"
+    )
+    relief_deliveries: Mapped[list["ReliefDelivery"]] = relationship(
+        back_populates="handled_by"
+    )
+    recovery_plans: Mapped[list["RecoveryPlan"]] = relationship(
+        back_populates="owner"
+    )

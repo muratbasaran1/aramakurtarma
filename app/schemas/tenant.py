@@ -1,6 +1,6 @@
 import uuid
 
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class TenantBase(BaseModel):
@@ -22,3 +22,28 @@ class TenantRead(TenantBase):
     id: uuid.UUID
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class TenantReadinessSnapshot(BaseModel):
+    """Readiness metrics for a specific tenant."""
+
+    tenant_id: uuid.UUID
+    tenant_name: str
+    tenant_slug: str
+    total_incidents: int
+    ready_incidents: int
+    not_ready_incidents: int
+    average_completion_ratio: float
+
+
+class TenantReadinessOverview(BaseModel):
+    """Aggregated readiness overview across all tenants."""
+
+    total_tenants: int
+    ready_tenants: int
+    not_ready_tenants: int
+    total_incidents: int
+    ready_incidents: int
+    not_ready_incidents: int
+    average_completion_ratio: float
+    tenants: list[TenantReadinessSnapshot]

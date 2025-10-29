@@ -4,10 +4,10 @@ import uuid
 from datetime import datetime
 from enum import Enum as PyEnum
 
-from sqlalchemy import DateTime, Enum as SQLEnum, ForeignKey, String, Text
+from sqlalchemy import Enum as SQLEnum, ForeignKey, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models.base import Base
+from app.models.base import Base, UTCDateTime, utc_now
 
 
 class IncidentStatus(str, PyEnum):  # type: ignore[misc]
@@ -44,7 +44,12 @@ class Incident(Base):
         SQLEnum(SeverityLevel), default=SeverityLevel.MEDIUM, nullable=False
     )
     location: Mapped[str | None] = mapped_column(String(200), nullable=True)
-    reported_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
+    reported_at: Mapped[datetime] = mapped_column(
+        UTCDateTime(), default=utc_now, nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        UTCDateTime(), default=utc_now, onupdate=utc_now, nullable=False
+    )
 
     tenant_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("tenant.id", ondelete="CASCADE"))
     tenant: Mapped["Tenant"] = relationship(back_populates="incidents")
@@ -52,4 +57,24 @@ class Incident(Base):
     reporter_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("user.id", ondelete="SET NULL"))
     reporter: Mapped[User | None] = relationship(back_populates="incidents")
 
-    tasks: Mapped[list["Task"]] = relationship(back_populates="incident", cascade="all, delete-orphan")
+    tasks: Mapped[list["Task"]] = relationship(
+        back_populates="incident", cascade="all, delete-orphan"
+    )
+    updates: Mapped[list["IncidentUpdate"]] = relationship(
+        back_populates="incident", cascade="all, delete-orphan"
+    )
+    resource_requests: Mapped[list["ResourceRequest"]] = relationship(
+        back_populates="incident", cascade="all, delete-orphan"
+    )
+    deployments: Mapped[list["IncidentDeployment"]] = relationship(
+        back_populates="incident", cascade="all, delete-orphan"
+    )
+    deployment_reports: Mapped[list["DeploymentReport"]] = relationship(
+        back_populates="incident", cascade="all, delete-orphan"
+    )
+    relief_deliveries: Mapped[list["ReliefDelivery"]] = relationship(
+        back_populates="incident", cascade="all, delete-orphan"
+    )
+    recovery_plans: Mapped[list["RecoveryPlan"]] = relationship(
+        back_populates="incident", cascade="all, delete-orphan"
+    )
