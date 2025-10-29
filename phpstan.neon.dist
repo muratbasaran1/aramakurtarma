@@ -1,0 +1,20 @@
+parameters:
+    paths:
+        - config
+    excludePaths:
+        analyse:
+            - vendor/*
+            - storage/*
+            - node_modules/*
+    level: 5
+    checkMissingIterableValueType: true
+    checkGenericClassInNonGenericObjectType: true
+    treatPhpDocTypesAsCertain: false
+    reportUnmatchedIgnoredErrors: true
+    tmpDir: build/phpstan
+
+    parallel:
+        maximumNumberOfProcesses: 4
+
+    bootstrapFiles:
+        - vendor/autoload.php

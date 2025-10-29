@@ -1,0 +1,9 @@
+{
+  "id": "INC-0001",
+  "tenant_id": "T-IST",
+  "title": "Deprem - Kadıköy",
+  "status": "OPEN",
+  "priority": "high",
+  "polygon": "POLYGON((...))",
+  "started_at": "2024-07-01T08:45:00Z"
+}
