@@ -1,0 +1,32 @@
+includes:
+    - vendor/nunomaduro/larastan/extension.neon
+    - vendor/nunomaduro/larastan/rules.neon
+
+parameters:
+    paths:
+        - app
+        - bootstrap/app.php
+        - config
+        - database
+        - routes
+        - tests
+    excludePaths:
+        analyse:
+            - storage/*
+            - vendor/*
+            - node_modules/*
+    level: 8
+    checkMissingIterableValueType: true
+    checkGenericClassInNonGenericObjectType: true
+    treatPhpDocTypesAsCertain: false
+    reportUnmatchedIgnoredErrors: true
+    tmpDir: build/phpstan
+
+    parallel:
+        maximumNumberOfProcesses: 8
+
+    bootstrapFiles:
+        - vendor/autoload.php
+
+    ignoreErrors:
+        - '#Call to an undefined method Illuminate\\Support\\Collection#'

@@ -1,0 +1,8 @@
+models:
+  - id: TASK-ASSIGNER-v1
+    faz: 15
+    status: pilot
+    metrics:
+      precision: 0.82
+      recall: 0.78
+    review_cadence: monthly
