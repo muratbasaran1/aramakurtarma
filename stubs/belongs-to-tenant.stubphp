@@ -1,0 +1,23 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Models\Concerns;
+
+use App\Models\Tenant;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+/**
+ * @method static Builder forTenant(Tenant|int|string $tenant)
+ */
+trait BelongsToTenant
+{
+    /**
+     * @return Builder<Model>
+     */
+    public function scopeForTenant(Builder $builder, Tenant|int|string $tenant): Builder
+    {
+        return $builder;
+    }
+}
