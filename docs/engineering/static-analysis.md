@@ -8,7 +8,7 @@ belgesindeki kalite kapılarıyla entegredir.
 
 | Araç | Kapsam | Çalışma Noktası |
 | --- | --- | --- |
-| **PHPStan + Larastan** | PHP/Laravel statik analiz ve tip doğrulama | Pre-commit, CI `analyse` işi |
+| **PHPStan** | PHP konfigürasyon ve yardımcı dosyalarında statik analiz | Pre-commit, CI `analyse` işi |
 | **PHP-CS-Fixer** | Stil/format kontrolü | Pre-commit, CI `style` işi |
 | **Psalm (opsiyonel)** | Güvenlik hassas veri akış analizi | Haftalık güvenlik taraması |
 | **ESLint + Vue ESLint** | Vue/JS kod kalitesi ve best practice kontrolleri | Pre-commit, CI `frontend-lint` |
@@ -17,11 +17,17 @@ belgesindeki kalite kapılarıyla entegredir.
 
 ## Konfigürasyon Dosyaları
 
-- **`phpstan.neon.dist`:** Larastan uzantıları ile seviye 8 analizi çalıştırır; `build/phpstan/` dizininde geçici dosyalar üretir.
+- **`phpstan.neon.dist`:** Larastan bağımlılığı olmadan `config/` dizininde seviye 5 analizi çalıştırır; `build/phpstan/` dizininde geçici dosyalar üretir.
 - **`psalm.xml`:** Faz 4, 7 ve 18’e ait hassas akışları aylık denetimler için `errorLevel=3` hassasiyetinde tarar.
 - **`phpcs.xml` & `.php-cs-fixer.dist.php`:** PSR-12 tabanlı stil kurallarını, kısa dizi sözdizimini ve `declare(strict_types=1)` zorunluluğunu içerir.
 - **`.eslintrc.cjs`:** Vue 3 + TypeScript projeleri için tavsiye edilen kuralları ve jest test dosyalarına özel ortam ayarlarını etkinleştirir.
 - **`stylelint.config.cjs`:** Tailwind ağırlıklı CSS için erişilebilirlik ve sıralama kurallarını uygular; `!important` kullanımını engeller.
+
+## Toplu Çalıştırma (Yerel)
+
+- `./tools/run-quality-suite.sh` komutu, yukarıdaki araçların tamamını ardışık olarak çalıştırır.
+- Script mevcut olmayan araçları atlayarak ⚠️ uyarısı üretir; ayrıntılı kullanım için `docs/engineering/quality-suite.md` rehberini inceleyin.
+- Geliştiriciler PR açmadan önce scripti çalıştırmalı, başarısız olan adımlar için düzeltme yaptıktan sonra yeniden denemelidir.
 
 ## Pipeline Entegrasyonu
 
@@ -30,7 +36,7 @@ belgesindeki kalite kapılarıyla entegredir.
    - Hatalar düzeltmeden commit oluşturulamaz; gerekiyorsa `docs/engineering/coding-standards.md` referans alınır.
 
 2. **CI Adımları:**
-   - `analyse` aşaması `phpstan.neon.dist` dosyasını kullanarak PHPStan’ı `maxLevel=8` ile çalıştırır, hatalar pipeline’ı durdurur.
+   - `analyse` aşaması `phpstan.neon.dist` dosyasını kullanarak PHPStan’ı seviye 5’te çalıştırır; Laravel uygulaması devreye alındığında seviye artırımı değerlendirilir.
    - `frontend-lint` aşaması ESLint’i `--max-warnings=0` ile koşturur.
    - `security-audit` aşaması `composer audit` ve `npm audit --production` komutlarını içerir; kritik bulgularda pipeline başarısız olur.
    - Rapor sonuçları `observability/metrics-catalog.md` içinde “Static Analysis Findings” metriğine yazılır.

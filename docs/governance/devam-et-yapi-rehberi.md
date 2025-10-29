@@ -17,7 +17,11 @@ Bu rehber, dokümantasyon boyunca tekrar eden “devam et” genişletmeleriyle 
 | Dayanıklılık & Kaos Çalışmaları | `resilience/`, `infra/`, `ops/oncall/` | Dayanıklılık yol haritaları, deney raporları ve vardiya yönetimi artefaktları. | Faz 6, 9, 22 |
 | Mühendislik Uygulama Rehberleri | `docs/engineering/` | Kod inceleme, dal stratejisi ve pipeline kalite kapılarını standartlaştıran rehberler. | Faz 0, 11, 12 |
 | Kodlama & Analiz Standartları | `docs/engineering/coding-standards.md`, `docs/engineering/static-analysis.md`, `docs/engineering/dependency-management.md` | Kod kalitesi, statik analiz ve bağımlılık yönetimi politikalarını detaylandırır. | Faz 0, 3, 11, 12, 22 |
+| Yerel Geliştirme Rehberi | `docs/engineering/local-development.md` | Yerel ortam kurulumu, günlük komutlar ve sorun giderme checklist’ini standartlaştırır. | Faz 0, 11, 12 |
 | Kod Kalite Konfigürasyonları | `.php-cs-fixer.dist.php`, `phpcs.xml`, `phpstan.neon.dist`, `psalm.xml`, `.eslintrc.cjs`, `stylelint.config.cjs`, `docs/engineering/tooling-configuration.md` | Kod kalite araçlarının proje kapsamındaki çalışma kurallarını ve script eşleşmelerini tanımlar. | Faz 0, 11, 12 |
+| PR Kontrol Araçları | `tools/check-binary-files.sh`, `docs/engineering/pr-checklist.md` | PR açmadan önce ikili dosya taraması ve kalite adımlarının tamamlandığını doğrular. | Faz 0, 11, 12 |
+| Kalite Suite Otomasyonu | `tools/run-quality-suite.sh`, `docs/engineering/quality-suite.md` | Kod kalite kontrollerini tek komutta koşturur; PHP araçları eksikse `composer install` komutunu otomatik çalıştırır. | Faz 0, 11, 12 |
+| PHP Kalite Bağımlılıkları | `composer.json`, `composer.lock` | Kod kalite araçlarının Composer ile kurulmasını ve `composer run quality` komutunu standartlaştırır. | Faz 0, 11, 12 |
 | Veri Yönetimi & Maskeleme | `governance/data-quality-dashboard/`, `open-data/releases/` | Veri kalitesi raporları, maskeleme checklist’leri ve paylaşım politikaları. | Faz 2, 21 |
 
 ## Kategori Bazlı Açıklamalar
@@ -69,6 +73,8 @@ Bu rehber, dokümantasyon boyunca tekrar eden “devam et” genişletmeleriyle 
 ### 9. Mühendislik Uygulama Rehberleri
 - `docs/engineering/` klasörü kod inceleme, dal stratejisi, kodlama standartları ve pipeline kalite kapıları için hazırlanmış rehberleri barındırır.
 - `docs/engineering/code-review.md` PR kontrollerini; `branching-model.md` Git akışını; `deployment-gates.md` kalite kapılarını; `coding-standards.md` kod stilini; `static-analysis.md` otomatik kontrolleri; `tooling-configuration.md` konfigürasyon dosyalarını; `dependency-management.md` ise paket yönetimini tanımlar.
+- `docs/engineering/local-development.md` yeni cihaz kurulumu, `.env` hazırlığı ve günlük komutlar için zorunlu checklist’i içerir; kalite suite ve PR kontrolleri tamamlanmadan merge talebi oluşturulamaz.
+- `docs/engineering/pr-checklist.md`, `tools/check-binary-files.sh` ve `tools/run-quality-suite.sh` PR açılışından önce uygulanması gereken kontrolleri hem manuel hem otomasyonlu şekilde sunar; Codex tabanlı süreçlerin kesintisiz işlemesine yardımcı olur.
 - Sprint planlama, release hazırlığı ve postmortem süreçlerinde bu rehberlere atıf yapılması zorunludur; güncellemeler README sürüm tablosu ve `CHANGELOG.md` üzerinden izlenir.
 
 ### 10. Veri Kalitesi ve Maskeleme Standartları

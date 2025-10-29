@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 return [
     'tracking' => [
         'inactivity_alerts' => true,

@@ -54,3 +54,23 @@ Bu dosya, uygulama ve dokümantasyon değişikliklerinin özetini tutmak için k
 - `docs/engineering/tooling-configuration.md` rehberi yayımlandı; README, Devam Et rehberi ve mühendislik indeksine yeni bağlantılar eklendi.
 ### 2024-07-21
 - PR otomasyonunun ikili dosya hatasına takılmaması için `.xlsx` ve `.pdf` placeholder'ları CSV/Markdown formatına dönüştürüldü; ilgili belgeler güncellendi.
+### 2024-07-22
+- PR öncesi kontrol listesi yayımlandı (`docs/engineering/pr-checklist.md`) ve README yönetişim bölümü güncellendi.
+- `tools/check-binary-files.sh` ile ikili dosya taraması için komut satırı aracı eklendi; Devam Et rehberinde yeni yapı kaydı oluşturuldu.
+
+### 2024-07-23
+- `tools/run-quality-suite.sh` ile kalite kontrollerini tek komutta koşturan script eklendi.
+- `docs/engineering/quality-suite.md` rehberi yayımlandı; README ve Devam Et rehberine yeni otomasyon akışı işlendi.
+
+### 2024-07-24
+- PHP kalite araçları için Composer dev bağımlılıkları (`composer.json`, `composer.lock`) eklendi ve `vendor/bin` komutları standartlaştırıldı.
+- `.php-cs-fixer.dist.php`, `phpcs.xml`, `phpstan.neon.dist` ve `psalm.xml` dosyaları mevcut dizinlere göre dinamik kapsamla güncellendi.
+- Mühendislik rehberleri, PR checklist’i ve Devam Et yapısı Composer kurulumu ve yeni kalite akışına göre revize edildi; README sürüm tablosuna v0.21 kaydı eklendi.
+
+### 2024-07-25
+- `tools/run-quality-suite.sh` script’i PHP araçları bulunmadığında `composer install --no-ansi --no-interaction --no-progress --prefer-dist` komutunu otomatik çalıştıracak şekilde güncellendi.
+- README, PR checklist’i, kalite suite rehberi ve Devam Et yapı tablosu yeni otomatik Composer kurulum davranışını yansıtacak şekilde revize edildi.
+
+### 2024-07-26
+- `docs/engineering/local-development.md` ile yerel geliştirme kurulum adımları, günlük komutlar ve sorun giderme notları standartlaştırıldı.
+- README, mühendislik indeksleri ve Devam Et yapı rehberi yeni yerel geliştirme rehberine referans verecek şekilde güncellendi.

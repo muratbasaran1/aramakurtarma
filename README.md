@@ -98,6 +98,9 @@ Bu dokümantasyon, TUDAK Afet Yönetim Sistemi için faz bazlı geliştirme plan
 - [Kodlama Standartları](#kodlama-standartları)
 - [Statik Analiz & Otomatik Kontroller](#statik-analiz--otomatik-kontroller)
 - [Kod Kalite Konfigürasyonları](#kod-kalite-konfigürasyonları)
+- [PR Öncesi Kontrol Listesi](#pr-öncesi-kontrol-listesi)
+- [Toplu Kalite Kontrol Suite](#toplu-kalite-kontrol-suite)
+- [Yerel Geliştirme Rehberi](#yerel-geliştirme-rehberi)
 - [Bağımlılık Yönetimi Politikası](#bağımlılık-yönetimi-politikası)
 - [Kod İnceleme Standartları](#kod-inceleme-standartları)
 - [Branching & Release Gate Politikaları](#branching--release-gate-politikaları)
@@ -1545,7 +1548,7 @@ _(Güncelleme: 2024-07-01)_
 
 **Amaç:** Kod tabanında erken hata tespiti ve güvenlik zafiyetlerinin otomatik araçlarla yakalanmasını sağlamak.
 
-**Araçlar (`docs/engineering/static-analysis.md`):** PHPStan/Larastan, ESLint, Stylelint, Trivy ve Composer Audit.
+**Araçlar (`docs/engineering/static-analysis.md`):** PHPStan, ESLint, Stylelint, Trivy ve Composer Audit.
 
 **Pipeline Uygulaması:**
 - Pre-commit hook’ları `composer analyse` ve `npm run lint` komutlarını zorunlu kılar.
@@ -1560,10 +1563,10 @@ _(Güncelleme: 2024-07-01)_
 **Amaç:** Kod kalite araçlarının depo seviyesinde tutarlı şekilde çalışmasını sağlamak, dokümantasyon ile gerçek yapılandırmalar arasındaki boşluğu kapatmak.
 
 **Konfigürasyonlar (`docs/engineering/tooling-configuration.md`):**
-- `.php-cs-fixer.dist.php`: PSR-12 tabanlı stil kurallarını ve `declare(strict_types=1)` zorunluluğunu uygular.
-- `phpcs.xml`: CI tarafında zorunlu kod standartları ve Slevomat tip ipuçlarını denetler.
-- `phpstan.neon.dist`: Larastan uzantılarıyla seviye 8 statik analizi yönetir; sonuçları `build/phpstan/` altında saklar.
-- `psalm.xml`: Güvenlik kritik modüllerde hassas veri akışını takip eder.
+- `.php-cs-fixer.dist.php`: Mevcut dizinleri dinamik olarak bulur, PSR-12 kuralları ve `declare(strict_types=1)` zorunluluğunu uygular.
+- `phpcs.xml`: `config/` dizinini tarayan kod standartlarını ve Slevomat tip ipuçlarını denetler.
+- `phpstan.neon.dist`: Larastan gerektirmeden seviye 5 statik analiz çalıştırır; sonuçları `build/phpstan/` altında saklar.
+- `psalm.xml`: `config/` kapsamındaki dosyalarda hassas veri akışını takip eder.
 - `.eslintrc.cjs`: Vue 3 + TypeScript bileşenleri için ESLint yapılandırmasını standartlaştırır.
 - `stylelint.config.cjs`: Tailwind ağırlıklı CSS için sınıf isimlendirme ve erişilebilirlik kurallarını denetler.
 
@@ -1571,6 +1574,42 @@ _(Güncelleme: 2024-07-01)_
 - `composer.json` ve `package.json` script’leri yukarıdaki dosyalarla eşleşen komutları içermeli, pre-commit ve CI pipeline’ları aynı kuralları tetiklemelidir.
 - Yeni modül/dizin eklenirken lint kapsamı gözden geçirilerek gerekli durumlarda ilgili konfigürasyon güncellenir.
 - Kural istisnaları RFC onayı olmadan yapılandırma dosyalarına eklenemez; gerekçeler kod inceleme notlarında kayıt altına alınır.
+
+
+## PR Öncesi Kontrol Listesi
+
+**Amaç:** PR açılışı sırasında Codex tabanlı otomasyonların "ikili dosya desteklenmez" gibi hatalara takılmasını önlemek ve kalite kapılarının manuel olarak doğrulanmasını sağlamak.
+
+**Kapsam (`docs/engineering/pr-checklist.md`):**
+- `tools/check-binary-files.sh` script’i ile staged dosyalarda ikili içerik taraması.
+- Kod standartları, statik analiz ve test komutlarının hızlı referansı.
+- Dokümantasyon/CHANGELOG güncellemeleri ve `docs/governance/devam-et-yapi-rehberi.md` kaydı için hatırlatıcı adımlar.
+
+**Uygulama Notları:** Check-list tamamlanmadan PR açılmaz; tespit edilen ikili dosyalar metin tabanlı formata dönüştürülür veya `.gitattributes` kaydı eklenir. Kontrol listesi çıktıları inceleme sürecine ek bilgi olarak paylaşılır.
+
+## Toplu Kalite Kontrol Suite
+
+**Amaç:** PR hazırlığında tekrarlanan kalite kontrollerini tek komutta koşturmak ve eksik araç kurulumlarını hızlıca tespit etmek.
+
+**Kapsam (`docs/engineering/quality-suite.md` & `tools/run-quality-suite.sh`):**
+- `tools/check-binary-files.sh`, PHP-CS-Fixer, PHP_CodeSniffer, PHPStan, Psalm ve `npm run lint` kontrollerini ardışık çalıştırır.
+- Mevcut olmayan araçları ⚠️ uyarısıyla raporlar, hatalı adımlar için `exit 1` döndürür.
+- `docs/engineering/pr-checklist.md` içindeki manuel adımları otomasyonla destekler.
+- `vendor/bin/` altında PHP araçları bulunmazsa `composer install --no-ansi --no-interaction --no-progress --prefer-dist` komutunu otomatik tetikler.
+
+**Uygulama Notları:** Script depo kökünde çalıştırılmalı, başarısız kontroller düzeltilip tekrar koşturulmalıdır. Çıktı özetleri kod inceleme yorumlarında paylaşılır ve gerektiğinde `docs/tests/` kayıtlarına referans verilir.
+
+
+## Yerel Geliştirme Rehberi
+
+**Amaç:** Yeni ekip üyelerinin ve mevcut geliştiricilerin yerel ortamlarını hızlı, güvenli ve faz hedefleriyle uyumlu şekilde kurmasını sağlamak.
+
+**Kapsam (`docs/engineering/local-development.md`):**
+- PHP 8.3, MySQL 8 ve Node.js 20 gereksinimlerini içeren ön koşul listesi.
+- `.env.local` hazırlığı, migrasyon, queue ve WebSocket servislerinin başlatılması gibi adım adım kurulum talimatları.
+- Günlük geliştirme komutları tablosu, PR öncesi checklist ve sık karşılaşılan sorunlar için çözüm önerileri.
+
+**Hata Önleme:** `./tools/run-quality-suite.sh` script’i eksik vendor araçlarını otomatik kurar; yine de sorun yaşanırsa rehberdeki troubleshooting bölümüne göre işlem yapın ve sonuçları `docs/governance/devam-et-yapi-rehberi.md` kaydına not edin. Yeni bağımlılık eklerken `docs/engineering/dependency-management.md` politikalarını ve PR checklist’ini tamamlamayı unutmayın.
 
 
 ## Bağımlılık Yönetimi Politikası
@@ -2504,6 +2543,11 @@ _(Güncelleme: 2024-07-16)_
 | v0.17 | 2024-07-19 | Kodlama standartları, statik analiz ve bağımlılık yönetimi politikalarının dokümante edilmesi | Teknik Liderlik |
 | v0.18 | 2024-07-20 | Kod kalite araç konfigürasyonlarının eklenmesi ve ilgili rehber bağlantılarının güncellenmesi | Teknik Liderlik |
 | v0.18.1 | 2024-07-21 | İkili placeholder dosyaların CSV/Markdown formatına taşınması ve yönetişim kayıtlarının güncellenmesi | Teknik Liderlik |
+| v0.19 | 2024-07-22 | PR öncesi kontrol listesi ve ikili dosya tarama script’inin eklenmesi, ilgili rehber bağlantılarının güncellenmesi | Teknik Liderlik |
+| v0.20 | 2024-07-23 | Toplu kalite suite script’inin eklenmesi, README/Devam Et rehberi ve mühendislik belgelerinin güncellenmesi | Teknik Liderlik |
+| v0.21 | 2024-07-24 | PHP kalite araçları için Composer bağımlılıklarının eklenmesi ve konfigürasyon kapsamının dinamikleştirilmesi | Teknik Liderlik |
+| v0.22 | 2024-07-25 | Kalite suite’in Composer bağımlılıklarını otomatik kuracak şekilde güncellenmesi ve ilgili rehberlerin revizyonu | Teknik Liderlik |
+| v0.23 | 2024-07-26 | Yerel geliştirme rehberinin yayımlanması ve mühendislik/Devam Et kayıtlarının güncellenmesi | Teknik Liderlik |
 
 > _Not: Yeni bir sürüm yayımlandığında bu tabloya satır eklenmeli ve ilgili bölümlerde revizyon tarihi güncellenmelidir._
 

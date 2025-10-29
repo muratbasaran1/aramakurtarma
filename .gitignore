@@ -1,5 +1,7 @@
 /vendor/
+build/
 node_modules/
+.php-cs-fixer.cache
 npm-debug.log
 yarn-error.log
 

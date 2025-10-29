@@ -1,14 +1,30 @@
 <?php
 
-$finder = PhpCsFixer\Finder::create()
-    ->in([
-        __DIR__.'/app',
-        __DIR__.'/bootstrap',
-        __DIR__.'/config',
-        __DIR__.'/database',
-        __DIR__.'/routes',
-        __DIR__.'/tests',
-    ])
+declare(strict_types = 1);
+
+$directories = [
+    __DIR__ . '/app',
+    __DIR__ . '/bootstrap',
+    __DIR__ . '/config',
+    __DIR__ . '/database',
+    __DIR__ . '/routes',
+    __DIR__ . '/tests',
+];
+
+$existingDirectories = array_values(array_filter($directories, static function (string $path): bool {
+    return is_dir($path);
+}));
+
+$finder = PhpCsFixer\Finder::create();
+
+if ($existingDirectories !== []) {
+    $finder->in($existingDirectories);
+} else {
+    $finder->in([__DIR__])
+        ->depth('== 0');
+}
+
+$finder
     ->name('*.php')
     ->ignoreVCS(true)
     ->exclude(['vendor', 'storage', 'node_modules']);
