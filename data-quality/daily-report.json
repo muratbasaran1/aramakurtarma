@@ -1,0 +1,15 @@
+{
+  "generated_at": "2024-07-01T00:00:00Z",
+  "checks": [
+    {
+      "name": "incident_status_consistency",
+      "status": "pass",
+      "details": "All incidents with closed_at populated are CLOSED"
+    },
+    {
+      "name": "inventory_assignment_integrity",
+      "status": "review",
+      "details": "2 assignments missing return transaction"
+    }
+  ]
+}

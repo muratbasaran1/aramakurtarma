@@ -1,0 +1,359 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Illuminate\Database\Eloquent;
+
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
+
+class Builder
+{
+    public function where(string|callable $column, mixed $operator = null, mixed $value = null, string $boolean = 'and'): self
+    {
+        return $this;
+    }
+
+    public function orWhere(string|callable $column, mixed $operator = null, mixed $value = null, string $boolean = 'or'): self
+    {
+        return $this;
+    }
+
+    public function whereIn(string $column, array $values, string $boolean = 'and', bool $not = false): self
+    {
+        return $this;
+    }
+
+    public function whereRaw(string $expression, array $bindings = [], string $boolean = 'and'): self
+    {
+        return $this;
+    }
+
+    public function forTenant(mixed $tenant): self
+    {
+        return $this;
+    }
+
+    public function whereKey(mixed $id): self
+    {
+        return $this;
+    }
+
+    public function find(mixed $id): ?Model
+    {
+        return null;
+    }
+
+    public function first(): ?Model
+    {
+        return null;
+    }
+
+    public function firstOrFail(): Model
+    {
+        return new Model();
+    }
+
+    public function findOrFail(mixed $id): Model
+    {
+        return new Model();
+    }
+
+    public function create(array $attributes = []): Model
+    {
+        return new Model();
+    }
+
+    public function count(): int
+    {
+        return 0;
+    }
+
+    public function value(string $column): mixed
+    {
+        return null;
+    }
+
+    public function withoutGlobalScope(string $scope): self
+    {
+        return $this;
+    }
+
+    public function with(array|string $relations): self
+    {
+        return $this;
+    }
+
+    public function withCount(array|string $relations): self
+    {
+        return $this;
+    }
+
+    public function select(array|string $columns): self
+    {
+        return $this;
+    }
+
+    public function selectRaw(string $expression, array $bindings = []): self
+    {
+        return $this;
+    }
+
+    public function limit(int $value): self
+    {
+        return $this;
+    }
+
+    public function orderBy(string $column, string $direction = 'asc'): self
+    {
+        return $this;
+    }
+
+    public function orderByDesc(string $column): self
+    {
+        return $this;
+    }
+
+    public function groupBy(string|array ...$groups): self
+    {
+        return $this;
+    }
+
+    public function get(array|string $columns = ['*']): Collection
+    {
+        return new Collection();
+    }
+
+    public function pluck(string $column, ?string $key = null): Collection
+    {
+        return new Collection();
+    }
+
+    public function paginate(?int $perPage = null): \Illuminate\Pagination\LengthAwarePaginator
+    {
+        return new \Illuminate\Pagination\LengthAwarePaginator();
+    }
+
+    public function getModel(): Model
+    {
+        return new class () extends Model {
+        };
+    }
+}
+
+abstract class Model
+{
+    public static function query(): Builder
+    {
+        return new Builder();
+    }
+
+    public static function addGlobalScope(string $name, callable $scope): void
+    {
+    }
+
+    public static function creating(callable $callback): void
+    {
+    }
+
+    public function is(?Model $model): bool
+    {
+        return $model !== null;
+    }
+
+    public function getAttribute(string $key): mixed
+    {
+        return null;
+    }
+
+    public function refresh(): static
+    {
+        return $this;
+    }
+
+    /**
+     * @param array<string, mixed> $attributes
+     */
+    public function fill(array $attributes): static
+    {
+        return $this;
+    }
+
+    public function save(array $options = []): bool
+    {
+        return true;
+    }
+
+    public function __get(string $name): mixed
+    {
+        return null;
+    }
+
+    public function __set(string $name, mixed $value): void
+    {
+    }
+
+    public function relationLoaded(string $key): bool
+    {
+        return false;
+    }
+
+    public function getRelationValue(string $key): mixed
+    {
+        return null;
+    }
+
+    public function load(array|string $relations): static
+    {
+        return $this;
+    }
+
+    public function setAttribute(string $key, mixed $value): void
+    {
+    }
+
+    public function belongsTo(string $class, ?string $foreignKey = null, ?string $ownerKey = null, ?string $relation = null): BelongsTo
+    {
+        return new BelongsTo();
+    }
+
+    public function hasMany(string $related, ?string $foreignKey = null, ?string $localKey = null): HasMany
+    {
+        return new HasMany();
+    }
+
+    public function getTable(): string
+    {
+        return 'stub';
+    }
+
+    public function getKey(): int|string|null
+    {
+        return null;
+    }
+}
+
+namespace Illuminate\Database\Eloquent\Factories;
+
+use Illuminate\Database\Eloquent\Model;
+
+trait HasFactory
+{
+    public static function factory(mixed ...$parameters): object
+    {
+        return new class () {
+        };
+    }
+
+    public static function newFactory(): ?Factory
+    {
+        return null;
+    }
+}
+
+abstract class Factory
+{
+    /**
+     * @return static
+     */
+    public static function factoryForModel(string $model): static
+    {
+        return new static();
+    }
+
+    /**
+     * @return static
+     */
+    public function count(?int $count = null): static
+    {
+        return $this;
+    }
+
+    /**
+     * @return static
+     */
+    public function state(mixed $state): static
+    {
+        return $this;
+    }
+
+    public function create(array $attributes = []): Model
+    {
+        return new Model();
+    }
+
+    public function new(): static
+    {
+        return new static();
+    }
+
+    public function guessModelNamesUsing(callable $callback): void
+    {
+    }
+}
+
+namespace Illuminate\Database\Eloquent\Relations;
+
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+class Relation
+{
+    protected Builder $query;
+
+    protected Model $parent;
+
+    public function __construct(?Builder $query = null, ?Model $parent = null)
+    {
+        $this->query = $query ?? new Builder();
+        $this->parent = $parent ?? new Model();
+    }
+
+    public function with(array|string $relations): static
+    {
+        return $this;
+    }
+
+    public function orderByDesc(string $column): static
+    {
+        return $this;
+    }
+
+    public function orderBy(string $column, string $direction = 'asc'): static
+    {
+        return $this;
+    }
+}
+
+class BelongsTo extends Relation
+{
+}
+
+class HasMany extends Relation
+{
+}
+
+namespace Illuminate\Pagination;
+
+class LengthAwarePaginator
+{
+    public function withQueryString(): static
+    {
+        return $this;
+    }
+}
+
+namespace Illuminate\Foundation\Auth;
+
+use Illuminate\Database\Eloquent\Model;
+
+abstract class User extends Model
+{
+}
+
+namespace Illuminate\Notifications;
+
+trait Notifiable
+{
+}

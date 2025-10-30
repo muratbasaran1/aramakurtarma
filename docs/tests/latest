@@ -1,0 +1,1 @@
+2024-07-10: CI pipeline (commit v0.9 taslağı) tüm unit/feature senaryolarını geçti; load testi 9.2k WS istemcide %70 CPU ile tamamlandı, security taraması için rapor bekleniyor.

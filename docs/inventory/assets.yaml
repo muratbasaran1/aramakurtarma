@@ -1,0 +1,9 @@
+assets:
+  - id: INV-0001
+    name: Mobil Komuta Aracı
+    status: active
+    last_service_at: 2024-05-12
+  - id: INV-0002
+    name: Termal Kamera
+    status: service
+    last_service_at: 2024-06-28

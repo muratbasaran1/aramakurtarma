@@ -1,0 +1,33 @@
+{
+    "name": "tudak/afet-yonetim",
+    "description": "TUDAK Afet Yönetim Sistemi kalite araçları",
+    "type": "project",
+    "license": "proprietary",
+    "require": {},
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.64",
+        "slevomat/coding-standard": "^8.15",
+        "squizlabs/php_codesniffer": "^3.10",
+        "phpstan/phpstan": "^1.11",
+        "vimeo/psalm": "^5.22",
+        "dealerdirect/phpcodesniffer-composer-installer": "^1.0"
+    },
+    "config": {
+        "bin-dir": "vendor/bin",
+        "sort-packages": true,
+        "platform": {
+            "php": "8.3.0"
+        },
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    },
+    "scripts": {
+        "quality": [
+            "@php vendor/bin/php-cs-fixer fix --dry-run --diff",
+            "@php vendor/bin/phpcs",
+            "@php vendor/bin/phpstan analyse",
+            "@php vendor/bin/psalm"
+        ]
+    }
+}

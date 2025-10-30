@@ -1,0 +1,9 @@
+# Ortam yapılandırması örneği
+name: example
+url: https://example.tudak
+logging:
+  level: info
+  retention_days: 14
+feature_flags:
+  tracking_inactivity: true
+  offline_queue: true
