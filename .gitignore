@@ -41,3 +41,11 @@ Homestead.json
 .env.production
 .phpactor.json
 auth.json
+
+# Python project artifacts
+__pycache__/
+.pytest_cache/
+*.py[cod]
+*.db
+.venv/
+env/

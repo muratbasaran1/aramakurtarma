@@ -3,6 +3,7 @@
 Bu kontrol listesi, TUDAK Afet Yönetim Sistemi deposunda **GitHub PR** oluştururken karşılaşılan "ikili dosya desteklenmez" hataları ve kalite kapılarını proaktif olarak yakalamanıza yardım eder.
 
 > **Hızlı Yol:** Aşağıdaki adımlara başlamadan önce `./tools/run-quality-suite.sh` komutunu çalıştırarak kalite kontrollerini tek seferde koşturabilirsiniz. Script `vendor/bin/` altında araçları bulamazsa `composer install`, `package.json` mevcut olup `node_modules` eksikse `npm install --no-audit --progress false` komutlarını otomatik çalıştırır. Ayrıntılar için `docs/engineering/quality-suite.md` rehberine bakın.
+> **Hızlı Yol:** Aşağıdaki adımlara başlamadan önce `./tools/run-quality-suite.sh` komutunu çalıştırarak kalite kontrollerini tek seferde koşturabilirsiniz. Script `vendor/bin/` altında araçları bulamazsa `composer install` komutunu otomatik çalıştırır. Ayrıntılar için `docs/engineering/quality-suite.md` rehberine bakın.
 
 ## 1. Hazırlık
 - [ ] Son değişiklikleri `work` dalında çek (`git pull --rebase`).

@@ -96,6 +96,7 @@ class Builder
     }
 
     public function selectRaw(string $expression, array $bindings = []): self
+    public function select(array $columns): self
     {
         return $this;
     }

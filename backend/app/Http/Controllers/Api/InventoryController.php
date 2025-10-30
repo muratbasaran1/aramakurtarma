@@ -17,10 +17,18 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use RuntimeException;
 
 class InventoryController extends Controller
 {
     use InterpretsFilters;
+
+    /**
+     * @var list<string>
+     */
+    private const STATUSES = ['active', 'service', 'retired'];
 
     public function __construct(private readonly TenantContext $tenantContext)
     {
@@ -34,6 +42,7 @@ class InventoryController extends Controller
             ->orderBy('code');
 
         $statuses = $this->extractListFilter($request, 'status', Inventory::STATUSES);
+        $statuses = $this->extractListFilter($request, 'status', self::STATUSES);
 
         if ($statuses !== []) {
             $query->whereIn('status', $statuses);
