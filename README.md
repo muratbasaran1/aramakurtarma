@@ -5,6 +5,7 @@ Bu dokümantasyon, TUDAK Afet Yönetim Sistemi için faz bazlı geliştirme plan
 ## İçindekiler
  - [Genel Bakış](#genel-bakış)
  - [Kod Tabanı Yapısı](#kod-tabanı-yapısı)
+- [Genel Bakış](#genel-bakış)
 - [Kılavuz İlkeler](#kılavuz-ilkeler)
 - [Roller ve Sorumluluklar](#roller-ve-sorumluluklar)
 - [Fazlar Arası Bağımlılıklar](#fazlar-arası-bağımlılıklar)
@@ -1627,6 +1628,8 @@ _(Güncelleme: 2024-07-01)_
 **Kontrol Listesi:** Ortam dosyasını güncellemeden önce `git diff -- .env.example` ile farkları gözden geçirin, `php artisan config:cache` komutuyla eksik değişkenleri test edin, kritik servisler için `TRACKING_PING_INTERVAL_*` gibi parametrelerin Faz 4/7 gereksinimleriyle uyumlu olduğunu doğrulayın.
 
 **Hata Önleme:** Kimlik bilgileri asla depo içine commit edilmez; rotasyon sonrası `security/chain-of-custody.md` ve `docs/threat-program/lessons-learned.md` kayıtları güncellenir. Yanlış yapılandırma tespit edilirse `runbook/incident-response.md` ve `runbook/data-restore.md` talimatları izlenir.
+
+**Uygulama Notları:** Script depo kökünde çalıştırılmalı, başarısız kontroller düzeltilip tekrar koşturulmalıdır. Çıktı özetleri kod inceleme yorumlarında paylaşılır ve gerektiğinde `docs/tests/` kayıtlarına referans verilir.
 
 
 ## Yerel Geliştirme Rehberi

@@ -9,6 +9,12 @@ $directories = [
     __DIR__ . '/backend/database',
     __DIR__ . '/backend/routes',
     __DIR__ . '/backend/tests',
+    __DIR__ . '/app',
+    __DIR__ . '/bootstrap',
+    __DIR__ . '/config',
+    __DIR__ . '/database',
+    __DIR__ . '/routes',
+    __DIR__ . '/tests',
 ];
 
 $existingDirectories = array_values(array_filter($directories, static function (string $path): bool {
@@ -36,6 +42,7 @@ $finder
         'backend/node_modules',
         'backend/bootstrap/cache',
     ]);
+    ->exclude(['vendor', 'storage', 'node_modules']);
 
 return (new PhpCsFixer\Config())
     ->setRiskyAllowed(true)

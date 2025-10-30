@@ -28,5 +28,16 @@
         <UndefinedClass errorLevel="info"/>
         <UndefinedFunction errorLevel="info"/>
         <TooManyTemplateParams errorLevel="info"/>
+<psalm errorLevel="3" resolveFromConfigFile="true">
+    <projectFiles>
+        <directory name="config"/>
+        <ignoreFiles>
+            <directory name="vendor"/>
+        </ignoreFiles>
+    </projectFiles>
+
+    <issueHandlers>
+        <LessSpecificReturnType errorLevel="info"/>
+        <MissingParamType errorLevel="info"/>
     </issueHandlers>
 </psalm>

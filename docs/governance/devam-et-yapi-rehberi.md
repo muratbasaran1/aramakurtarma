@@ -27,6 +27,10 @@ Bu rehber, dokümantasyon boyunca tekrar eden “devam et” genişletmeleriyle 
 | Kalite Suite Otomasyonu | `tools/run-quality-suite.sh`, `docs/engineering/quality-suite.md` | Kod kalite kontrollerini tek komutta koşturur; eksik vendor veya frontend bağımlılıklarında `composer install` ve `npm install --no-audit --progress false` komutlarını otomatik tetikler. | Faz 0, 11, 12 |
 | PHP Kalite Bağımlılıkları | `composer.json`, `composer.lock` | Kod kalite araçlarının Composer ile kurulmasını ve `composer run quality` komutunu standartlaştırır. | Faz 0, 11, 12 |
 | Frontend Kalite Bağımlılıkları | `package.json`, `package-lock.json` | ESLint/Stylelint bağımlılıklarını sabitler; kalite suite `npm install --no-audit --progress false` komutuyla otomatik kurar. | Faz 0, 11, 12 |
+| Kod Kalite Konfigürasyonları | `.php-cs-fixer.dist.php`, `phpcs.xml`, `phpstan.neon.dist`, `psalm.xml`, `.eslintrc.cjs`, `stylelint.config.cjs`, `docs/engineering/tooling-configuration.md` | Kod kalite araçlarının proje kapsamındaki çalışma kurallarını ve script eşleşmelerini tanımlar. | Faz 0, 11, 12 |
+| PR Kontrol Araçları | `tools/check-binary-files.sh`, `docs/engineering/pr-checklist.md` | PR açmadan önce ikili dosya taraması ve kalite adımlarının tamamlandığını doğrular. | Faz 0, 11, 12 |
+| Kalite Suite Otomasyonu | `tools/run-quality-suite.sh`, `docs/engineering/quality-suite.md` | Kod kalite kontrollerini tek komutta koşturur; PHP araçları eksikse `composer install` komutunu otomatik çalıştırır. | Faz 0, 11, 12 |
+| PHP Kalite Bağımlılıkları | `composer.json`, `composer.lock` | Kod kalite araçlarının Composer ile kurulmasını ve `composer run quality` komutunu standartlaştırır. | Faz 0, 11, 12 |
 | Veri Yönetimi & Maskeleme | `governance/data-quality-dashboard/`, `open-data/releases/` | Veri kalitesi raporları, maskeleme checklist’leri ve paylaşım politikaları. | Faz 2, 21 |
 
 ## Kategori Bazlı Açıklamalar
@@ -83,6 +87,8 @@ Bu rehber, dokümantasyon boyunca tekrar eden “devam et” genişletmeleriyle 
 - `.env.example` ve `docs/engineering/env-management.md` ortam şablonlarının güncelliğini, gizli anahtar rotasyon ilkelerini ve audit kayıtlarının nasıl tutulacağını açıklar; değişiklikler `config/environment/` altındaki YAML dosyalarıyla birlikte takip edilir.
 - `docs/engineering/pr-checklist.md`, `tools/check-binary-files.sh` ve `tools/run-quality-suite.sh` PR açılışından önce uygulanması gereken kontrolleri hem manuel hem otomasyonlu şekilde sunar; Codex tabanlı süreçlerin kesintisiz işlemesine yardımcı olur.
 - `package.json` ve `package-lock.json` dosyaları frontend kalite araçlarını sabitler; kalite suite çalıştırıldığında eksik `node_modules` için `npm install --no-audit --progress false` komutu otomatik devreye girer.
+- `docs/engineering/local-development.md` yeni cihaz kurulumu, `.env` hazırlığı ve günlük komutlar için zorunlu checklist’i içerir; kalite suite ve PR kontrolleri tamamlanmadan merge talebi oluşturulamaz.
+- `docs/engineering/pr-checklist.md`, `tools/check-binary-files.sh` ve `tools/run-quality-suite.sh` PR açılışından önce uygulanması gereken kontrolleri hem manuel hem otomasyonlu şekilde sunar; Codex tabanlı süreçlerin kesintisiz işlemesine yardımcı olur.
 - Sprint planlama, release hazırlığı ve postmortem süreçlerinde bu rehberlere atıf yapılması zorunludur; güncellemeler README sürüm tablosu ve `CHANGELOG.md` üzerinden izlenir.
 
 ### 10. Veri Kalitesi ve Maskeleme Standartları

@@ -13,6 +13,7 @@ Script aşağıdaki adımları sırasıyla çalıştırır:
 - **Ön kontrol (Composer - kök):** `vendor/bin/` altında PHP kalite araçları bulunmuyorsa `composer install --no-ansi --no-interaction --no-progress --prefer-dist` komutu otomatik çalıştırılır.
 - **Ön kontrol (Composer - backend):** `backend/composer.json` bulunduğu halde `backend/vendor/autoload.php` yoksa `composer --working-dir=backend install --no-ansi --no-interaction --no-progress --prefer-dist` komutu tetiklenir.
 - **Ön kontrol (npm):** `package.json` mevcut olup `node_modules` altında ESLint/Stylelint ikilileri bulunmuyorsa `npm install --no-audit --progress false` komutu tetiklenir.
+- **Ön kontrol:** `vendor/bin/` altında PHP kalite araçları bulunmuyorsa `composer install --no-ansi --no-interaction --no-progress --prefer-dist` komutu otomatik çalıştırılır.
 1. `tools/check-binary-files.sh` ile staged dosyalarda ikili içerik taraması.
 2. `vendor/bin/php-cs-fixer` ile PSR-12 format kontrolü (`--dry-run --diff`).
 3. `vendor/bin/phpcs` ile PHP kod standartları denetimi (`phpcs.xml`).
