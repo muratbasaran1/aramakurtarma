@@ -2590,6 +2590,8 @@ _(Güncelleme: 2024-07-16)_
 | v0.30 | 2024-08-02 | Tenant slug doğrulamasıyla güçlendirilmiş API rotaları, `forTenantQuery` yardımcıları ve güncellenen kalite stubları | Teknik Liderlik |
 | v0.31 | 2024-08-02 | Olay oluşturma API ucu, GeoJSON doğrulaması ve tenant bazlı benzersiz kod kontrolleri ile test kapsamının genişletilmesi | Teknik Liderlik |
 | v0.32 | 2024-08-02 | Tenant olay güncelleme API'sinin eklenmesi, validasyon testleri ve backend dokümantasyonunun güncellenmesi | Teknik Liderlik |
+| v0.33 | 2024-08-03 | Envanter API’sine oluşturma/güncelleme uçlarının eklenmesi ve tenant doğrulamalarının güçlendirilmesi | Teknik Liderlik |
+| v0.34 | 2024-08-03 | OpsCenter web paneli ön izlemesi, dashboard testleri ve backend dokümantasyon güncellemesi | Teknik Liderlik |
 
 > _Not: Yeni bir sürüm yayımlandığında bu tabloya satır eklenmeli ve ilgili bölümlerde revizyon tarihi güncellenmelidir._
 

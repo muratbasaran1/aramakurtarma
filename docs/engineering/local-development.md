@@ -81,6 +81,7 @@ Bu rehber, TUDAK Afet Yönetim Sistemi üzerinde çalışan ekiplerin yerel geli
 | --- | --- | --- |
 | Kalite suite | `./tools/run-quality-suite.sh` | İkili taraması, PHP lint/analiz ve frontend lint işlemlerini tek komutta yürütür; eksik vendor araçlarını otomatik olarak hem kök hem de `backend/` dizininde `composer install` ile yükler. |
 | PHP testleri | `cd backend && php artisan test` *(planlanıyor)* veya ilgili `phpunit`/`pest` komutu | Modül bazlı testleri çalıştırarak regresyon riskini azaltın. |
+| Laravel sunucusu | `cd backend && php artisan serve` | API ve Blade arayüzünü yerelde doğrulamak için; OpsCenter paneli `http://localhost:8000/opscenter` adresinde. |
 | Laravel sunucusu | `cd backend && php artisan serve` | API ve Blade arayüzünü yerelde doğrulamak için. |
 | Frontend derlemesi | `npm run dev` | Vite tabanlı geliştirme sunucusunu açar. |
 | Queue işleyicisi | `cd backend && php artisan queue:work` | Offline kuyruk senaryolarını doğrulamak için. |

@@ -112,3 +112,9 @@ Bu dosya, uygulama ve dokümantasyon değişikliklerinin özetini tutmak için k
 - Görev API’sine `POST /api/tenants/{tenant}/tasks` ve `PATCH /api/tenants/{tenant}/tasks/{task}` uçları eklendi; GeoJSON LineString rotası, çift onay zorunluluğu ve tarih tutarlılığı `StoreTaskRequest`/`UpdateTaskRequest` ile doğrulanıyor.
 - TaskController güncellenerek rota dönüştürme yardımcıları ve tenant izolasyonu güçlendirildi; Task modeli `STATUSES` sabiti ve `route` cast’i ile tutarlı veri üretir hale getirildi.
 - Görev API feature testleri oluşturma, güncelleme ve doğrulama ihlali senaryolarını kapsayacak şekilde genişletildi; backend README, CHANGELOG ve ana README sürüm tablosu yeni yetenekleri belgeledi.
+### 2024-08-03
+- Envanter API’sine `GET /api/tenants/{tenant}/inventories/{inventory}` detay ucu ile `POST`/`PATCH` işlemleri eklendi; tenant izolasyonu, kod benzersizliği ve servis tarihi doğrulamaları `StoreInventoryRequest` ve `UpdateInventoryRequest` sınıflarıyla sağlandı.
+- InventoryController varsayılan durumu `active` olarak atayacak ve çapraz tenant erişimlerini 404 ile engelleyecek şekilde güncellendi; rota tanımları yeni uçları kapsayacak şekilde genişletildi.
+- Envanter API feature testleri oluşturularak oluşturma, güncelleme, doğrulama ve tenant ayrımı senaryoları güvence altına alındı; backend README ve sürüm geçmişi yeni yetenekleri belgeledi.
+- `/opscenter` rotası altında hafif OpsCenter paneli yayınlanarak tenant seçimi, olay/görev/envanter özetleri ve birim istatistikleri tek ekranda gösterildi.
+- OpsCenterController, Blade görünümü ve kapsayıcı feature testleri eklendi; web rotaları güncellenirken backend README’ye paneli çalıştırma adımları ve kullanıcı talimatları işlendi.

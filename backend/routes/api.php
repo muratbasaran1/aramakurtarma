@@ -33,6 +33,12 @@ Route::middleware(['api', 'tenant'])
 
         Route::get('inventories', [InventoryController::class, 'index'])
             ->name('inventories.index');
+        Route::get('inventories/{inventory}', [InventoryController::class, 'show'])
+            ->name('inventories.show');
+        Route::post('inventories', [InventoryController::class, 'store'])
+            ->name('inventories.store');
+        Route::patch('inventories/{inventory}', [InventoryController::class, 'update'])
+            ->name('inventories.update');
 
         Route::get('users', [UserController::class, 'index'])
             ->name('users.index');

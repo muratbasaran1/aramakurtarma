@@ -6,6 +6,7 @@ namespace Illuminate\Database\Eloquent;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 
 class Builder
 {
@@ -89,6 +90,12 @@ class Builder
         return $this;
     }
 
+    public function select(array|string $columns): self
+    {
+        return $this;
+    }
+
+    public function selectRaw(string $expression, array $bindings = []): self
     public function select(array $columns): self
     {
         return $this;
@@ -107,6 +114,21 @@ class Builder
     public function orderByDesc(string $column): self
     {
         return $this;
+    }
+
+    public function groupBy(string|array ...$groups): self
+    {
+        return $this;
+    }
+
+    public function get(array|string $columns = ['*']): Collection
+    {
+        return new Collection();
+    }
+
+    public function pluck(string $column, ?string $key = null): Collection
+    {
+        return new Collection();
     }
 
     public function paginate(?int $perPage = null): \Illuminate\Pagination\LengthAwarePaginator

@@ -76,11 +76,28 @@ Tenant bağlamında çalışan REST uçları `routes/api.php` dosyasında tanım
 | Görev Oluştur | `POST /api/tenants/{tenant}/tasks` | Tenant bağlamında olay doğrulaması yaparak görev açar; GeoJSON rota, atamalar ve planlanan başlangıç zamanı isteğe bağlıdır. |
 | Görev Güncelle | `PATCH /api/tenants/{tenant}/tasks/{task}` | Durum geçişlerinde tamamlanma/doğrulama tarihlerini ve çift onay zorunluluklarını doğrular, rota güncellemelerinde GeoJSON kontrolü yapar. |
 | Envanter | `GET /api/tenants/{tenant}/inventories` | Kod, durum ve serbest metin arama destekli envanter listesini döndürür. |
+| Envanter Detayı | `GET /api/tenants/{tenant}/inventories/{inventory}` | Tenant doğrulamasıyla tekil envanter kaydını döndürür. |
+| Envanter Oluştur | `POST /api/tenants/{tenant}/inventories` | Kod benzersizliği, durum ve servis tarihi doğrulamasıyla yeni envanter kaydı oluşturur. |
+| Envanter Güncelle | `PATCH /api/tenants/{tenant}/inventories/{inventory}` | Tenant izolasyonu korunarak kod, durum, isim ve servis tarihi alanlarını günceller. |
 | Kullanıcılar | `GET /api/tenants/{tenant}/users` | Durum, rol, birim ve arama parametreleri ile kullanıcı listesini döndürür. |
 | Birimler | `GET /api/tenants/{tenant}/units` | Tür ve arama filtresiyle birim listesini, görev/kullanıcı istatistikleriyle birlikte döndürür. |
 | Birim Detayı | `GET /api/tenants/{tenant}/units/{unit}` | Son 10 görevi, kullanıcı listesini ve aktif görev sayısını içerir. |
 
 > **Not:** Birim detayı uç noktası ID veya slug ile erişilebilir. Her iki durumda da istek bağlamındaki tenant doğrulanır ve farklı tenant’a ait kayıtlar 404 döner.
+
+## OpsCenter Paneli (Ön İzleme)
+Tenant verilerini hızlıca gözlemlemek için `/opscenter` rotası altında hafif bir web paneli yayınlandı. Panel, seçilen tenant’a ait son olayları, görev güncellemelerini, envanter durumunu ve birim istatistiklerini tek ekranda listeler.
+
+### Çalıştırma Adımları
+```bash
+php artisan serve --host=0.0.0.0 --port=8000
+# Ayrı bir terminalde
+php artisan migrate --seed   # İlk defa kurulum yapıyorsanız
+```
+
+Ardından tarayıcınızdan `http://localhost:8000/opscenter` adresine gidin. Birden fazla tenant varsa sağ üstteki açılır menüden slug seçerek paneller arasında geçiş yapabilirsiniz. Seeder çalıştırılmadıysa panel boş durum mesajı gösterir.
+
+> **İpucu:** Panel yalnızca okuma amaçlıdır; REST uçları üzerinden yaptığınız olay/görev/envanter değişiklikleri sayfayı yenilediğinizde anında yansır.
 
 ## Sonraki Adımlar
 Bu temel şema üzerine aşağıdaki yetenekler kademeli olarak eklenecektir:

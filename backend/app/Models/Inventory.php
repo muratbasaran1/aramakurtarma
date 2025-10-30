@@ -34,6 +34,15 @@ class Inventory extends Model
     /**
      * @var list<string>
      */
+    public const STATUSES = ['active', 'service', 'retired'];
+
+    public const STATUS_ACTIVE = 'active';
+    public const STATUS_SERVICE = 'service';
+    public const STATUS_RETIRED = 'retired';
+
+    /**
+     * @var list<string>
+     */
     protected $fillable = [
         'tenant_id',
         'code',
