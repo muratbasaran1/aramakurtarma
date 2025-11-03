@@ -51,6 +51,7 @@ Bu rehber, TUDAK Afet Yönetim Sistemi üzerinde çalışan ekiplerin yerel geli
    php artisan migrate --seed
    ```
 8. **Queues & websocket servislerini başlatın** (gerektiğinde)
+<<<<<<< HEAD
    - `.env.example` dosyasını `.env.local` olarak kopyalayın.
    - `config/environment/example.yaml` içindeki tenant/sunucu örneklerini kendi ortamınıza uyarlayın.
 3. **PHP bağımlılıklarını yükleyin**
@@ -70,6 +71,8 @@ Bu rehber, TUDAK Afet Yönetim Sistemi üzerinde çalışan ekiplerin yerel geli
    php artisan migrate --seed --env=.env.local
    ```
 7. **Queues & websocket servislerini başlatın** (gerektiğinde)
+=======
+>>>>>>> b5aab88 (Add tenant discovery API with summary metrics)
    ```bash
    php artisan horizon
    php artisan websockets:serve
@@ -82,7 +85,10 @@ Bu rehber, TUDAK Afet Yönetim Sistemi üzerinde çalışan ekiplerin yerel geli
 | Kalite suite | `./tools/run-quality-suite.sh` | İkili taraması, PHP lint/analiz ve frontend lint işlemlerini tek komutta yürütür; eksik vendor araçlarını otomatik olarak hem kök hem de `backend/` dizininde `composer install` ile yükler. |
 | PHP testleri | `cd backend && php artisan test` *(planlanıyor)* veya ilgili `phpunit`/`pest` komutu | Modül bazlı testleri çalıştırarak regresyon riskini azaltın. |
 | Laravel sunucusu | `cd backend && php artisan serve` | API ve Blade arayüzünü yerelde doğrulamak için; OpsCenter paneli `http://localhost:8000/opscenter` adresinde. |
+<<<<<<< HEAD
 | Laravel sunucusu | `cd backend && php artisan serve` | API ve Blade arayüzünü yerelde doğrulamak için. |
+=======
+>>>>>>> b5aab88 (Add tenant discovery API with summary metrics)
 | Frontend derlemesi | `npm run dev` | Vite tabanlı geliştirme sunucusunu açar. |
 | Queue işleyicisi | `cd backend && php artisan queue:work` | Offline kuyruk senaryolarını doğrulamak için. |
 
@@ -91,6 +97,7 @@ Bu rehber, TUDAK Afet Yönetim Sistemi üzerinde çalışan ekiplerin yerel geli
 - [ ] `composer install` ve `composer --working-dir=backend install` komutları sonrası `composer diagnose` çıktısı uyarısız.
 - [ ] `npm audit --production` kritik bulgu üretmiyor; varsa `docs/engineering/dependency-management.md` politikalarına göre işlem yapıldı.
 - [ ] `backend/.env` veya türetilmiş `.env.local` dosyalarında hassas bilgiler commit edilmedi (gitignore kontrolü).
+<<<<<<< HEAD
 | Kalite suite | `./tools/run-quality-suite.sh` | İkili taraması, PHP lint/analiz ve frontend lint işlemlerini tek komutta yürütür; eksik vendor araçlarını otomatik olarak `composer install` ile yükler. |
 | PHP testleri | `composer test` *(planlanıyor)* veya ilgili `phpunit`/`pest` komutu | Modül bazlı testleri çalıştırarak regresyon riskini azaltın. |
 | Laravel sunucusu | `php artisan serve --env=.env.local` | API ve Blade arayüzünü yerelde doğrulamak için. |
@@ -102,6 +109,8 @@ Bu rehber, TUDAK Afet Yönetim Sistemi üzerinde çalışan ekiplerin yerel geli
 - [ ] `composer install` sonrası `composer diagnose` çıktısı uyarısız.
 - [ ] `npm audit --production` kritik bulgu üretmiyor; varsa `docs/engineering/dependency-management.md` politikalarına göre işlem yapıldı.
 - [ ] `.env.local` içinde hassas bilgiler commit edilmedi (gitignore kontrolü).
+=======
+>>>>>>> b5aab88 (Add tenant discovery API with summary metrics)
 - [ ] `storage/logs/laravel.log` içinde hata kalmadı; kritik bulgular `observability/` kayıtlarıyla eşleştirildi.
 
 ## 5. Sık Karşılaşılan Sorunlar

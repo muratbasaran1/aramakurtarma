@@ -17,19 +17,25 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\Response;
+<<<<<<< HEAD
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use RuntimeException;
+=======
+>>>>>>> b5aab88 (Add tenant discovery API with summary metrics)
 
 class InventoryController extends Controller
 {
     use InterpretsFilters;
 
+<<<<<<< HEAD
     /**
      * @var list<string>
      */
     private const STATUSES = ['active', 'service', 'retired'];
 
+=======
+>>>>>>> b5aab88 (Add tenant discovery API with summary metrics)
     public function __construct(private readonly TenantContext $tenantContext)
     {
     }
@@ -42,7 +48,10 @@ class InventoryController extends Controller
             ->orderBy('code');
 
         $statuses = $this->extractListFilter($request, 'status', Inventory::STATUSES);
+<<<<<<< HEAD
         $statuses = $this->extractListFilter($request, 'status', self::STATUSES);
+=======
+>>>>>>> b5aab88 (Add tenant discovery API with summary metrics)
 
         if ($statuses !== []) {
             $query->whereIn('status', $statuses);

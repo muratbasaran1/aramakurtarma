@@ -37,6 +37,14 @@ class Unit extends Model
     /**
      * @var list<string>
      */
+<<<<<<< HEAD
+=======
+    public const TYPES = ['command', 'logistics', 'medical', 'search-and-rescue'];
+
+    /**
+     * @var list<string>
+     */
+>>>>>>> b5aab88 (Add tenant discovery API with summary metrics)
     protected $fillable = [
         'tenant_id',
         'name',

@@ -5,7 +5,10 @@ Bu dokümantasyon, TUDAK Afet Yönetim Sistemi için faz bazlı geliştirme plan
 ## İçindekiler
  - [Genel Bakış](#genel-bakış)
  - [Kod Tabanı Yapısı](#kod-tabanı-yapısı)
+<<<<<<< HEAD
 - [Genel Bakış](#genel-bakış)
+=======
+>>>>>>> b5aab88 (Add tenant discovery API with summary metrics)
 - [Kılavuz İlkeler](#kılavuz-ilkeler)
 - [Roller ve Sorumluluklar](#roller-ve-sorumluluklar)
 - [Fazlar Arası Bağımlılıklar](#fazlar-arası-bağımlılıklar)
@@ -1629,8 +1632,11 @@ _(Güncelleme: 2024-07-01)_
 
 **Hata Önleme:** Kimlik bilgileri asla depo içine commit edilmez; rotasyon sonrası `security/chain-of-custody.md` ve `docs/threat-program/lessons-learned.md` kayıtları güncellenir. Yanlış yapılandırma tespit edilirse `runbook/incident-response.md` ve `runbook/data-restore.md` talimatları izlenir.
 
+<<<<<<< HEAD
 **Uygulama Notları:** Script depo kökünde çalıştırılmalı, başarısız kontroller düzeltilip tekrar koşturulmalıdır. Çıktı özetleri kod inceleme yorumlarında paylaşılır ve gerektiğinde `docs/tests/` kayıtlarına referans verilir.
 
+=======
+>>>>>>> b5aab88 (Add tenant discovery API with summary metrics)
 
 ## Yerel Geliştirme Rehberi
 
@@ -2592,6 +2598,14 @@ _(Güncelleme: 2024-07-16)_
 | v0.32 | 2024-08-02 | Tenant olay güncelleme API'sinin eklenmesi, validasyon testleri ve backend dokümantasyonunun güncellenmesi | Teknik Liderlik |
 | v0.33 | 2024-08-03 | Envanter API’sine oluşturma/güncelleme uçlarının eklenmesi ve tenant doğrulamalarının güçlendirilmesi | Teknik Liderlik |
 | v0.34 | 2024-08-03 | OpsCenter web paneli ön izlemesi, dashboard testleri ve backend dokümantasyon güncellemesi | Teknik Liderlik |
+<<<<<<< HEAD
+=======
+| v0.35 | 2024-08-03 | OpsCenter özet servisinin tekrar kullanılabilir hale getirilmesi ve JSON API ucunun eklenmesi | Teknik Liderlik |
+| v0.36 | 2024-08-04 | Tenant kullanıcı API’sine detay/oluştur/güncelle uçlarının eklenmesi ve doğrulama testlerinin genişletilmesi | Teknik Liderlik |
+| v0.37 | 2024-08-05 | Tenant birim API’sine oluştur/güncelle uçlarının eklenmesi, slug doğrulaması ve test kapsamının genişletilmesi | Teknik Liderlik |
+| v0.38 | 2024-08-05 | Birim API slug çözümleyicisinin sayısal slug desteğiyle güçlendirilmesi ve PHP-CS-Fixer import sıralamasının PHPCS ile hizalanması | Teknik Liderlik |
+| v0.39 | 2024-08-06 | Tenant keşif API’sinin eklenmesi, OpsCenter özetinin tenant detay uçlarına taşınması ve ilgili dokümantasyon kayıtlarının güncellenmesi | Teknik Liderlik |
+>>>>>>> b5aab88 (Add tenant discovery API with summary metrics)
 
 > _Not: Yeni bir sürüm yayımlandığında bu tabloya satır eklenmeli ve ilgili bölümlerde revizyon tarihi güncellenmelidir._
 

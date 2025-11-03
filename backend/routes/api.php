@@ -4,11 +4,29 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Api\IncidentController;
 use App\Http\Controllers\Api\InventoryController;
+<<<<<<< HEAD
 use App\Http\Controllers\Api\TaskController;
+=======
+use App\Http\Controllers\Api\OpsCenterSummaryController;
+use App\Http\Controllers\Api\TaskController;
+use App\Http\Controllers\Api\TenantController;
+>>>>>>> b5aab88 (Add tenant discovery API with summary metrics)
 use App\Http\Controllers\Api\UnitController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 
+<<<<<<< HEAD
+=======
+Route::middleware(['api'])
+    ->prefix('tenants')
+    ->group(function (): void {
+        Route::get('/', [TenantController::class, 'index'])
+            ->name('api.tenants.index');
+        Route::get('{tenant}', [TenantController::class, 'show'])
+            ->name('api.tenants.show');
+    });
+
+>>>>>>> b5aab88 (Add tenant discovery API with summary metrics)
 Route::middleware(['api', 'tenant'])
     ->prefix('tenants/{tenant}')
     ->as('api.tenants.')
@@ -42,9 +60,28 @@ Route::middleware(['api', 'tenant'])
 
         Route::get('users', [UserController::class, 'index'])
             ->name('users.index');
+<<<<<<< HEAD
+=======
+        Route::get('users/{user}', [UserController::class, 'show'])
+            ->name('users.show');
+        Route::post('users', [UserController::class, 'store'])
+            ->name('users.store');
+        Route::patch('users/{user}', [UserController::class, 'update'])
+            ->name('users.update');
+>>>>>>> b5aab88 (Add tenant discovery API with summary metrics)
 
         Route::get('units', [UnitController::class, 'index'])
             ->name('units.index');
         Route::get('units/{unit}', [UnitController::class, 'show'])
             ->name('units.show');
+<<<<<<< HEAD
+=======
+        Route::post('units', [UnitController::class, 'store'])
+            ->name('units.store');
+        Route::patch('units/{unit}', [UnitController::class, 'update'])
+            ->name('units.update');
+
+        Route::get('opscenter/summary', [OpsCenterSummaryController::class, 'show'])
+            ->name('opscenter.summary');
+>>>>>>> b5aab88 (Add tenant discovery API with summary metrics)
     });

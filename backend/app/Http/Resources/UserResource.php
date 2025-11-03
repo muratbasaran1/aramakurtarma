@@ -31,6 +31,10 @@ class UserResource extends JsonResource
             'status' => $user->status,
             'documents' => $user->documents,
             'documents_expires_at' => $user->documents_expires_at?->toIso8601String(),
+<<<<<<< HEAD
+=======
+            'unit_id' => $user->unit_id,
+>>>>>>> b5aab88 (Add tenant discovery API with summary metrics)
             'unit' => $this->when(
                 $unitRelation !== null,
                 function () use ($unitRelation): array {

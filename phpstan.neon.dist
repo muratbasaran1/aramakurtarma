@@ -25,4 +25,7 @@ parameters:
 
     bootstrapFiles:
         - backend/vendor/autoload.php
+<<<<<<< HEAD
         - vendor/autoload.php
+=======
+>>>>>>> b5aab88 (Add tenant discovery API with summary metrics)

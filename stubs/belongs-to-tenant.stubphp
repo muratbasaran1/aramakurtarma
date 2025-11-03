@@ -10,6 +10,10 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * @method static Builder forTenant(Tenant|int|string $tenant)
+<<<<<<< HEAD
+=======
+ * @method static Builder forTenantQuery(Tenant|int|string $tenant)
+>>>>>>> b5aab88 (Add tenant discovery API with summary metrics)
  */
 trait BelongsToTenant
 {
@@ -20,4 +24,15 @@ trait BelongsToTenant
     {
         return $builder;
     }
+<<<<<<< HEAD
+=======
+
+    /**
+     * @return Model|null
+     */
+    public static function findForTenantByIdentifier(Tenant|int|string $tenant, int|string $identifier)
+    {
+        return new Model();
+    }
+>>>>>>> b5aab88 (Add tenant discovery API with summary metrics)
 }

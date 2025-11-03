@@ -63,6 +63,14 @@ class Tenant extends Model
         return $this->hasMany(Inventory::class);
     }
 
+<<<<<<< HEAD
+=======
+    public function tasks(): HasMany
+    {
+        return $this->hasMany(Task::class);
+    }
+
+>>>>>>> b5aab88 (Add tenant discovery API with summary metrics)
     public function getRouteKeyName(): string
     {
         return 'slug';
