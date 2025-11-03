@@ -118,3 +118,22 @@ Bu dosya, uygulama ve dokümantasyon değişikliklerinin özetini tutmak için k
 - Envanter API feature testleri oluşturularak oluşturma, güncelleme, doğrulama ve tenant ayrımı senaryoları güvence altına alındı; backend README ve sürüm geçmişi yeni yetenekleri belgeledi.
 - `/opscenter` rotası altında hafif OpsCenter paneli yayınlanarak tenant seçimi, olay/görev/envanter özetleri ve birim istatistikleri tek ekranda gösterildi.
 - OpsCenterController, Blade görünümü ve kapsayıcı feature testleri eklendi; web rotaları güncellenirken backend README’ye paneli çalıştırma adımları ve kullanıcı talimatları işlendi.
+<<<<<<< HEAD
+=======
+- OpsCenter özet servisi oluşturularak web paneli ile JSON API aynı veri kaynağını kullanacak şekilde birleşik hale getirildi; `GET /api/tenants/{tenant}/opscenter/summary` ucu eklendi ve testlerle güvence altına alındı.
+### 2024-08-04
+- Kullanıcı API’sine detay, oluşturma ve güncelleme uçları eklendi; `StoreUserRequest` ve `UpdateUserRequest` tenant kapsamı, belge geçerliliği ve şifre politikalarını doğruluyor.
+- UserController ve UserResource güncellenerek tenant izolasyonu güçlendirildi, yeni uçlar JSON kaynaklarıyla tutarlı hale getirildi.
+- Kullanıcı API feature testleri genişletilerek oluşturma, güncelleme, hatalı belge tarihi, çapraz tenant erişimi ve şifre hash doğrulaması senaryoları kapsandı.
+- Backend README, ana README sürüm tablosu ve Devam Et yönetişim rehberi yeni kullanıcı uçlarına referans verecek şekilde güncellendi.
+### 2024-08-05
+- Birim API’sine `POST /api/tenants/{tenant}/units` ve `PATCH /api/tenants/{tenant}/units/{unit}` uçları eklendi; slug benzersizliği, tip doğrulaması ve metadata temizliği `StoreUnitRequest`/`UpdateUnitRequest` ile sağlandı.
+- UnitController yeniden düzenlenerek slug veya ID ile erişim, tenant izolasyonu ve tekrar kullanılabilir ilişki yüklemeleri tek noktada toplandı.
+- Unit API feature testleri oluşturma, eş tenant doğrulaması ve slug güncelleme senaryolarını kapsayacak şekilde genişletildi; backend README ve ana README sürüm tablosu yeni uçları yansıtacak biçimde güncellendi.
+- `BelongsToTenant::findForTenantByIdentifier` yardımı eklenerek birim uçlarının sayısal slug’ları da tanıyacak şekilde güçlendirilmesi sağlandı; UpdateUnitRequest/UnitController akışları yardımcıyı kullanacak biçimde sadeleştirildi ve ek feature testleriyle doğrulandı.
+- PHP-CS-Fixer konfigürasyonuna `imports_order` tanımı eklenerek fonksiyon ve sınıf `use` sıraları PHPCS ile hizalandı; kalite suite çakışmaları giderildi.
+### 2024-08-06
+- `TenantController` ve `TenantResource` eklenerek `GET /api/tenants` ile `GET /api/tenants/{tenant}` uçları tenant metriklerini ve OpsCenter özetlerini JSON formatında sunar hale getirildi; `include_summary=0` parametresiyle özet çıktısı isteğe bağlı hale getirildi.
+- Tenant modeli ve rotaları güncellenerek yeni metrik sayaçları (`withCount`) ve arama/slug filtreleri desteklendi, OpsCenterSummary servisi yeniden kullanılarak detay uçlarından tutarlı veri sağlandı.
+- `TenantApiTest` ile listeleme, filtreleme, detay ve özet devre dışı bırakma senaryoları kapsandı; backend README, Devam Et yapı rehberi, ana README sürüm tablosu ve CHANGELOG yeni tenant keşif akışını belgeleyecek şekilde güncellendi.
+>>>>>>> b5aab88 (Add tenant discovery API with summary metrics)

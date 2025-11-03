@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+<<<<<<< HEAD
 use App\Models\Incident;
 use App\Models\Inventory;
 use App\Models\Task;
@@ -13,6 +14,13 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+=======
+use App\Models\Tenant;
+use App\OpsCenter\OpsCenterSummary;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+>>>>>>> b5aab88 (Add tenant discovery API with summary metrics)
 use Illuminate\Support\Facades\Redirect;
 
 class OpsCenterController extends Controller
@@ -38,13 +46,18 @@ class OpsCenterController extends Controller
             ]);
         }
 
+<<<<<<< HEAD
         $requestedSlug = $request->string('tenant')->toString();
+=======
+        $requestedSlug = (string) $request->query('tenant', '');
+>>>>>>> b5aab88 (Add tenant discovery API with summary metrics)
         $activeSlug = $requestedSlug !== '' ? $requestedSlug : (string) $tenants->first()->slug;
 
         $tenant = Tenant::query()
             ->where('slug', $activeSlug)
             ->first();
 
+<<<<<<< HEAD
         if ($tenant === null) {
             return Redirect::route('opscenter', ['tenant' => $tenants->first()->slug]);
         }
@@ -116,10 +129,18 @@ class OpsCenterController extends Controller
             ->orderBy('name')
             ->limit(6)
             ->get(['id', 'name', 'slug', 'type']);
+=======
+        if (! $tenant instanceof Tenant) {
+            return Redirect::route('opscenter', ['tenant' => $tenants->first()->slug]);
+        }
+
+        $summary = OpsCenterSummary::forTenant($tenant)->toViewData();
+>>>>>>> b5aab88 (Add tenant discovery API with summary metrics)
 
         return view('opscenter', [
             'tenants' => $tenants,
             'tenant' => $tenant,
+<<<<<<< HEAD
             'summary' => [
                 'incidentCounts' => $incidentCounts,
                 'taskCounts' => $taskCounts,
@@ -141,4 +162,9 @@ class OpsCenterController extends Controller
             ->mapWithKeys(fn ($value, string $key): array => [$key => (int) $value])
             ->toArray();
     }
+=======
+            'summary' => $summary,
+        ]);
+    }
+>>>>>>> b5aab88 (Add tenant discovery API with summary metrics)
 }

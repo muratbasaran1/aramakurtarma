@@ -107,6 +107,26 @@ class UnitApiTest extends TestCase
             );
     }
 
+<<<<<<< HEAD
+=======
+    public function test_show_accepts_numeric_slug_identifier(): void
+    {
+        $tenant = Tenant::factory()->create(['slug' => 'antalya']);
+        $unit = Unit::factory()->for($tenant)->create(['slug' => '123', 'type' => 'logistics']);
+
+        $response = $this->withHeaders(['X-Tenant' => $tenant->slug])
+            ->getJson(route('api.tenants.units.show', [
+                'tenant' => $tenant->slug,
+                'unit' => '123',
+            ]));
+
+        $response
+            ->assertOk()
+            ->assertJsonPath('data.id', $unit->id)
+            ->assertJsonPath('data.slug', '123');
+    }
+
+>>>>>>> b5aab88 (Add tenant discovery API with summary metrics)
     public function test_show_does_not_leak_other_tenant_units(): void
     {
         $tenant = Tenant::factory()->create(['slug' => 'ankara']);
@@ -121,4 +141,131 @@ class UnitApiTest extends TestCase
             ]))
             ->assertNotFound();
     }
+<<<<<<< HEAD
+=======
+
+    public function test_store_creates_unit_with_auto_slug(): void
+    {
+        $tenant = Tenant::factory()->create(['slug' => 'kayseri']);
+
+        $payload = [
+            'name' => 'Saha Koordinasyon Ekibi',
+            'type' => 'search-and-rescue',
+            'metadata' => ['capacity' => 12],
+        ];
+
+        $response = $this->withHeaders(['X-Tenant' => $tenant->slug])
+            ->postJson(route('api.tenants.units.store', ['tenant' => $tenant->slug]), $payload);
+
+        $response
+            ->assertCreated()
+            ->assertJsonPath('data.name', 'Saha Koordinasyon Ekibi')
+            ->assertJsonPath('data.slug', 'saha-koordinasyon-ekibi')
+            ->assertJsonPath('data.type', 'search-and-rescue')
+            ->assertJsonPath('data.metadata.capacity', 12);
+
+        $this->assertDatabaseHas('units', [
+            'tenant_id' => $tenant->id,
+            'slug' => 'saha-koordinasyon-ekibi',
+        ]);
+    }
+
+    public function test_store_rejects_duplicate_slug_within_tenant(): void
+    {
+        $tenant = Tenant::factory()->create(['slug' => 'eskisehir']);
+
+        Unit::factory()->for($tenant)->create(['slug' => 'lojistik-merkez']);
+
+        $response = $this->withHeaders(['X-Tenant' => $tenant->slug])
+            ->postJson(route('api.tenants.units.store', ['tenant' => $tenant->slug]), [
+                'name' => 'Lojistik Merkez',
+                'slug' => 'lojistik-merkez',
+                'type' => 'logistics',
+            ]);
+
+        $response
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['slug']);
+    }
+
+    public function test_update_changes_unit_details_and_slug(): void
+    {
+        $tenant = Tenant::factory()->create(['slug' => 'samsun']);
+        $unit = Unit::factory()->for($tenant)->create([
+            'name' => 'Komuta Merkezi',
+            'slug' => 'komuta-merkezi',
+            'type' => 'command',
+            'metadata' => ['capacity' => 8],
+        ]);
+
+        $response = $this->withHeaders(['X-Tenant' => $tenant->slug])
+            ->patchJson(route('api.tenants.units.update', [
+                'tenant' => $tenant->slug,
+                'unit' => $unit->slug,
+            ]), [
+                'name' => 'Komuta Merkezi 2',
+                'slug' => 'komuta-merkezi-2',
+                'type' => 'command',
+                'metadata' => ['capacity' => 16],
+            ]);
+
+        $response
+            ->assertOk()
+            ->assertJsonPath('data.name', 'Komuta Merkezi 2')
+            ->assertJsonPath('data.slug', 'komuta-merkezi-2')
+            ->assertJsonPath('data.metadata.capacity', 16);
+
+        $this->assertDatabaseHas('units', [
+            'tenant_id' => $tenant->id,
+            'slug' => 'komuta-merkezi-2',
+        ]);
+    }
+
+    public function test_update_allows_numeric_slug_identifier(): void
+    {
+        $tenant = Tenant::factory()->create(['slug' => 'mardin']);
+        $unit = Unit::factory()->for($tenant)->create([
+            'name' => 'Saha Birimi',
+            'slug' => '456',
+            'type' => 'search-and-rescue',
+        ]);
+
+        $response = $this->withHeaders(['X-Tenant' => $tenant->slug])
+            ->patchJson(route('api.tenants.units.update', [
+                'tenant' => $tenant->slug,
+                'unit' => '456',
+            ]), [
+                'metadata' => ['capacity' => 5],
+            ]);
+
+        $response
+            ->assertOk()
+            ->assertJsonPath('data.slug', '456')
+            ->assertJsonPath('data.metadata.capacity', 5);
+
+        $this->assertDatabaseHas('units', [
+            'tenant_id' => $tenant->id,
+            'slug' => '456',
+            'metadata->capacity' => 5,
+        ]);
+    }
+
+    public function test_update_returns_404_for_unit_of_another_tenant(): void
+    {
+        $tenant = Tenant::factory()->create(['slug' => 'kars']);
+        $otherTenant = Tenant::factory()->create(['slug' => 'ardahan']);
+
+        $unit = Unit::factory()->for($otherTenant)->create(['slug' => 'ardahan-medikal']);
+
+        $this->withHeaders(['X-Tenant' => $tenant->slug])
+            ->patchJson(route('api.tenants.units.update', [
+                'tenant' => $tenant->slug,
+                'unit' => $unit->slug,
+            ]), [
+                'name' => 'Yetkisiz Güncelleme',
+                'type' => 'medical',
+            ])
+            ->assertNotFound();
+    }
+>>>>>>> b5aab88 (Add tenant discovery API with summary metrics)
 }

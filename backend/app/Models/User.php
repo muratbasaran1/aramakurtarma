@@ -41,6 +41,14 @@ class User extends Authenticatable
     /**
      * @var list<string>
      */
+<<<<<<< HEAD
+=======
+    public const STATUSES = ['active', 'inactive', 'suspended'];
+
+    /**
+     * @var list<string>
+     */
+>>>>>>> b5aab88 (Add tenant discovery API with summary metrics)
     protected $fillable = [
         'tenant_id',
         'unit_id',

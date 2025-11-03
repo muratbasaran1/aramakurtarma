@@ -22,16 +22,26 @@ Bu rehber, dokümantasyon boyunca tekrar eden “devam et” genişletmeleriyle 
 | Kod Kalite Konfigürasyonları | `.php-cs-fixer.dist.php`, `phpcs.xml`, `phpstan.neon.dist`, `psalm.xml`, `.eslintrc.cjs`, `stylelint.config.cjs`, `docs/engineering/tooling-configuration.md` | Kod kalite araçlarının proje kapsamındaki çalışma kurallarını ve script eşleşmelerini tanımlar. | Faz 0, 11, 12 |
 | Laravel Backend Uygulaması | `backend/` | Laravel 11 tabanlı API & görev motoru iskeleti; tenant, birim, kullanıcı, olay, görev ve envanter tabloları ile örnek seed verisini içerir. | Faz 3, 4, 6, 11 |
 | OpsCenter Web Paneli | `backend/app/Http/Controllers/OpsCenterController.php`, `backend/resources/views/opscenter.blade.php` | Tenant seçimiyle olay/görev/envanter özetlerini gösteren hafif web arayüzü; Faz 6 OpsCenter gereksinimlerini prototip olarak doğrular. | Faz 4, 6 |
+<<<<<<< HEAD
 | Tenant Kapsamı Bileşenleri | `backend/app/Tenant/`, `backend/app/Http/Middleware/EnsureTenant.php`, `backend/app/Models/Concerns/BelongsToTenant.php` | HTTP isteklerinden tenant çözümleyip modelleri otomatik `tenant_id` filtresiyle sınırlar; multi-tenant güvenlik gereksinimlerini pekiştirir. | Faz 2, 3, 6 |
+=======
+| OpsCenter Özet Servisi | `backend/app/OpsCenter/OpsCenterSummary.php`, `backend/app/Http/Controllers/Api/OpsCenterSummaryController.php` | Web paneli ve JSON API’nin aynı veri kümesini kullanmasını sağlayan ortak özet katmanı; Faz 6 durum farkındalığı için raporlamayı hızlandırır. | Faz 4, 6 |
+| Kullanıcı Yönetimi API’si | `backend/app/Http/Controllers/Api/UserController.php`, `backend/app/Http/Requests/Api/Users/`, `backend/tests/Feature/Api/UserApiTest.php` | Tenant izolasyonlu kullanıcı listeleme, detay, oluşturma ve güncelleme uçlarını belge doğrulaması ve şifre politikalarıyla sağlar. | Faz 1, 3 |
+| Tenant Keşif API’si | `backend/app/Http/Controllers/Api/TenantController.php`, `backend/app/Http/Resources/TenantResource.php`, `backend/tests/Feature/Api/TenantApiTest.php` | Tenant listesini metriklerle birlikte döndürür; slug/arama filtreleri ve OpsCenter özet JSON çıktısı ile Faz 6 panellerine veri besler. | Faz 3, 4, 6 |
+| Tenant Kapsamı Bileşenleri | `backend/app/Tenant/`, `backend/app/Http/Middleware/EnsureTenant.php`, `backend/app/Models/Concerns/BelongsToTenant.php` | HTTP isteklerinden tenant çözümleyip modelleri otomatik `tenant_id` filtresiyle sınırlar; `findForTenantByIdentifier` yardımıyla slug/ID (sayısal slug dahil) çözümlemelerini merkezî hale getirir. | Faz 2, 3, 6 |
+>>>>>>> b5aab88 (Add tenant discovery API with summary metrics)
 | Statik Analiz Stubları | `stubs/laravel-model.stubphp` | Psalm, `backend/app/` içindeki çoklu tenant modellerini tararken Laravel Eloquent bağımlılıklarının sembolik tanımlarını sağlar; factory jenerik uyarıları bilgi seviyesine çekilmiştir ve kalite süiti backend kodunu kapsayacak şekilde tamamlanır. | Faz 11, 12 |
 | PR Kontrol Araçları | `tools/check-binary-files.sh`, `docs/engineering/pr-checklist.md` | PR açmadan önce ikili dosya taraması ve kalite adımlarının tamamlandığını doğrular. | Faz 0, 11, 12 |
 | Kalite Suite Otomasyonu | `tools/run-quality-suite.sh`, `docs/engineering/quality-suite.md` | Kod kalite kontrollerini tek komutta koşturur; eksik vendor veya frontend bağımlılıklarında `composer install` ve `npm install --no-audit --progress false` komutlarını otomatik tetikler. | Faz 0, 11, 12 |
 | PHP Kalite Bağımlılıkları | `composer.json`, `composer.lock` | Kod kalite araçlarının Composer ile kurulmasını ve `composer run quality` komutunu standartlaştırır. | Faz 0, 11, 12 |
 | Frontend Kalite Bağımlılıkları | `package.json`, `package-lock.json` | ESLint/Stylelint bağımlılıklarını sabitler; kalite suite `npm install --no-audit --progress false` komutuyla otomatik kurar. | Faz 0, 11, 12 |
+<<<<<<< HEAD
 | Kod Kalite Konfigürasyonları | `.php-cs-fixer.dist.php`, `phpcs.xml`, `phpstan.neon.dist`, `psalm.xml`, `.eslintrc.cjs`, `stylelint.config.cjs`, `docs/engineering/tooling-configuration.md` | Kod kalite araçlarının proje kapsamındaki çalışma kurallarını ve script eşleşmelerini tanımlar. | Faz 0, 11, 12 |
 | PR Kontrol Araçları | `tools/check-binary-files.sh`, `docs/engineering/pr-checklist.md` | PR açmadan önce ikili dosya taraması ve kalite adımlarının tamamlandığını doğrular. | Faz 0, 11, 12 |
 | Kalite Suite Otomasyonu | `tools/run-quality-suite.sh`, `docs/engineering/quality-suite.md` | Kod kalite kontrollerini tek komutta koşturur; PHP araçları eksikse `composer install` komutunu otomatik çalıştırır. | Faz 0, 11, 12 |
 | PHP Kalite Bağımlılıkları | `composer.json`, `composer.lock` | Kod kalite araçlarının Composer ile kurulmasını ve `composer run quality` komutunu standartlaştırır. | Faz 0, 11, 12 |
+=======
+>>>>>>> b5aab88 (Add tenant discovery API with summary metrics)
 | Veri Yönetimi & Maskeleme | `governance/data-quality-dashboard/`, `open-data/releases/` | Veri kalitesi raporları, maskeleme checklist’leri ve paylaşım politikaları. | Faz 2, 21 |
 
 ## Kategori Bazlı Açıklamalar
@@ -88,8 +98,11 @@ Bu rehber, dokümantasyon boyunca tekrar eden “devam et” genişletmeleriyle 
 - `.env.example` ve `docs/engineering/env-management.md` ortam şablonlarının güncelliğini, gizli anahtar rotasyon ilkelerini ve audit kayıtlarının nasıl tutulacağını açıklar; değişiklikler `config/environment/` altındaki YAML dosyalarıyla birlikte takip edilir.
 - `docs/engineering/pr-checklist.md`, `tools/check-binary-files.sh` ve `tools/run-quality-suite.sh` PR açılışından önce uygulanması gereken kontrolleri hem manuel hem otomasyonlu şekilde sunar; Codex tabanlı süreçlerin kesintisiz işlemesine yardımcı olur.
 - `package.json` ve `package-lock.json` dosyaları frontend kalite araçlarını sabitler; kalite suite çalıştırıldığında eksik `node_modules` için `npm install --no-audit --progress false` komutu otomatik devreye girer.
+<<<<<<< HEAD
 - `docs/engineering/local-development.md` yeni cihaz kurulumu, `.env` hazırlığı ve günlük komutlar için zorunlu checklist’i içerir; kalite suite ve PR kontrolleri tamamlanmadan merge talebi oluşturulamaz.
 - `docs/engineering/pr-checklist.md`, `tools/check-binary-files.sh` ve `tools/run-quality-suite.sh` PR açılışından önce uygulanması gereken kontrolleri hem manuel hem otomasyonlu şekilde sunar; Codex tabanlı süreçlerin kesintisiz işlemesine yardımcı olur.
+=======
+>>>>>>> b5aab88 (Add tenant discovery API with summary metrics)
 - Sprint planlama, release hazırlığı ve postmortem süreçlerinde bu rehberlere atıf yapılması zorunludur; güncellemeler README sürüm tablosu ve `CHANGELOG.md` üzerinden izlenir.
 
 ### 10. Veri Kalitesi ve Maskeleme Standartları

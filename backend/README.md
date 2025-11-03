@@ -67,6 +67,11 @@ Tenant bağlamında çalışan REST uçları `routes/api.php` dosyasında tanım
 
 | Kaynak | Uç | Açıklama |
 | --- | --- | --- |
+<<<<<<< HEAD
+=======
+| Tenant Listesi | `GET /api/tenants` | Tenant’ların slug, ad ve temel metriklerini listeler; `search` veya `slug` parametreleriyle filtrelenebilir. |
+| Tenant Detayı | `GET /api/tenants/{tenant}` | Belirtilen tenant’ın sayaçlarını ve OpsCenter özetini JSON olarak döndürür (`include_summary=0` ile özet kapatılabilir). |
+>>>>>>> b5aab88 (Add tenant discovery API with summary metrics)
 | Olaylar | `GET /api/tenants/{tenant}/incidents` | Durum, öncelik ve kod filtreleriyle olay listesini döndürür. |
 | Olay Oluştur | `POST /api/tenants/{tenant}/incidents` | Benzersiz kod, GeoJSON (Polygon/MultiPolygon) ve zaman doğrulamasıyla yeni olay kaydı oluşturur. |
 | Olay Güncelle | `PATCH /api/tenants/{tenant}/incidents/{incident}` | Tenant doğrulamasıyla başlık, durum, öncelik ve GeoJSON alanlarını günceller; `closed` durumuna geçişte `closed_at` zorunludur. |
@@ -80,8 +85,19 @@ Tenant bağlamında çalışan REST uçları `routes/api.php` dosyasında tanım
 | Envanter Oluştur | `POST /api/tenants/{tenant}/inventories` | Kod benzersizliği, durum ve servis tarihi doğrulamasıyla yeni envanter kaydı oluşturur. |
 | Envanter Güncelle | `PATCH /api/tenants/{tenant}/inventories/{inventory}` | Tenant izolasyonu korunarak kod, durum, isim ve servis tarihi alanlarını günceller. |
 | Kullanıcılar | `GET /api/tenants/{tenant}/users` | Durum, rol, birim ve arama parametreleri ile kullanıcı listesini döndürür. |
+<<<<<<< HEAD
 | Birimler | `GET /api/tenants/{tenant}/units` | Tür ve arama filtresiyle birim listesini, görev/kullanıcı istatistikleriyle birlikte döndürür. |
 | Birim Detayı | `GET /api/tenants/{tenant}/units/{unit}` | Son 10 görevi, kullanıcı listesini ve aktif görev sayısını içerir. |
+=======
+| Kullanıcı Detayı | `GET /api/tenants/{tenant}/users/{user}` | Tenant doğrulamasıyla kullanıcı bilgilerini, birim eşleşmesini ve belge durumunu döndürür. |
+| Kullanıcı Oluştur | `POST /api/tenants/{tenant}/users` | Tenant kapsamında benzersiz e-posta, belge geçerlilik tarihi ve güçlü şifre doğrulamasıyla yeni kullanıcı oluşturur. |
+| Kullanıcı Güncelle | `PATCH /api/tenants/{tenant}/users/{user}` | Tenant izolasyonunu koruyarak ad, durum, birim ataması ve şifre güncellemelerini uygular. |
+| Birimler | `GET /api/tenants/{tenant}/units` | Tür ve arama filtresiyle birim listesini, görev/kullanıcı istatistikleriyle birlikte döndürür. |
+| Birim Detayı | `GET /api/tenants/{tenant}/units/{unit}` | Son 10 görevi, kullanıcı listesini ve aktif görev sayısını içerir (ID veya slug — sayısal slug’lar dahil). |
+| Birim Oluştur | `POST /api/tenants/{tenant}/units` | Otomatik/manuel slug üretimiyle benzersiz birim kaydı oluşturur; tip seçimi ve meta veriler doğrulanır. |
+| Birim Güncelle | `PATCH /api/tenants/{tenant}/units/{unit}` | Slug, ad, tip ve metadata güncellemelerini tenant izolasyonu korunarak uygular (ID veya slug — sayısal slug’lar dahil). |
+| OpsCenter Özeti | `GET /api/tenants/{tenant}/opscenter/summary` | Panelde gösterilen olay/görev/envanter sayıları ile son kayıtları JSON formatında döndürür. |
+>>>>>>> b5aab88 (Add tenant discovery API with summary metrics)
 
 > **Not:** Birim detayı uç noktası ID veya slug ile erişilebilir. Her iki durumda da istek bağlamındaki tenant doğrulanır ve farklı tenant’a ait kayıtlar 404 döner.
 

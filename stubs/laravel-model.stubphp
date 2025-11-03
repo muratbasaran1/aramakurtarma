@@ -96,7 +96,10 @@ class Builder
     }
 
     public function selectRaw(string $expression, array $bindings = []): self
+<<<<<<< HEAD
     public function select(array $columns): self
+=======
+>>>>>>> b5aab88 (Add tenant discovery API with summary metrics)
     {
         return $this;
     }
@@ -205,11 +208,27 @@ abstract class Model
         return null;
     }
 
+<<<<<<< HEAD
+=======
+    public function getRelation(string $key): mixed
+    {
+        return null;
+    }
+
+>>>>>>> b5aab88 (Add tenant discovery API with summary metrics)
     public function load(array|string $relations): static
     {
         return $this;
     }
 
+<<<<<<< HEAD
+=======
+    public function loadMissing(array|string $relations): static
+    {
+        return $this;
+    }
+
+>>>>>>> b5aab88 (Add tenant discovery API with summary metrics)
     public function setAttribute(string $key, mixed $value): void
     {
     }
