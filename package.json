@@ -1,0 +1,27 @@
+{
+  "name": "tudak-afet-yonetim",
+  "version": "0.0.0",
+  "private": true,
+  "description": "TUDAK Afet Yönetim Sistemi frontend kalite araçları",
+  "scripts": {
+    "lint": "npm run lint:eslint && npm run lint:stylelint",
+    "lint:eslint": "eslint --max-warnings=0 --no-error-on-unmatched-pattern --ext .js,.jsx,.ts,.tsx,.vue resources/js resources/ts resources/views",
+    "lint:stylelint": "stylelint \"resources/**/*.{css,scss,pcss,vue}\" --allow-empty-input"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.46.2",
+    "@typescript-eslint/parser": "^8.46.2",
+    "eslint": "^9.38.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "eslint-plugin-vue": "^10.5.1",
+    "postcss-html": "^1.8.0",
+    "prettier": "^3.6.2",
+    "stylelint": "^16.23.0",
+    "stylelint-config-recommended-vue": "^1.6.1",
+    "stylelint-config-standard": "^39.0.1",
+    "stylelint-order": "^7.0.0",
+    "typescript": "^5.6.3",
+    "vue-eslint-parser": "^10.2.0"
+  }
+}

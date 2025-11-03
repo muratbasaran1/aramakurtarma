@@ -1,0 +1,3 @@
+id,title,impact,likelihood,score,owner,status,next_review
+R-2024-001,Offline kuyruk kapasite riski,Yüksek,Orta,12,Ops Center,Eylemde,2024-07-15
+R-2024-002,Yetkisiz erişim riski,Çok Yüksek,Düşük,15,Güvenlik,Eylemde,2024-07-10
