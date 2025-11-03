@@ -1,0 +1,3 @@
+id,category,area,impact_score,target_fix_date,owner,status
+TD-2024-01,Code,Tracking Service,8,2024-08-01,Backend Team,Planned
+TD-2024-02,Infra,OpsCenter Cache,7,2024-07-20,DevOps Team,In Progress

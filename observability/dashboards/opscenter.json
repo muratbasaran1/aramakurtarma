@@ -1,0 +1,79 @@
+{
+  "title": "OpsCenter Durum Panosu",
+  "phase": [4, 6, 7, 11],
+  "panels": [
+    {
+      "id": 1,
+      "title": "API P99 Latency",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.99, sum(rate(http_server_requests_duration_seconds_bucket{service=\"api\"}[5m])) by (le))"
+        }
+      ],
+      "thresholds": [
+        { "label": "Uyarı", "value": 1.0 },
+        { "label": "Kritik", "value": 1.5 }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Aktif WS Bağlantıları",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "sum(opscenter_ws_active_connections) by (tenant)"
+        }
+      ],
+      "annotations": [
+        {
+          "text": "Benchmark hedefi 10k",
+          "phase_ref": 4
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Kural Motoru Kuyruk Gecikmesi",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(rule_engine_queue_latency_bucket[5m])) by (le))"
+        }
+      ],
+      "thresholds": [
+        { "label": "Uyarı", "value": 3.0 },
+        { "label": "Kritik", "value": 5.0 }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "No Motion Alerts",
+      "type": "table",
+      "targets": [
+        {
+          "expr": "sum(increase(no_motion_alerts_total[1h])) by (tenant, acknowledged)"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "DB Replication Lag",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "max(pg_replication_lag_seconds)"
+        }
+      ],
+      "thresholds": [
+        { "label": "Uyarı", "value": 1.5 },
+        { "label": "Kritik", "value": 3.0 }
+      ]
+    }
+  ],
+  "links": [
+    { "title": "Runbook: OpsCenter Degradation", "url": "../../runbook/opscenter-degradation.md" },
+    { "title": "Runbook: No Motion Alert", "url": "../../runbooks/tracking/no-motion-alert.md" },
+    { "title": "Benchmark: 2024-07-10 OpsCenter", "url": "../../analytics/benchmark/2024-07-10-opscenter.md" }
+  ]
+}

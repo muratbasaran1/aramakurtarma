@@ -1,0 +1,38 @@
+# Digital Twin Veri Seti Kataloğu
+# Her veri seti Faz 24 veri gölü aktarımıyla uyumlu olacak şekilde tanımlanır.
+
+- id: dt-incident-polygons
+  ad: "Olay Poligonları"
+  kaynak: "PostGIS incidents.tablosu"
+  güncelleme_sıklığı: "5 dk"
+  saklama: "PMTiles + GeoJSON snapshot"
+  kalite_kriterleri:
+    - "Polygon self-intersection yok"
+    - "tenant_id zorunlu"
+  kullanım:
+    - fazlar: [4, 6, 8]
+    - açıklama: "OpsCenter harita overlay ve playback modülü"
+
+- id: dt-resource-inventory
+  ad: "Envanter Konum Zaman Serisi"
+  kaynak: "inventory_movements"
+  güncelleme_sıklığı: "15 dk"
+  saklama: "TimeSeriesDB + CSV yedek"
+  kalite_kriterleri:
+    - "LineString koordinat sayısı ≥ 2"
+    - "status ∈ {active, service, retired}"
+  kullanım:
+    - fazlar: [3, 18]
+    - açıklama: "Lojistik planlama ve zincir izlenebilirliği"
+
+- id: dt-risk-overlays
+  ad: "Risk Katmanları"
+  kaynak: "Harici FIRMS/WAQI/USGS API"
+  güncelleme_sıklığı: "60 dk"
+  saklama: "Data Lake Parquet"
+  kalite_kriterleri:
+    - "Timestamp ISO8601"
+    - "Harici kaynak hash doğrulaması"
+  kullanım:
+    - fazlar: [7, 8, 23]
+    - açıklama: "Kural motoru tetikleri ve senaryo simülasyonu"

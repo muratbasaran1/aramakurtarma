@@ -1,0 +1,5 @@
+hafta,başlangıç,opscenter_komutanı,devops_gözcüsü,güvenlik_gözcüsü,tenant_temsilcisi,not
+2024-07-15,2024-07-15T08:00Z,A. Yılmaz,B. Demir,C. Aksoy,D. Öztürk,Gündüz vardiyası; network-partition deney sonrası izleme
+2024-07-15,2024-07-15T20:00Z,E. Kaya,F. Gür,S. Doğan,H. Çelik,Gece vardiyası; SMS fallback testleri
+2024-07-22,2024-07-22T08:00Z,B. Demir,C. Aksoy,E. Kaya,A. Yılmaz,Database failover hazırlığı
+2024-07-22,2024-07-22T20:00Z,F. Gür,S. Doğan,H. Çelik,D. Öztürk,Hareketsizlik alarmı iyileştirme gözlemi
