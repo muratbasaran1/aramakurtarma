@@ -109,15 +109,15 @@ class UpdateTaskRequest extends FormRequest
                 $validator->errors()->add('verified_at', 'Doğrulama tarihi tamamlanma tarihinden önce olamaz.');
             }
 
-            if (\in_array($finalStatus, ['done', 'verified'], true) && $completedAt === null) {
+            if (\in_array($finalStatus, [Task::STATUS_DONE, Task::STATUS_VERIFIED], true) && $completedAt === null) {
                 $validator->errors()->add('completed_at', 'Tamamlanan görevler için completed_at alanı gereklidir.');
             }
 
-            if ($finalStatus === 'verified' && $verifiedAt === null) {
+            if ($finalStatus === Task::STATUS_VERIFIED && $verifiedAt === null) {
                 $validator->errors()->add('verified_at', 'Doğrulanan görevler için verified_at alanı gereklidir.');
             }
 
-            if ($finalStatus === 'verified' && ! $requiresDouble) {
+            if ($finalStatus === Task::STATUS_VERIFIED && ! $requiresDouble) {
                 $validator->errors()->add('requires_double_confirmation', 'Çift onay kapalıyken görev doğrulanamaz.');
             }
         });

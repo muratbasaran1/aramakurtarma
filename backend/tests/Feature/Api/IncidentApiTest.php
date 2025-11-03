@@ -125,6 +125,13 @@ class IncidentApiTest extends TestCase
             'code' => 'INC-900',
             'status' => 'active',
         ]);
+
+        $this->assertDatabaseHas('audit_logs', [
+            'event' => 'incident.created',
+            'auditable_type' => Incident::class,
+            'auditable_id' => $response->json('data.id'),
+            'tenant_id' => $tenant->id,
+        ]);
     }
 
     public function test_it_enforces_unique_incident_codes_per_tenant(): void
@@ -190,6 +197,13 @@ class IncidentApiTest extends TestCase
             'status' => 'active',
             'priority' => 'high',
         ]);
+
+        $this->assertDatabaseHas('audit_logs', [
+            'event' => 'incident.updated',
+            'auditable_type' => Incident::class,
+            'auditable_id' => $incident->getKey(),
+            'tenant_id' => $tenant->id,
+        ]);
     }
 
     public function test_it_validates_unique_code_during_update(): void
@@ -231,6 +245,67 @@ class IncidentApiTest extends TestCase
             'id' => $incident->getKey(),
             'tenant_id' => $otherTenant->getKey(),
             'status' => $incident->status,
+        ]);
+    }
+
+    public function test_it_deletes_open_incident_without_tasks(): void
+    {
+        $tenant = Tenant::factory()->create(['slug' => 'malatya']);
+        $incident = Incident::factory()->for($tenant)->create([
+            'status' => Incident::STATUS_OPEN,
+        ]);
+
+        $response = $this->deleteJson('/api/tenants/'.$tenant->slug.'/incidents/'.$incident->getKey());
+
+        $response->assertNoContent();
+
+        $this->assertDatabaseHas('audit_logs', [
+            'event' => 'incident.deleted',
+            'auditable_type' => Incident::class,
+            'auditable_id' => $incident->getKey(),
+            'tenant_id' => $tenant->id,
+        ]);
+
+        $this->assertDatabaseMissing('incidents', [
+            'id' => $incident->getKey(),
+        ]);
+    }
+
+    public function test_it_prevents_deleting_incident_with_tasks(): void
+    {
+        $tenant = Tenant::factory()->create(['slug' => 'kocaeli']);
+        $incident = Incident::factory()->for($tenant)->create([
+            'status' => Incident::STATUS_OPEN,
+        ]);
+
+        Task::factory()->for($tenant)->for($incident)->create();
+
+        $response = $this->deleteJson('/api/tenants/'.$tenant->slug.'/incidents/'.$incident->getKey());
+
+        $response->assertStatus(422)
+            ->assertJsonPath('message', 'Aktif görevi bulunan olay silinemez.');
+
+        $this->assertDatabaseHas('incidents', [
+            'id' => $incident->getKey(),
+        ]);
+    }
+
+    public function test_it_prevents_deleting_incident_from_other_tenant(): void
+    {
+        $tenant = Tenant::factory()->create(['slug' => 'sinop']);
+        $otherTenant = Tenant::factory()->create(['slug' => 'giresun']);
+
+        $incident = Incident::factory()->for($otherTenant)->create([
+            'status' => Incident::STATUS_OPEN,
+        ]);
+
+        $response = $this->deleteJson('/api/tenants/'.$tenant->slug.'/incidents/'.$incident->getKey());
+
+        $response->assertNotFound();
+
+        $this->assertDatabaseHas('incidents', [
+            'id' => $incident->getKey(),
+            'tenant_id' => $otherTenant->getKey(),
         ]);
     }
 }

@@ -68,7 +68,7 @@ class StoreTaskRequest extends FormRequest
     public function withValidator(Validator $validator): void
     {
         $validator->after(function (Validator $validator): void {
-            $status = $this->input('status', 'planned');
+            $status = $this->input('status', Task::STATUS_PLANNED);
             $completedProvided = $this->filled('completed_at');
             $verifiedProvided = $this->filled('verified_at');
             $requiresDouble = $this->has('requires_double_confirmation')
@@ -79,15 +79,15 @@ class StoreTaskRequest extends FormRequest
                 ) ?? false
                 : true;
 
-            if (\in_array($status, ['done', 'verified'], true) && ! $completedProvided) {
+            if (\in_array($status, [Task::STATUS_DONE, Task::STATUS_VERIFIED], true) && ! $completedProvided) {
                 $validator->errors()->add('completed_at', 'Tamamlanan görevler için completed_at alanı gereklidir.');
             }
 
-            if ($status === 'verified' && ! $verifiedProvided) {
+            if ($status === Task::STATUS_VERIFIED && ! $verifiedProvided) {
                 $validator->errors()->add('verified_at', 'Doğrulanan görevler için verified_at alanı gereklidir.');
             }
 
-            if ($status === 'verified' && ! $requiresDouble) {
+            if ($status === Task::STATUS_VERIFIED && ! $requiresDouble) {
                 $validator->errors()->add('requires_double_confirmation', 'Çift onay kapalıyken görev doğrulanamaz.');
             }
         });

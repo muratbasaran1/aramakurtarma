@@ -29,6 +29,7 @@ Aşağıdaki tablolar Faz 2 (veri sertleştirme) ve Faz 3 (çekirdek modüller) 
 | `incidents` | Olay yönetimi | `code` (tenant içinde benzersiz), `status` (`open/active/closed`), `priority`, `impact_area` (Polygon / JSON)
 | `tasks` | Görev yaşam döngüsü | `status` (`planned/assigned/in_progress/done/verified`), `route` (LineString / JSON), `requires_double_confirmation`
 | `inventories` | Envanter takibi | `status` (`active/service/retired`), `last_service_at`, `attributes` (JSON)
+| `audit_logs` | İşlem geçmişi | `tenant_id`, `event`, `auditable_type`, `auditable_id`, `payload` (değişiklikler + meta)
 
 > **Not:** Uzamsal veri tipleri (`impact_area`, `route`) SQLite test ortamında otomatik olarak JSON sütunlarına düşer. MySQL 8+ ortamında gerçek `POLYGON` ve `LINESTRING` tipleri kullanılır.
 
@@ -38,7 +39,7 @@ Aşağıdaki tablolar Faz 2 (veri sertleştirme) ve Faz 3 (çekirdek modüller) 
 - Incident → Tasks: `hasMany`
 - Task → Tenant/Incident/Unit/User: `belongsTo`
 
-Model sınıfları (`app/Models/*`) ilgili ilişki ve JSON alan `casts` tanımlarını içerir. Bu sayede Eloquent üzerinden faz gereksinimlerinde geçen kural ve doğrulamalar kolayca uygulanabilir.
+Model sınıfları (`app/Models/*`) ilgili ilişki ve JSON alan `casts` tanımlarını içerir. Bu sayede Eloquent üzerinden faz gereksinimlerinde geçen kural ve doğrulamalar kolayca uygulanabilir. `AuditLog` modeli ise API denetim kayıtlarını JSON payload olarak saklar.
 
 ## Çoklu Tenant Kapsamı & Middleware
 - `App\Models\Concerns\BelongsToTenant` trait’i, `tenant_id` sütunu bulunan modelleri otomatik olarak aktif tenant ile sınırlar. `TenantContext` tanımlıysa tüm sorgular `WHERE tenant_id = ?` filtresiyle çalışır ve kayıt oluşturulurken boş kalan `tenant_id` otomatik doldurulur.
@@ -73,23 +74,34 @@ Tenant bağlamında çalışan REST uçları `routes/api.php` dosyasında tanım
 | Olay Oluştur | `POST /api/tenants/{tenant}/incidents` | Benzersiz kod, GeoJSON (Polygon/MultiPolygon) ve zaman doğrulamasıyla yeni olay kaydı oluşturur. |
 | Olay Güncelle | `PATCH /api/tenants/{tenant}/incidents/{incident}` | Tenant doğrulamasıyla başlık, durum, öncelik ve GeoJSON alanlarını günceller; `closed` durumuna geçişte `closed_at` zorunludur. |
 | Olay Detayı | `GET /api/tenants/{tenant}/incidents/{incident}` | Göreve bağlanan kayıtları ve görev sayısını içerir. |
+| Olay Sil | `DELETE /api/tenants/{tenant}/incidents/{incident}` | Yalnızca `open` durumunda ve görevi bulunmayan kayıtları kalıcı olarak siler; aksi durumda 422 döner. |
 | Görevler | `GET /api/tenants/{tenant}/tasks` | Durum, olay ve çift onay filtreleriyle görev listesini döndürür. |
 | Görev Detayı | `GET /api/tenants/{tenant}/tasks/{task}` | İlgili olay, atanmış birim ve personel bilgilerini içerir. |
 | Görev Oluştur | `POST /api/tenants/{tenant}/tasks` | Tenant bağlamında olay doğrulaması yaparak görev açar; GeoJSON rota, atamalar ve planlanan başlangıç zamanı isteğe bağlıdır. |
 | Görev Güncelle | `PATCH /api/tenants/{tenant}/tasks/{task}` | Durum geçişlerinde tamamlanma/doğrulama tarihlerini ve çift onay zorunluluklarını doğrular, rota güncellemelerinde GeoJSON kontrolü yapar. |
+| Görev Sil | `DELETE /api/tenants/{tenant}/tasks/{task}` | `planned` veya `assigned` durumundaki görevleri siler; ilerlemiş görevlerde 422 döner. |
 | Envanter | `GET /api/tenants/{tenant}/inventories` | Kod, durum ve serbest metin arama destekli envanter listesini döndürür. |
 | Envanter Detayı | `GET /api/tenants/{tenant}/inventories/{inventory}` | Tenant doğrulamasıyla tekil envanter kaydını döndürür. |
 | Envanter Oluştur | `POST /api/tenants/{tenant}/inventories` | Kod benzersizliği, durum ve servis tarihi doğrulamasıyla yeni envanter kaydı oluşturur. |
 | Envanter Güncelle | `PATCH /api/tenants/{tenant}/inventories/{inventory}` | Tenant izolasyonu korunarak kod, durum, isim ve servis tarihi alanlarını günceller. |
+| Envanter Sil | `DELETE /api/tenants/{tenant}/inventories/{inventory}` | Yalnızca `retired` durumundaki kayıtları siler; aktif veya serviste olan envanter 422 döner. |
 | Kullanıcılar | `GET /api/tenants/{tenant}/users` | Durum, rol, birim ve arama parametreleri ile kullanıcı listesini döndürür. |
 | Kullanıcı Detayı | `GET /api/tenants/{tenant}/users/{user}` | Tenant doğrulamasıyla kullanıcı bilgilerini, birim eşleşmesini ve belge durumunu döndürür. |
 | Kullanıcı Oluştur | `POST /api/tenants/{tenant}/users` | Tenant kapsamında benzersiz e-posta, belge geçerlilik tarihi ve güçlü şifre doğrulamasıyla yeni kullanıcı oluşturur. |
 | Kullanıcı Güncelle | `PATCH /api/tenants/{tenant}/users/{user}` | Tenant izolasyonunu koruyarak ad, durum, birim ataması ve şifre güncellemelerini uygular. |
+| Kullanıcı Sil | `DELETE /api/tenants/{tenant}/users/{user}` | Aktif görev ataması bulunmayan kullanıcıları siler; ataması olan kayıtlar 422 döner ve işlem audit log’a kaydedilir. |
 | Birimler | `GET /api/tenants/{tenant}/units` | Tür ve arama filtresiyle birim listesini, görev/kullanıcı istatistikleriyle birlikte döndürür. |
 | Birim Detayı | `GET /api/tenants/{tenant}/units/{unit}` | Son 10 görevi, kullanıcı listesini ve aktif görev sayısını içerir (ID veya slug — sayısal slug’lar dahil). |
 | Birim Oluştur | `POST /api/tenants/{tenant}/units` | Otomatik/manuel slug üretimiyle benzersiz birim kaydı oluşturur; tip seçimi ve meta veriler doğrulanır. |
 | Birim Güncelle | `PATCH /api/tenants/{tenant}/units/{unit}` | Slug, ad, tip ve metadata güncellemelerini tenant izolasyonu korunarak uygular (ID veya slug — sayısal slug’lar dahil). |
+| Birim Sil | `DELETE /api/tenants/{tenant}/units/{unit}` | Aktif görevi veya kullanıcı kaydı bulunmayan birimleri siler; koşullar sağlanmazsa 422 döner ve audit log kaydı oluşturur. |
 | OpsCenter Özeti | `GET /api/tenants/{tenant}/opscenter/summary` | Panelde gösterilen olay/görev/envanter sayıları ile son kayıtları JSON formatında döndürür. |
+
+## Audit Log Olayları
+
+- `App\Support\Audit\AuditLogger` servisi olay, görev, envanter, birim ve kullanıcı uçlarında gerçekleşen `create`, `update` ve `delete` işlemlerini otomatik olarak `audit_logs` tablosuna yazar.
+- Payload içerisindeki `changes` alanı hassas değerleri (örn. `password`) maskeleyerek (`***`) saklar; ilişkili kaynak öznitelikleri `attributes` alanında tutulur.
+- Audit kayıtları tenant kimliği ve (varsa) kimliği doğrulanmış kullanıcı bilgisi ile ilişkilendirilir; böylece Faz 1 güvenlik ve Faz 11 izlenebilirlik hedefleri desteklenir.
 
 > **Not:** Birim detayı uç noktası ID veya slug ile erişilebilir. Her iki durumda da istek bağlamındaki tenant doğrulanır ve farklı tenant’a ait kayıtlar 404 döner.
 
@@ -110,7 +122,7 @@ Ardından tarayıcınızdan `http://localhost:8000/opscenter` adresine gidin. Bi
 ## Sonraki Adımlar
 Bu temel şema üzerine aşağıdaki yetenekler kademeli olarak eklenecektir:
 - Fortify tabanlı kimlik doğrulama, 2FA ve Spatie Permissions entegrasyonu
-- Görev doğrulama (çift onay), zimmet transaction’ları ve audit log mekanizmaları
+- Görev doğrulama (çift onay), zimmet transaction’ları ve audit log iyileştirmeleri (aksiyon sınıflandırması, webhook tetikleri)
 - Canlı takip pingi, geofence ve hareketsizlik alarmı API uçları
 
 Detaylı yol haritası ve faz bağımlılıkları proje kökündeki `README.md` ve yönetişim dokümanlarında yer almaktadır.

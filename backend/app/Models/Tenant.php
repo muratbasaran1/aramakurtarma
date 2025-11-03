@@ -68,6 +68,11 @@ class Tenant extends Model
         return $this->hasMany(Task::class);
     }
 
+    public function auditLogs(): HasMany
+    {
+        return $this->hasMany(AuditLog::class);
+    }
+
     public function getRouteKeyName(): string
     {
         return 'slug';

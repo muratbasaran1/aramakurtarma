@@ -2594,6 +2594,8 @@ _(Güncelleme: 2024-07-16)_
 | v0.37 | 2024-08-05 | Tenant birim API’sine oluştur/güncelle uçlarının eklenmesi, slug doğrulaması ve test kapsamının genişletilmesi | Teknik Liderlik |
 | v0.38 | 2024-08-05 | Birim API slug çözümleyicisinin sayısal slug desteğiyle güçlendirilmesi ve PHP-CS-Fixer import sıralamasının PHPCS ile hizalanması | Teknik Liderlik |
 | v0.39 | 2024-08-06 | Tenant keşif API’sinin eklenmesi, OpsCenter özetinin tenant detay uçlarına taşınması ve ilgili dokümantasyon kayıtlarının güncellenmesi | Teknik Liderlik |
+| v0.40 | 2024-08-06 | Tenant kaynakları için silme uçları, durum bazlı güvenlik kontrolleri ve genişletilen API/test dokümantasyonu | Teknik Liderlik |
+| v0.41 | 2024-08-07 | Audit log altyapısı, tenant API işlemlerinde otomatik kayıt ve ilgili test/dokümantasyon güncellemeleri | Teknik Liderlik |
 
 > _Not: Yeni bir sürüm yayımlandığında bu tabloya satır eklenmeli ve ilgili bölümlerde revizyon tarihi güncellenmelidir._
 

@@ -32,6 +32,8 @@ Route::middleware(['api', 'tenant'])
             ->name('incidents.store');
         Route::patch('incidents/{incident}', [IncidentController::class, 'update'])
             ->name('incidents.update');
+        Route::delete('incidents/{incident}', [IncidentController::class, 'destroy'])
+            ->name('incidents.destroy');
 
         Route::get('tasks', [TaskController::class, 'index'])
             ->name('tasks.index');
@@ -41,6 +43,8 @@ Route::middleware(['api', 'tenant'])
             ->name('tasks.store');
         Route::patch('tasks/{task}', [TaskController::class, 'update'])
             ->name('tasks.update');
+        Route::delete('tasks/{task}', [TaskController::class, 'destroy'])
+            ->name('tasks.destroy');
 
         Route::get('inventories', [InventoryController::class, 'index'])
             ->name('inventories.index');
@@ -50,6 +54,8 @@ Route::middleware(['api', 'tenant'])
             ->name('inventories.store');
         Route::patch('inventories/{inventory}', [InventoryController::class, 'update'])
             ->name('inventories.update');
+        Route::delete('inventories/{inventory}', [InventoryController::class, 'destroy'])
+            ->name('inventories.destroy');
 
         Route::get('users', [UserController::class, 'index'])
             ->name('users.index');
@@ -59,6 +65,8 @@ Route::middleware(['api', 'tenant'])
             ->name('users.store');
         Route::patch('users/{user}', [UserController::class, 'update'])
             ->name('users.update');
+        Route::delete('users/{user}', [UserController::class, 'destroy'])
+            ->name('users.destroy');
 
         Route::get('units', [UnitController::class, 'index'])
             ->name('units.index');
@@ -68,6 +76,8 @@ Route::middleware(['api', 'tenant'])
             ->name('units.store');
         Route::patch('units/{unit}', [UnitController::class, 'update'])
             ->name('units.update');
+        Route::delete('units/{unit}', [UnitController::class, 'destroy'])
+            ->name('units.destroy');
 
         Route::get('opscenter/summary', [OpsCenterSummaryController::class, 'show'])
             ->name('opscenter.summary');

@@ -147,6 +147,13 @@ class TaskApiTest extends TestCase
             'assigned_to' => $assignee->id,
             'status' => 'assigned',
         ]);
+
+        $this->assertDatabaseHas('audit_logs', [
+            'event' => 'task.created',
+            'auditable_type' => Task::class,
+            'auditable_id' => $response->json('data.id'),
+            'tenant_id' => $tenant->id,
+        ]);
     }
 
     public function test_it_updates_task_status_with_completion_fields(): void
@@ -174,6 +181,13 @@ class TaskApiTest extends TestCase
             'id' => $task->id,
             'status' => 'done',
         ]);
+
+        $this->assertDatabaseHas('audit_logs', [
+            'event' => 'task.updated',
+            'auditable_type' => Task::class,
+            'auditable_id' => $task->getKey(),
+            'tenant_id' => $tenant->id,
+        ]);
     }
 
     public function test_it_rejects_verified_status_without_double_confirmation(): void
@@ -193,5 +207,66 @@ class TaskApiTest extends TestCase
 
         $response->assertUnprocessable()
             ->assertJsonValidationErrors(['requires_double_confirmation']);
+    }
+
+    public function test_it_deletes_planned_task(): void
+    {
+        $tenant = Tenant::factory()->create(['slug' => 'rize']);
+        $incident = Incident::factory()->for($tenant)->create();
+        $task = Task::factory()->for($tenant)->for($incident)->create([
+            'status' => Task::STATUS_PLANNED,
+        ]);
+
+        $response = $this->deleteJson('/api/tenants/'.$tenant->slug.'/tasks/'.$task->getKey());
+
+        $response->assertNoContent();
+
+        $this->assertDatabaseMissing('tasks', [
+            'id' => $task->getKey(),
+        ]);
+
+        $this->assertDatabaseHas('audit_logs', [
+            'event' => 'task.deleted',
+            'auditable_type' => Task::class,
+            'auditable_id' => $task->getKey(),
+            'tenant_id' => $tenant->id,
+        ]);
+    }
+
+    public function test_it_blocks_deleting_progressed_task(): void
+    {
+        $tenant = Tenant::factory()->create(['slug' => 'trabzon']);
+        $incident = Incident::factory()->for($tenant)->create();
+        $task = Task::factory()->for($tenant)->for($incident)->create([
+            'status' => Task::STATUS_IN_PROGRESS,
+        ]);
+
+        $response = $this->deleteJson('/api/tenants/'.$tenant->slug.'/tasks/'.$task->getKey());
+
+        $response->assertStatus(422)
+            ->assertJsonPath('message', 'Görev yalnızca planlama aşamasındayken silinebilir.');
+
+        $this->assertDatabaseHas('tasks', [
+            'id' => $task->getKey(),
+        ]);
+    }
+
+    public function test_it_blocks_deleting_task_from_other_tenant(): void
+    {
+        $tenant = Tenant::factory()->create(['slug' => 'kastamonu']);
+        $otherTenant = Tenant::factory()->create(['slug' => 'bayburt']);
+        $incident = Incident::factory()->for($otherTenant)->create();
+        $task = Task::factory()->for($otherTenant)->for($incident)->create([
+            'status' => Task::STATUS_PLANNED,
+        ]);
+
+        $response = $this->deleteJson('/api/tenants/'.$tenant->slug.'/tasks/'.$task->getKey());
+
+        $response->assertNotFound();
+
+        $this->assertDatabaseHas('tasks', [
+            'id' => $task->getKey(),
+            'tenant_id' => $otherTenant->getKey(),
+        ]);
     }
 }

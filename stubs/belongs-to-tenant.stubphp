@@ -8,10 +8,6 @@ use App\Models\Tenant;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
-/**
- * @method static Builder forTenant(Tenant|int|string $tenant)
- * @method static Builder forTenantQuery(Tenant|int|string $tenant)
- */
 trait BelongsToTenant
 {
     /**
@@ -28,5 +24,15 @@ trait BelongsToTenant
     public static function findForTenantByIdentifier(Tenant|int|string $tenant, int|string $identifier)
     {
         return new Model();
+    }
+
+    public static function forTenantQuery(Tenant|int|string $tenant): Builder
+    {
+        return Model::query();
+    }
+
+    public static function forTenant(Tenant|int|string $tenant): Builder
+    {
+        return Model::query();
     }
 }

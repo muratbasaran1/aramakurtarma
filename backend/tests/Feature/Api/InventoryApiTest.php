@@ -107,6 +107,13 @@ class InventoryApiTest extends TestCase
             'tenant_id' => $tenant->getKey(),
             'code' => 'EQP-44',
         ]);
+
+        $this->assertDatabaseHas('audit_logs', [
+            'event' => 'inventory.created',
+            'auditable_type' => Inventory::class,
+            'auditable_id' => $response->json('data.id'),
+            'tenant_id' => $tenant->id,
+        ]);
     }
 
     public function test_it_defaults_status_to_active_when_omitted(): void
@@ -157,6 +164,13 @@ class InventoryApiTest extends TestCase
             'id' => $inventory->getKey(),
             'status' => 'retired',
         ]);
+
+        $this->assertDatabaseHas('audit_logs', [
+            'event' => 'inventory.updated',
+            'auditable_type' => Inventory::class,
+            'auditable_id' => $inventory->getKey(),
+            'tenant_id' => $tenant->id,
+        ]);
     }
 
     public function test_it_blocks_updates_for_inventory_from_another_tenant(): void
@@ -184,5 +198,64 @@ class InventoryApiTest extends TestCase
 
         $response->assertUnprocessable()
             ->assertJsonValidationErrors(['last_service_at']);
+    }
+
+    public function test_it_deletes_retired_inventory(): void
+    {
+        $tenant = Tenant::factory()->create(['slug' => 'diyarbakir']);
+        $inventory = Inventory::factory()->for($tenant)->create([
+            'status' => Inventory::STATUS_RETIRED,
+        ]);
+
+        $response = $this->deleteJson('/api/tenants/'.$tenant->slug.'/inventories/'.$inventory->getKey());
+
+        $response->assertNoContent();
+
+        $this->assertDatabaseMissing('inventories', [
+            'id' => $inventory->getKey(),
+        ]);
+
+        $this->assertDatabaseHas('audit_logs', [
+            'event' => 'inventory.deleted',
+            'auditable_type' => Inventory::class,
+            'auditable_id' => $inventory->getKey(),
+            'tenant_id' => $tenant->id,
+        ]);
+    }
+
+    public function test_it_blocks_deleting_non_retired_inventory(): void
+    {
+        $tenant = Tenant::factory()->create(['slug' => 'mersin']);
+        $inventory = Inventory::factory()->for($tenant)->create([
+            'status' => Inventory::STATUS_ACTIVE,
+        ]);
+
+        $response = $this->deleteJson('/api/tenants/'.$tenant->slug.'/inventories/'.$inventory->getKey());
+
+        $response->assertStatus(422)
+            ->assertJsonPath('message', 'Envanter yalnızca emekli durumundayken silinebilir.');
+
+        $this->assertDatabaseHas('inventories', [
+            'id' => $inventory->getKey(),
+            'tenant_id' => $tenant->getKey(),
+        ]);
+    }
+
+    public function test_it_blocks_deleting_inventory_from_other_tenant(): void
+    {
+        $tenant = Tenant::factory()->create(['slug' => 'gaziantep']);
+        $otherTenant = Tenant::factory()->create(['slug' => 'malatya']);
+        $inventory = Inventory::factory()->for($otherTenant)->create([
+            'status' => Inventory::STATUS_RETIRED,
+        ]);
+
+        $response = $this->deleteJson('/api/tenants/'.$tenant->slug.'/inventories/'.$inventory->getKey());
+
+        $response->assertNotFound();
+
+        $this->assertDatabaseHas('inventories', [
+            'id' => $inventory->getKey(),
+            'tenant_id' => $otherTenant->getKey(),
+        ]);
     }
 }

@@ -11,6 +11,7 @@ use App\Http\Requests\Api\Tasks\UpdateTaskRequest;
 use App\Http\Resources\TaskResource;
 use App\Models\Task;
 use App\Models\Tenant;
+use App\Support\Audit\AuditLogger;
 use App\Tenant\TenantContext;
 use Illuminate\Contracts\Database\Query\Expression as ExpressionContract;
 use Illuminate\Http\JsonResponse;
@@ -25,8 +26,10 @@ class TaskController extends Controller
 {
     use InterpretsFilters;
 
-    public function __construct(private readonly TenantContext $tenantContext)
-    {
+    public function __construct(
+        private readonly TenantContext $tenantContext,
+        private readonly AuditLogger $auditLogger
+    ) {
     }
 
     public function index(Request $request): AnonymousResourceCollection
@@ -91,9 +94,15 @@ class TaskController extends Controller
         }
 
         $validated = $request->validated();
+        $auditChanges = $validated;
 
         $validated['tenant_id'] = $contextTenant->getKey();
-        $validated['status'] = $validated['status'] ?? 'planned';
+        $auditChanges['tenant_id'] = $contextTenant->getKey();
+
+        if (! isset($validated['status'])) {
+            $validated['status'] = Task::STATUS_PLANNED;
+            $auditChanges['status'] = Task::STATUS_PLANNED;
+        }
 
         if (\array_key_exists('route', $validated)) {
             $route = $validated['route'];
@@ -109,6 +118,10 @@ class TaskController extends Controller
             'incident:id,tenant_id,code,title,status,priority',
             'assignedUnit:id,name',
             'assignee:id,name,email,unit_id',
+        ]);
+
+        $this->auditLogger->record('task.created', $task, [
+            'changes' => $auditChanges,
         ]);
 
         return (new TaskResource($task))
@@ -129,6 +142,7 @@ class TaskController extends Controller
         }
 
         $validated = $request->validated();
+        $auditChanges = $validated;
 
         if (\array_key_exists('route', $validated)) {
             $route = $validated['route'];
@@ -147,7 +161,38 @@ class TaskController extends Controller
             'assignee:id,name,email,unit_id',
         ]);
 
+        if ($auditChanges !== []) {
+            $this->auditLogger->record('task.updated', $task, [
+                'changes' => $auditChanges,
+            ]);
+        }
+
         return new TaskResource($task);
+    }
+
+    public function destroy(string $tenant, Task $task): Response
+    {
+        $contextTenant = $this->tenant();
+
+        if ($contextTenant->slug !== $tenant) {
+            throw new RuntimeException('İstek bağlamı ile rota tenant bilgisi uyuşmuyor.');
+        }
+
+        if ($task->tenant_id !== $contextTenant->getKey()) {
+            abort(Response::HTTP_NOT_FOUND);
+        }
+
+        if (! \in_array($task->status, [Task::STATUS_PLANNED, Task::STATUS_ASSIGNED], true)) {
+            abort(Response::HTTP_UNPROCESSABLE_ENTITY, 'Görev yalnızca planlama aşamasındayken silinebilir.');
+        }
+
+        $this->auditLogger->record('task.deleted', $task, [
+            'attributes' => $task->withoutRelations()->toArray(),
+        ]);
+
+        $task->delete();
+
+        return response()->noContent();
     }
 
     private function tenant(): Tenant

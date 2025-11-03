@@ -27,7 +27,8 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  *
- * @method static Builder|self forTenant(Tenant|int|string $tenant)
+ * @method static Builder forTenant(Tenant|int|string $tenant)
+ * @method static Builder forTenantQuery(Tenant|int|string $tenant)
  * @method Builder forTenant(Tenant|int|string $tenant)
  */
 class Task extends Model
@@ -36,10 +37,22 @@ class Task extends Model
     use HasFactory;
     use BelongsToTenant;
 
+    public const STATUS_PLANNED = 'planned';
+    public const STATUS_ASSIGNED = 'assigned';
+    public const STATUS_IN_PROGRESS = 'in_progress';
+    public const STATUS_DONE = 'done';
+    public const STATUS_VERIFIED = 'verified';
+
     /**
      * @var list<string>
      */
-    public const STATUSES = ['planned', 'assigned', 'in_progress', 'done', 'verified'];
+    public const STATUSES = [
+        self::STATUS_PLANNED,
+        self::STATUS_ASSIGNED,
+        self::STATUS_IN_PROGRESS,
+        self::STATUS_DONE,
+        self::STATUS_VERIFIED,
+    ];
 
     /**
      * @var list<string>

@@ -11,6 +11,7 @@ use App\Http\Requests\Api\Inventories\UpdateInventoryRequest;
 use App\Http\Resources\InventoryResource;
 use App\Models\Inventory;
 use App\Models\Tenant;
+use App\Support\Audit\AuditLogger;
 use App\Tenant\TenantContext;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -22,8 +23,10 @@ class InventoryController extends Controller
 {
     use InterpretsFilters;
 
-    public function __construct(private readonly TenantContext $tenantContext)
-    {
+    public function __construct(
+        private readonly TenantContext $tenantContext,
+        private readonly AuditLogger $auditLogger
+    ) {
     }
 
     public function index(Request $request): AnonymousResourceCollection
@@ -82,11 +85,21 @@ class InventoryController extends Controller
         }
 
         $validated = $request->validated();
+        $auditChanges = $validated;
         $validated['tenant_id'] = $contextTenant->getKey();
-        $validated['status'] = $validated['status'] ?? Inventory::STATUS_ACTIVE;
+        $auditChanges['tenant_id'] = $contextTenant->getKey();
+
+        if (! isset($validated['status'])) {
+            $validated['status'] = Inventory::STATUS_ACTIVE;
+            $auditChanges['status'] = Inventory::STATUS_ACTIVE;
+        }
 
         $inventory = Inventory::query()->create($validated);
         $inventory->refresh();
+
+        $this->auditLogger->record('inventory.created', $inventory, [
+            'changes' => $auditChanges,
+        ]);
 
         return (new InventoryResource($inventory))
             ->response()
@@ -111,7 +124,38 @@ class InventoryController extends Controller
         $inventory->save();
         $inventory->refresh();
 
+        if ($validated !== []) {
+            $this->auditLogger->record('inventory.updated', $inventory, [
+                'changes' => $validated,
+            ]);
+        }
+
         return new InventoryResource($inventory);
+    }
+
+    public function destroy(string $tenant, Inventory $inventory): Response
+    {
+        $contextTenant = $this->tenant();
+
+        if ($contextTenant->slug !== $tenant) {
+            throw new RuntimeException('İstek bağlamı ile rota tenant bilgisi uyuşmuyor.');
+        }
+
+        if ($inventory->tenant_id !== $contextTenant->getKey()) {
+            abort(Response::HTTP_NOT_FOUND);
+        }
+
+        if ($inventory->status !== Inventory::STATUS_RETIRED) {
+            abort(Response::HTTP_UNPROCESSABLE_ENTITY, 'Envanter yalnızca emekli durumundayken silinebilir.');
+        }
+
+        $this->auditLogger->record('inventory.deleted', $inventory, [
+            'attributes' => $inventory->withoutRelations()->toArray(),
+        ]);
+
+        $inventory->delete();
+
+        return response()->noContent();
     }
 
     private function tenant(): Tenant

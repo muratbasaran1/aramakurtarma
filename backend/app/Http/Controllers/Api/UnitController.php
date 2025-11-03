@@ -9,8 +9,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Units\StoreUnitRequest;
 use App\Http\Requests\Api\Units\UpdateUnitRequest;
 use App\Http\Resources\UnitResource;
+use App\Models\Task;
 use App\Models\Tenant;
 use App\Models\Unit;
+use App\Support\Audit\AuditLogger;
 use App\Tenant\TenantContext;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
@@ -25,8 +27,10 @@ class UnitController extends Controller
 {
     use InterpretsFilters;
 
-    public function __construct(private readonly TenantContext $tenantContext)
-    {
+    public function __construct(
+        private readonly TenantContext $tenantContext,
+        private readonly AuditLogger $auditLogger
+    ) {
     }
 
     public function index(Request $request): AnonymousResourceCollection
@@ -38,7 +42,11 @@ class UnitController extends Controller
                 'users',
                 'tasks',
                 'tasks as active_tasks_count' => static function (Builder $builder): void {
-                    $builder->whereIn('status', ['planned', 'assigned', 'in_progress']);
+                    $builder->whereIn('status', [
+                        Task::STATUS_PLANNED,
+                        Task::STATUS_ASSIGNED,
+                        Task::STATUS_IN_PROGRESS,
+                    ]);
                 },
             ])
             ->orderBy('name');
@@ -89,12 +97,17 @@ class UnitController extends Controller
 
         $validated = $request->validated();
         $validated['tenant_id'] = $contextTenant->getKey();
+        $auditChanges = $validated;
 
         $unit = Unit::query()->create($validated);
         /** @var Unit $unit */
         $unit = $unit;
         $unit->refresh();
         $unit = $this->loadUnitRelations($unit);
+
+        $this->auditLogger->record('unit.created', $unit, [
+            'changes' => $auditChanges,
+        ]);
 
         return (new UnitResource($unit))
             ->response()
@@ -117,7 +130,44 @@ class UnitController extends Controller
         $model->save();
         $model->refresh();
 
+        if ($validated !== []) {
+            $this->auditLogger->record('unit.updated', $model, [
+                'changes' => $validated,
+            ]);
+        }
+
         return new UnitResource($this->loadUnitRelations($model));
+    }
+
+    public function destroy(string $tenant, string $unit): Response
+    {
+        $contextTenant = $this->tenant();
+
+        if ($contextTenant->slug !== $tenant) {
+            throw new RuntimeException('İstek bağlamı ile rota tenant bilgisi uyuşmuyor.');
+        }
+
+        $model = $this->resolveUnit($contextTenant, $unit);
+
+        $hasActiveTasks = $model->tasks()
+            ->whereIn('status', [
+                Task::STATUS_PLANNED,
+                Task::STATUS_ASSIGNED,
+                Task::STATUS_IN_PROGRESS,
+            ])
+            ->exists();
+
+        abort_if($hasActiveTasks, Response::HTTP_UNPROCESSABLE_ENTITY, 'Aktif görevi bulunan birim silinemez.');
+
+        abort_if($model->users()->exists(), Response::HTTP_UNPROCESSABLE_ENTITY, 'Kullanıcısı bulunan birim silinemez.');
+
+        $this->auditLogger->record('unit.deleted', $model, [
+            'attributes' => $model->withoutRelations()->toArray(),
+        ]);
+
+        $model->delete();
+
+        return response()->noContent();
     }
 
     private function tenant(): Tenant
@@ -153,7 +203,11 @@ class UnitController extends Controller
                 'users',
                 'tasks',
                 'tasks as active_tasks_count' => static function (Builder $builder): void {
-                    $builder->whereIn('status', ['planned', 'assigned', 'in_progress']);
+                    $builder->whereIn('status', [
+                        Task::STATUS_PLANNED,
+                        Task::STATUS_ASSIGNED,
+                        Task::STATUS_IN_PROGRESS,
+                    ]);
                 },
             ])
             ->with([

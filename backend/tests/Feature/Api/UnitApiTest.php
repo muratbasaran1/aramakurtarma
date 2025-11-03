@@ -163,6 +163,13 @@ class UnitApiTest extends TestCase
             'tenant_id' => $tenant->id,
             'slug' => 'saha-koordinasyon-ekibi',
         ]);
+
+        $this->assertDatabaseHas('audit_logs', [
+            'event' => 'unit.created',
+            'auditable_type' => Unit::class,
+            'auditable_id' => $response->json('data.id'),
+            'tenant_id' => $tenant->id,
+        ]);
     }
 
     public function test_store_rejects_duplicate_slug_within_tenant(): void
@@ -214,6 +221,13 @@ class UnitApiTest extends TestCase
             'tenant_id' => $tenant->id,
             'slug' => 'komuta-merkezi-2',
         ]);
+
+        $this->assertDatabaseHas('audit_logs', [
+            'event' => 'unit.updated',
+            'auditable_type' => Unit::class,
+            'auditable_id' => $unit->getKey(),
+            'tenant_id' => $tenant->id,
+        ]);
     }
 
     public function test_update_allows_numeric_slug_identifier(): void
@@ -243,6 +257,13 @@ class UnitApiTest extends TestCase
             'slug' => '456',
             'metadata->capacity' => 5,
         ]);
+
+        $this->assertDatabaseHas('audit_logs', [
+            'event' => 'unit.updated',
+            'auditable_type' => Unit::class,
+            'auditable_id' => $unit->getKey(),
+            'tenant_id' => $tenant->id,
+        ]);
     }
 
     public function test_update_returns_404_for_unit_of_another_tenant(): void
@@ -261,5 +282,96 @@ class UnitApiTest extends TestCase
                 'type' => 'medical',
             ])
             ->assertNotFound();
+    }
+
+    public function test_destroy_deletes_unit_without_dependencies(): void
+    {
+        $tenant = Tenant::factory()->create(['slug' => 'yalova']);
+        $unit = Unit::factory()->for($tenant)->create(['slug' => 'destek-ekibi']);
+
+        $response = $this->withHeaders(['X-Tenant' => $tenant->slug])
+            ->deleteJson(route('api.tenants.units.destroy', [
+                'tenant' => $tenant->slug,
+                'unit' => $unit->slug,
+            ]));
+
+        $response->assertNoContent();
+
+        $this->assertDatabaseMissing('units', [
+            'id' => $unit->getKey(),
+        ]);
+
+        $this->assertDatabaseHas('audit_logs', [
+            'event' => 'unit.deleted',
+            'auditable_type' => Unit::class,
+            'auditable_id' => $unit->getKey(),
+            'tenant_id' => $tenant->id,
+        ]);
+    }
+
+    public function test_destroy_blocks_unit_with_active_task(): void
+    {
+        $tenant = Tenant::factory()->create(['slug' => 'mus']);
+        $unit = Unit::factory()->for($tenant)->create(['slug' => 'lojistik']);
+        $incident = Incident::factory()->for($tenant)->create();
+
+        Task::factory()->for($tenant)->for($incident)->create([
+            'assigned_unit_id' => $unit->getKey(),
+            'status' => Task::STATUS_ASSIGNED,
+        ]);
+
+        $response = $this->withHeaders(['X-Tenant' => $tenant->slug])
+            ->deleteJson(route('api.tenants.units.destroy', [
+                'tenant' => $tenant->slug,
+                'unit' => $unit->slug,
+            ]));
+
+        $response->assertStatus(422)
+            ->assertJsonPath('message', 'Aktif görevi bulunan birim silinemez.');
+
+        $this->assertDatabaseHas('units', [
+            'id' => $unit->getKey(),
+        ]);
+    }
+
+    public function test_destroy_blocks_unit_with_users(): void
+    {
+        $tenant = Tenant::factory()->create(['slug' => 'adana']);
+        $unit = Unit::factory()->for($tenant)->create(['slug' => 'lojistik-2']);
+
+        User::factory()->for($tenant)->for($unit)->create();
+
+        $response = $this->withHeaders(['X-Tenant' => $tenant->slug])
+            ->deleteJson(route('api.tenants.units.destroy', [
+                'tenant' => $tenant->slug,
+                'unit' => $unit->slug,
+            ]));
+
+        $response->assertStatus(422)
+            ->assertJsonPath('message', 'Kullanıcısı bulunan birim silinemez.');
+
+        $this->assertDatabaseHas('units', [
+            'id' => $unit->getKey(),
+        ]);
+    }
+
+    public function test_destroy_blocks_unit_from_other_tenant(): void
+    {
+        $tenant = Tenant::factory()->create(['slug' => 'edirne']);
+        $otherTenant = Tenant::factory()->create(['slug' => 'kirklareli']);
+        $unit = Unit::factory()->for($otherTenant)->create(['slug' => 'arama']);
+
+        $response = $this->withHeaders(['X-Tenant' => $tenant->slug])
+            ->deleteJson(route('api.tenants.units.destroy', [
+                'tenant' => $tenant->slug,
+                'unit' => $unit->slug,
+            ]));
+
+        $response->assertNotFound();
+
+        $this->assertDatabaseHas('units', [
+            'id' => $unit->getKey(),
+            'tenant_id' => $otherTenant->getKey(),
+        ]);
     }
 }

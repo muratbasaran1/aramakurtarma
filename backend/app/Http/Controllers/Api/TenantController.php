@@ -7,7 +7,11 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Api\Concerns\InterpretsFilters;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\TenantResource;
+use App\Models\Incident;
+use App\Models\Inventory;
+use App\Models\Task;
 use App\Models\Tenant;
+use App\Models\User;
 use App\OpsCenter\OpsCenterSummary;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -71,29 +75,29 @@ class TenantController extends Controller
         return [
             'incidents',
             'incidents as incidents_open_count' => static function (Builder $query): void {
-                $query->whereIn('status', ['open', 'active']);
+                $query->whereIn('status', [Incident::STATUS_OPEN, Incident::STATUS_ACTIVE]);
             },
             'incidents as incidents_closed_count' => static function (Builder $query): void {
-                $query->where('status', 'closed');
+                $query->where('status', Incident::STATUS_CLOSED);
             },
             'tasks',
             'tasks as tasks_active_count' => static function (Builder $query): void {
-                $query->whereIn('status', ['assigned', 'in_progress']);
+                $query->whereIn('status', [Task::STATUS_ASSIGNED, Task::STATUS_IN_PROGRESS]);
             },
             'tasks as tasks_verified_count' => static function (Builder $query): void {
-                $query->where('status', 'verified');
+                $query->where('status', Task::STATUS_VERIFIED);
             },
             'units',
             'users',
             'users as users_active_count' => static function (Builder $query): void {
-                $query->where('status', 'active');
+                $query->where('status', User::STATUS_ACTIVE);
             },
             'inventories',
             'inventories as inventories_active_count' => static function (Builder $query): void {
-                $query->where('status', 'active');
+                $query->where('status', Inventory::STATUS_ACTIVE);
             },
             'inventories as inventories_service_count' => static function (Builder $query): void {
-                $query->where('status', 'service');
+                $query->where('status', Inventory::STATUS_SERVICE);
             },
         ];
     }

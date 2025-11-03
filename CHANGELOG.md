@@ -134,3 +134,11 @@ Bu dosya, uygulama ve dokümantasyon değişikliklerinin özetini tutmak için k
 - `TenantController` ve `TenantResource` eklenerek `GET /api/tenants` ile `GET /api/tenants/{tenant}` uçları tenant metriklerini ve OpsCenter özetlerini JSON formatında sunar hale getirildi; `include_summary=0` parametresiyle özet çıktısı isteğe bağlı hale getirildi.
 - Tenant modeli ve rotaları güncellenerek yeni metrik sayaçları (`withCount`) ve arama/slug filtreleri desteklendi, OpsCenterSummary servisi yeniden kullanılarak detay uçlarından tutarlı veri sağlandı.
 - `TenantApiTest` ile listeleme, filtreleme, detay ve özet devre dışı bırakma senaryoları kapsandı; backend README, Devam Et yapı rehberi, ana README sürüm tablosu ve CHANGELOG yeni tenant keşif akışını belgeleyecek şekilde güncellendi.
+- Olay, görev, envanter, kullanıcı ve birim kaynaklarına `DELETE` uçları eklendi; durum/bağımlılık kontrolleri ile yetkisiz silme girişimleri 422 yanıtlarıyla engellendi.
+- İlgili feature testleri genişletilerek silme akışları ve çapraz tenant senaryoları doğrulandı; backend README, ana README ve Devam Et rehberi yeni kabiliyetleri belgeledi.
+
+### 2024-08-07
+- `audit_logs` tablosu ve `App\Support\Audit\AuditLogger` servisi eklenerek olay/görev/envanter/birim/kullanıcı API işlemleri tenant bazlı audit kayıtlarına dönüştürüldü; hassas alanlar maskeleme ile korunuyor.
+- İlgili controller’larda oluşturma/güncelleme/silme akışları audit servisine entegre edildi, payload eşleştirmeleri için maskeleme kuralları tanımlandı.
+- Feature testleri audit kayıtlarını doğrulayacak şekilde genişletildi; kullanıcı senaryosu parola maskelemesini kontrol ediyor.
+- Backend README, ana README ve Devam Et rehberi audit log altyapısını ve yeni sürüm bilgisini belgeledi.

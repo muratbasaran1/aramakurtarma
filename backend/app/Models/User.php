@@ -28,7 +28,8 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  *
- * @method static Builder|self forTenant(Tenant|int|string $tenant)
+ * @method static Builder forTenant(Tenant|int|string $tenant)
+ * @method static Builder forTenantQuery(Tenant|int|string $tenant)
  * @method Builder forTenant(Tenant|int|string $tenant)
  */
 class User extends Authenticatable
@@ -38,10 +39,18 @@ class User extends Authenticatable
     use Notifiable;
     use BelongsToTenant;
 
+    public const STATUS_ACTIVE = 'active';
+    public const STATUS_INACTIVE = 'inactive';
+    public const STATUS_SUSPENDED = 'suspended';
+
     /**
      * @var list<string>
      */
-    public const STATUSES = ['active', 'inactive', 'suspended'];
+    public const STATUSES = [
+        self::STATUS_ACTIVE,
+        self::STATUS_INACTIVE,
+        self::STATUS_SUSPENDED,
+    ];
 
     /**
      * @var list<string>

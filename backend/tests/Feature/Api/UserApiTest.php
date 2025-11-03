@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Api;
 
+use App\Models\AuditLog;
+use App\Models\Incident;
+use App\Models\Task;
 use App\Models\Tenant;
 use App\Models\Unit;
 use App\Models\User;
@@ -134,6 +137,12 @@ class UserApiTest extends TestCase
 
         $created = User::query()->where('email', 'yeni@example.org')->firstOrFail();
         $this->assertTrue(Hash::check('super-secret-pass', $created->password));
+
+        $audit = AuditLog::query()->latest('id')->first();
+        $this->assertNotNull($audit);
+        $this->assertSame('user.created', $audit->event);
+        $this->assertSame($tenant->id, $audit->tenant_id);
+        $this->assertSame('***', $audit->payload['changes']['password'] ?? null);
     }
 
     public function test_it_requires_documents_expiry_when_documents_present(): void
@@ -196,6 +205,12 @@ class UserApiTest extends TestCase
         $this->assertSame('active', $user->status);
         $this->assertSame($newUnit->id, $user->unit_id);
         $this->assertTrue(Hash::check('updated-password-123', $user->password));
+
+        $updateAudit = AuditLog::query()->latest('id')->first();
+        $this->assertNotNull($updateAudit);
+        $this->assertSame('user.updated', $updateAudit->event);
+        $this->assertSame($tenant->id, $updateAudit->tenant_id);
+        $this->assertSame('***', $updateAudit->payload['changes']['password'] ?? null);
     }
 
     public function test_it_prevents_cross_tenant_updates(): void
@@ -207,5 +222,65 @@ class UserApiTest extends TestCase
         $this->patchJson('/api/tenants/'.$otherTenant->slug.'/users/'.$user->id, [
             'name' => 'Yetkisiz',
         ])->assertNotFound();
+    }
+
+    public function test_destroy_deletes_user_without_active_assignments(): void
+    {
+        $tenant = Tenant::factory()->create(['slug' => 'kastamonu']);
+        $user = User::factory()->for($tenant)->create([
+            'status' => User::STATUS_ACTIVE,
+        ]);
+
+        $response = $this->deleteJson('/api/tenants/'.$tenant->slug.'/users/'.$user->getKey());
+
+        $response->assertNoContent();
+
+        $this->assertDatabaseMissing('users', [
+            'id' => $user->getKey(),
+        ]);
+
+        $this->assertDatabaseHas('audit_logs', [
+            'event' => 'user.deleted',
+            'auditable_type' => User::class,
+            'auditable_id' => $user->getKey(),
+            'tenant_id' => $tenant->id,
+        ]);
+    }
+
+    public function test_destroy_blocks_user_with_active_task_assignment(): void
+    {
+        $tenant = Tenant::factory()->create(['slug' => 'bolu']);
+        $incident = Incident::factory()->for($tenant)->create();
+        $user = User::factory()->for($tenant)->create();
+
+        Task::factory()->for($tenant)->for($incident)->create([
+            'assigned_to' => $user->getKey(),
+            'status' => Task::STATUS_IN_PROGRESS,
+        ]);
+
+        $response = $this->deleteJson('/api/tenants/'.$tenant->slug.'/users/'.$user->getKey());
+
+        $response->assertStatus(422)
+            ->assertJsonPath('message', 'Aktif görev ataması bulunan kullanıcı silinemez.');
+
+        $this->assertDatabaseHas('users', [
+            'id' => $user->getKey(),
+        ]);
+    }
+
+    public function test_destroy_blocks_user_from_other_tenant(): void
+    {
+        $tenant = Tenant::factory()->create(['slug' => 'amasya']);
+        $otherTenant = Tenant::factory()->create(['slug' => 'tokat']);
+        $user = User::factory()->for($tenant)->create();
+
+        $response = $this->deleteJson('/api/tenants/'.$otherTenant->slug.'/users/'.$user->getKey());
+
+        $response->assertNotFound();
+
+        $this->assertDatabaseHas('users', [
+            'id' => $user->getKey(),
+            'tenant_id' => $tenant->getKey(),
+        ]);
     }
 }
