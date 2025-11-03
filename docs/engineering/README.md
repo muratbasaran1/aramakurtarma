@@ -27,13 +27,6 @@ Bu klasör, TUDAK Afet Yönetim Sistemi geliştirme ekiplerinin kod kalitesi, s�
 5. Yeni cihaz kurulumu ve günlük komutlar için `local-development.md` rehberini referans alın; checklist tamamlanmadan PR açılmamalıdır.
 6. Statik analiz ve bağımlılık taramalarının çıktılarının ilgili kayıt defterlerine işlendiğini doğrulayın.
 7. Takım içi eğitimlerde bu klasörü referans göstererek yeni geliştiricilerin yönetişim beklentilerine uyumunu hızlandırın.
-<<<<<<< HEAD
-3. PHP kalite araçlarını çalıştırmadan önce `composer install` ve gerekirse `composer run quality` komutlarını kullanarak bağımlılıkların güncel olduğundan emin olun; `tools/run-quality-suite.sh` script’i vendor araçlarını bulamazsa bu kurulumu otomatik tetikler.
-4. Yeni cihaz kurulumu ve günlük komutlar için `local-development.md` rehberini referans alın; checklist tamamlanmadan PR açılmamalıdır.
-5. Statik analiz ve bağımlılık taramalarının çıktılarının ilgili kayıt defterlerine işlendiğini doğrulayın.
-6. Takım içi eğitimlerde bu klasörü referans göstererek yeni geliştiricilerin yönetişim beklentilerine uyumunu hızlandırın.
-=======
->>>>>>> b5aab88 (Add tenant discovery API with summary metrics)
 
 ## İletişim
 

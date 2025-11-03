@@ -9,15 +9,6 @@ $directories = [
     __DIR__ . '/backend/database',
     __DIR__ . '/backend/routes',
     __DIR__ . '/backend/tests',
-<<<<<<< HEAD
-    __DIR__ . '/app',
-    __DIR__ . '/bootstrap',
-    __DIR__ . '/config',
-    __DIR__ . '/database',
-    __DIR__ . '/routes',
-    __DIR__ . '/tests',
-=======
->>>>>>> b5aab88 (Add tenant discovery API with summary metrics)
 ];
 
 $existingDirectories = array_values(array_filter($directories, static function (string $path): bool {
@@ -45,10 +36,6 @@ $finder
         'backend/node_modules',
         'backend/bootstrap/cache',
     ]);
-<<<<<<< HEAD
-    ->exclude(['vendor', 'storage', 'node_modules']);
-=======
->>>>>>> b5aab88 (Add tenant discovery API with summary metrics)
 
 return (new PhpCsFixer\Config())
     ->setRiskyAllowed(true)
@@ -56,14 +43,10 @@ return (new PhpCsFixer\Config())
     ->setRules([
         '@PSR12' => true,
         'array_syntax' => ['syntax' => 'short'],
-<<<<<<< HEAD
-        'ordered_imports' => ['sort_algorithm' => 'alpha'],
-=======
         'ordered_imports' => [
             'sort_algorithm' => 'alpha',
             'imports_order' => ['class', 'function', 'const'],
         ],
->>>>>>> b5aab88 (Add tenant discovery API with summary metrics)
         'no_unused_imports' => true,
         'single_quote' => true,
         'declare_strict_types' => true,

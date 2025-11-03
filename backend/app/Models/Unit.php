@@ -25,7 +25,8 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  *
- * @method static Builder|self forTenant(Tenant|int|string $tenant)
+ * @method static Builder forTenant(Tenant|int|string $tenant)
+ * @method static Builder forTenantQuery(Tenant|int|string $tenant)
  * @method Builder forTenant(Tenant|int|string $tenant)
  */
 class Unit extends Model
@@ -37,14 +38,11 @@ class Unit extends Model
     /**
      * @var list<string>
      */
-<<<<<<< HEAD
-=======
     public const TYPES = ['command', 'logistics', 'medical', 'search-and-rescue'];
 
     /**
      * @var list<string>
      */
->>>>>>> b5aab88 (Add tenant discovery API with summary metrics)
     protected $fillable = [
         'tenant_id',
         'name',

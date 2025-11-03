@@ -22,7 +22,8 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  *
- * @method static Builder|self forTenant(Tenant|int|string $tenant)
+ * @method static Builder forTenant(Tenant|int|string $tenant)
+ * @method static Builder forTenantQuery(Tenant|int|string $tenant)
  * @method Builder forTenant(Tenant|int|string $tenant)
  */
 class Inventory extends Model

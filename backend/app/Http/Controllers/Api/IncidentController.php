@@ -11,6 +11,7 @@ use App\Http\Requests\Api\Incidents\UpdateIncidentRequest;
 use App\Http\Resources\IncidentResource;
 use App\Models\Incident;
 use App\Models\Tenant;
+use App\Support\Audit\AuditLogger;
 use App\Tenant\TenantContext;
 use Illuminate\Contracts\Database\Query\Expression;
 use Illuminate\Database\Eloquent\Builder;
@@ -27,8 +28,10 @@ class IncidentController extends Controller
 {
     use InterpretsFilters;
 
-    public function __construct(private readonly TenantContext $tenantContext)
-    {
+    public function __construct(
+        private readonly TenantContext $tenantContext,
+        private readonly AuditLogger $auditLogger
+    ) {
     }
 
     public function index(Request $request): AnonymousResourceCollection
@@ -109,7 +112,7 @@ class IncidentController extends Controller
         $validated = $request->validated();
         $validated['tenant_id'] = $contextTenant->id;
 
-        $validated['status'] = $validated['status'] ?? 'open';
+        $validated['status'] = $validated['status'] ?? Incident::STATUS_OPEN;
         $validated['priority'] = $validated['priority'] ?? 'medium';
 
         $impactArea = $validated['impact_area'] ?? null;
@@ -122,6 +125,10 @@ class IncidentController extends Controller
 
         $incident = Incident::query()->create($validated);
         $incident->refresh();
+
+        $this->auditLogger->record('incident.created', $incident, [
+            'changes' => $validated,
+        ]);
 
         return (new IncidentResource($incident))
             ->response()
@@ -156,7 +163,42 @@ class IncidentController extends Controller
         $incident->save();
         $incident->refresh();
 
+        if ($validated !== []) {
+            $this->auditLogger->record('incident.updated', $incident, [
+                'changes' => $validated,
+            ]);
+        }
+
         return new IncidentResource($incident);
+    }
+
+    public function destroy(string $tenant, Incident $incident): Response
+    {
+        $contextTenant = $this->tenant();
+
+        if ($contextTenant->slug !== $tenant) {
+            throw new RuntimeException('İstek bağlamı ile rota tenant bilgisi uyuşmuyor.');
+        }
+
+        if ($incident->tenant_id !== $contextTenant->getKey()) {
+            abort(Response::HTTP_NOT_FOUND);
+        }
+
+        if ($incident->status !== Incident::STATUS_OPEN) {
+            abort(Response::HTTP_UNPROCESSABLE_ENTITY, 'Sadece açık durumdaki olaylar silinebilir.');
+        }
+
+        if ($incident->tasks()->exists()) {
+            abort(Response::HTTP_UNPROCESSABLE_ENTITY, 'Aktif görevi bulunan olay silinemez.');
+        }
+
+        $this->auditLogger->record('incident.deleted', $incident, [
+            'attributes' => $incident->withoutRelations()->toArray(),
+        ]);
+
+        $incident->delete();
+
+        return response()->noContent();
     }
 
     private function tenant(): Tenant

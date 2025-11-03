@@ -101,7 +101,10 @@ final class OpsCenterSummary
             ->withCount([
                 'users',
                 'tasks as active_tasks_count' => static function (Builder $query): void {
-                    $query->whereIn('status', ['assigned', 'in_progress']);
+                    $query->whereIn('status', [
+                        Task::STATUS_ASSIGNED,
+                        Task::STATUS_IN_PROGRESS,
+                    ]);
                 },
             ])
             ->orderBy('name')

@@ -4,19 +4,13 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Api\IncidentController;
 use App\Http\Controllers\Api\InventoryController;
-<<<<<<< HEAD
-use App\Http\Controllers\Api\TaskController;
-=======
 use App\Http\Controllers\Api\OpsCenterSummaryController;
 use App\Http\Controllers\Api\TaskController;
 use App\Http\Controllers\Api\TenantController;
->>>>>>> b5aab88 (Add tenant discovery API with summary metrics)
 use App\Http\Controllers\Api\UnitController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 
-<<<<<<< HEAD
-=======
 Route::middleware(['api'])
     ->prefix('tenants')
     ->group(function (): void {
@@ -26,7 +20,6 @@ Route::middleware(['api'])
             ->name('api.tenants.show');
     });
 
->>>>>>> b5aab88 (Add tenant discovery API with summary metrics)
 Route::middleware(['api', 'tenant'])
     ->prefix('tenants/{tenant}')
     ->as('api.tenants.')
@@ -39,6 +32,8 @@ Route::middleware(['api', 'tenant'])
             ->name('incidents.store');
         Route::patch('incidents/{incident}', [IncidentController::class, 'update'])
             ->name('incidents.update');
+        Route::delete('incidents/{incident}', [IncidentController::class, 'destroy'])
+            ->name('incidents.destroy');
 
         Route::get('tasks', [TaskController::class, 'index'])
             ->name('tasks.index');
@@ -48,6 +43,8 @@ Route::middleware(['api', 'tenant'])
             ->name('tasks.store');
         Route::patch('tasks/{task}', [TaskController::class, 'update'])
             ->name('tasks.update');
+        Route::delete('tasks/{task}', [TaskController::class, 'destroy'])
+            ->name('tasks.destroy');
 
         Route::get('inventories', [InventoryController::class, 'index'])
             ->name('inventories.index');
@@ -57,31 +54,31 @@ Route::middleware(['api', 'tenant'])
             ->name('inventories.store');
         Route::patch('inventories/{inventory}', [InventoryController::class, 'update'])
             ->name('inventories.update');
+        Route::delete('inventories/{inventory}', [InventoryController::class, 'destroy'])
+            ->name('inventories.destroy');
 
         Route::get('users', [UserController::class, 'index'])
             ->name('users.index');
-<<<<<<< HEAD
-=======
         Route::get('users/{user}', [UserController::class, 'show'])
             ->name('users.show');
         Route::post('users', [UserController::class, 'store'])
             ->name('users.store');
         Route::patch('users/{user}', [UserController::class, 'update'])
             ->name('users.update');
->>>>>>> b5aab88 (Add tenant discovery API with summary metrics)
+        Route::delete('users/{user}', [UserController::class, 'destroy'])
+            ->name('users.destroy');
 
         Route::get('units', [UnitController::class, 'index'])
             ->name('units.index');
         Route::get('units/{unit}', [UnitController::class, 'show'])
             ->name('units.show');
-<<<<<<< HEAD
-=======
         Route::post('units', [UnitController::class, 'store'])
             ->name('units.store');
         Route::patch('units/{unit}', [UnitController::class, 'update'])
             ->name('units.update');
+        Route::delete('units/{unit}', [UnitController::class, 'destroy'])
+            ->name('units.destroy');
 
         Route::get('opscenter/summary', [OpsCenterSummaryController::class, 'show'])
             ->name('opscenter.summary');
->>>>>>> b5aab88 (Add tenant discovery API with summary metrics)
     });

@@ -73,8 +73,6 @@ trait BelongsToTenant
         );
     }
 
-<<<<<<< HEAD
-=======
     public static function findForTenantByIdentifier(Tenant|int|string $tenant, int|string $identifier): ?Model
     {
         return static::forTenantQuery($tenant)
@@ -88,7 +86,6 @@ trait BelongsToTenant
             ->first();
     }
 
->>>>>>> b5aab88 (Add tenant discovery API with summary metrics)
     protected static function resolveTenantId(Tenant|int|string $tenant): ?int
     {
         return match (true) {

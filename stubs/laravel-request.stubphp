@@ -50,14 +50,8 @@ class Request
         return $default;
     }
 
-<<<<<<< HEAD
-    public function string(string $key): string
-    {
-        return '';
-=======
     public function string(string $key, string $default = ''): \Illuminate\Support\Stringable
     {
         return new \Illuminate\Support\Stringable($default);
->>>>>>> b5aab88 (Add tenant discovery API with summary metrics)
     }
 }

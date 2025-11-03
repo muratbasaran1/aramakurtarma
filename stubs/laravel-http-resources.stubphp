@@ -18,6 +18,11 @@ class JsonResource
         return new AnonymousResourceCollection($resource);
     }
 
+    public static function make(mixed $resource = null): static
+    {
+        return new static($resource);
+    }
+
     /**
      * @return array<string, mixed>
      */
@@ -51,6 +56,14 @@ class JsonResource
     public function response(?Request $request = null): JsonResponse
     {
         return new JsonResponse($this->resolve($request));
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     */
+    public function additional(array $data): static
+    {
+        return $this;
     }
 }
 

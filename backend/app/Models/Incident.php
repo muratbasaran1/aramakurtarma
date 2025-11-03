@@ -26,7 +26,8 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  *
- * @method static Builder|self forTenant(Tenant|int|string $tenant)
+ * @method static Builder forTenant(Tenant|int|string $tenant)
+ * @method static Builder forTenantQuery(Tenant|int|string $tenant)
  * @method Builder forTenant(Tenant|int|string $tenant)
  */
 class Incident extends Model
@@ -35,10 +36,18 @@ class Incident extends Model
     use HasFactory;
     use BelongsToTenant;
 
+    public const STATUS_OPEN = 'open';
+    public const STATUS_ACTIVE = 'active';
+    public const STATUS_CLOSED = 'closed';
+
     /**
      * @var list<string>
      */
-    public const STATUSES = ['open', 'active', 'closed'];
+    public const STATUSES = [
+        self::STATUS_OPEN,
+        self::STATUS_ACTIVE,
+        self::STATUS_CLOSED,
+    ];
 
     /**
      * @var list<string>

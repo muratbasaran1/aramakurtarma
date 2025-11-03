@@ -8,13 +8,6 @@ use App\Models\Tenant;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
-/**
- * @method static Builder forTenant(Tenant|int|string $tenant)
-<<<<<<< HEAD
-=======
- * @method static Builder forTenantQuery(Tenant|int|string $tenant)
->>>>>>> b5aab88 (Add tenant discovery API with summary metrics)
- */
 trait BelongsToTenant
 {
     /**
@@ -24,8 +17,6 @@ trait BelongsToTenant
     {
         return $builder;
     }
-<<<<<<< HEAD
-=======
 
     /**
      * @return Model|null
@@ -34,5 +25,14 @@ trait BelongsToTenant
     {
         return new Model();
     }
->>>>>>> b5aab88 (Add tenant discovery API with summary metrics)
+
+    public static function forTenantQuery(Tenant|int|string $tenant): Builder
+    {
+        return Model::query();
+    }
+
+    public static function forTenant(Tenant|int|string $tenant): Builder
+    {
+        return Model::query();
+    }
 }

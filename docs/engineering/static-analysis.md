@@ -11,10 +11,6 @@ belgesindeki kalite kapılarıyla entegredir.
 | **PHPStan** | PHP konfigürasyon ve yardımcı dosyalarında statik analiz | Pre-commit, CI `analyse` işi |
 | **PHP-CS-Fixer** | Stil/format kontrolü | Pre-commit, CI `style` işi |
 | **Psalm (opsiyonel)** | Kök `config/` + `backend/app/` (multi-tenant çekirdek) üzerinde güvenlik hassas veri akış analizi | Haftalık güvenlik taraması |
-<<<<<<< HEAD
-| **Psalm (opsiyonel)** | Güvenlik hassas veri akış analizi | Haftalık güvenlik taraması |
-=======
->>>>>>> b5aab88 (Add tenant discovery API with summary metrics)
 | **ESLint + Vue ESLint** | Vue/JS kod kalitesi ve best practice kontrolleri | Pre-commit, CI `frontend-lint` |
 | **Stylelint** | Tailwind ve genel CSS kuralları | Pre-commit |
 | **Trivy / Composer Audit** | Bağımlılık zafiyet taraması | Gece yarısı cron, release öncesi |
@@ -23,10 +19,6 @@ belgesindeki kalite kapılarıyla entegredir.
 
 - **`phpstan.neon.dist`:** Larastan bağımlılığı olmadan `config/` dizininde seviye 5 analizi çalıştırır; `build/phpstan/` dizininde geçici dosyalar üretir.
 - **`psalm.xml`:** Faz 4, 7 ve 18’e ait hassas akışları aylık denetimler için `errorLevel=3` hassasiyetinde tarar; Laravel Eloquent bağımlılıkları için `stubs/laravel-model.stubphp` kullanılır ve kapsam kök `config/` dosyalarıyla birlikte `backend/app/` altındaki multi-tenant bağlamı içerir. Laravel’in factory jenerik anotasyonları için `TooManyTemplateParams` uyarıları bilgi seviyesine indirgenmiştir; gerçek hatalar için factory dosyalarındaki PHPDoc blokları güncel tutulmalıdır.
-<<<<<<< HEAD
-- **`psalm.xml`:** Faz 4, 7 ve 18’e ait hassas akışları aylık denetimler için `errorLevel=3` hassasiyetinde tarar.
-=======
->>>>>>> b5aab88 (Add tenant discovery API with summary metrics)
 - **`phpcs.xml` & `.php-cs-fixer.dist.php`:** PSR-12 tabanlı stil kurallarını, kısa dizi sözdizimini ve `declare(strict_types=1)` zorunluluğunu içerir.
 - **`.eslintrc.cjs`:** Vue 3 + TypeScript projeleri için tavsiye edilen kuralları ve jest test dosyalarına özel ortam ayarlarını etkinleştirir.
 - **`stylelint.config.cjs`:** Tailwind ağırlıklı CSS için erişilebilirlik ve sıralama kurallarını uygular; `!important` kullanımını engeller.
