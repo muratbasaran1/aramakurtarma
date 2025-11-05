@@ -6,6 +6,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Api\Concerns\InterpretsFilters;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\Tenants\StoreTenantRequest;
+use App\Http\Requests\Api\Tenants\UpdateTenantRequest;
 use App\Http\Resources\TenantResource;
 use App\Models\Incident;
 use App\Models\Inventory;
@@ -14,6 +16,12 @@ use App\Models\Tenant;
 use App\Models\User;
 use App\OpsCenter\OpsCenterSummary;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Symfony\Component\HttpFoundation\Response;
+
+use function abort_if;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
@@ -50,6 +58,44 @@ class TenantController extends Controller
         );
     }
 
+    public function store(StoreTenantRequest $request): JsonResponse
+    {
+        /** @var Tenant $tenant */
+        $tenant = Tenant::query()->create($request->validated());
+
+        return $this->makeTenantResource($request, $tenant)
+            ->response()
+            ->setStatusCode(Response::HTTP_CREATED);
+    }
+
+    public function show(Request $request, Tenant $tenant): TenantResource
+    {
+        return $this->makeTenantResource($request, $tenant);
+    }
+
+    public function update(UpdateTenantRequest $request, Tenant $tenant): TenantResource
+    {
+        $validated = $request->validated();
+
+        if ($validated !== []) {
+            $tenant->fill($validated);
+            $tenant->save();
+        }
+
+        return $this->makeTenantResource($request, $tenant);
+    }
+
+    public function destroy(Tenant $tenant): Response
+    {
+        abort_if($tenant->units()->exists(), Response::HTTP_UNPROCESSABLE_ENTITY, 'Aktif birimleri bulunan tenant silinemez.');
+        abort_if($tenant->users()->exists(), Response::HTTP_UNPROCESSABLE_ENTITY, 'Kullanıcıları bulunan tenant silinemez.');
+        abort_if($tenant->incidents()->exists(), Response::HTTP_UNPROCESSABLE_ENTITY, 'Olay kayıtları bulunan tenant silinemez.');
+        abort_if($tenant->tasks()->exists(), Response::HTTP_UNPROCESSABLE_ENTITY, 'Görev kayıtları bulunan tenant silinemez.');
+        abort_if($tenant->inventories()->exists(), Response::HTTP_UNPROCESSABLE_ENTITY, 'Envanter kayıtları bulunan tenant silinemez.');
+
+        $tenant->delete();
+
+        return response()->noContent();
     public function show(Request $request, Tenant $tenant): TenantResource
     {
         $tenant->loadCount($this->countDefinitions());
@@ -100,5 +146,22 @@ class TenantController extends Controller
                 $query->where('status', Inventory::STATUS_SERVICE);
             },
         ];
+    }
+
+    private function makeTenantResource(Request $request, Tenant $tenant): TenantResource
+    {
+        $tenant->loadCount($this->countDefinitions());
+
+        $resource = TenantResource::make($tenant);
+
+        if ($request->boolean('include_summary', true)) {
+            $summary = OpsCenterSummary::forTenant($tenant)->toApiArray($tenant);
+
+            $resource->additional([
+                'summary' => $summary,
+            ]);
+        }
+
+        return $resource;
     }
 }

@@ -8,6 +8,7 @@ use App\Models\Incident;
 use App\Models\Inventory;
 use App\Models\Task;
 use App\Models\Tenant;
+use App\Models\TrackingPing;
 use App\Models\Unit;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -49,6 +50,7 @@ class DatabaseSeeder extends Seeder
                     ->create();
 
                 $incidents->each(function (Incident $incident) use ($tenant, $units, $users): void {
+                    $tasks = Task::factory()
                     Task::factory()
                         ->count(3)
                         ->for($tenant)
@@ -68,6 +70,23 @@ class DatabaseSeeder extends Seeder
                             ];
                         })
                         ->create();
+
+                    $tasks->each(function (Task $task) use ($tenant, $users): void {
+                        $assignee = $users->firstWhere('id', $task->assigned_to) ?? $users->random();
+
+                        TrackingPing::factory()
+                            ->count(2)
+                            ->state(fn () => ['tenant_id' => $tenant->id])
+                            ->for($assignee, 'user')
+                            ->for($task)
+                            ->sequence(
+                                fn (int $sequence) => [
+                                    'captured_at' => now()->subMinutes(10 - ($sequence * 3)),
+                                    'speed' => $sequence === 0 ? 1.5 : 0.0,
+                                ]
+                            )
+                            ->create();
+                    });
                 });
             });
     }

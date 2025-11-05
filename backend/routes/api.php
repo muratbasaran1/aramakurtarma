@@ -2,11 +2,13 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Api\AuditLogController;
 use App\Http\Controllers\Api\IncidentController;
 use App\Http\Controllers\Api\InventoryController;
 use App\Http\Controllers\Api\OpsCenterSummaryController;
 use App\Http\Controllers\Api\TaskController;
 use App\Http\Controllers\Api\TenantController;
+use App\Http\Controllers\Api\TrackingPingController;
 use App\Http\Controllers\Api\UnitController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
@@ -16,6 +18,14 @@ Route::middleware(['api'])
     ->group(function (): void {
         Route::get('/', [TenantController::class, 'index'])
             ->name('api.tenants.index');
+        Route::post('/', [TenantController::class, 'store'])
+            ->name('api.tenants.store');
+        Route::get('{tenant}', [TenantController::class, 'show'])
+            ->name('api.tenants.show');
+        Route::patch('{tenant}', [TenantController::class, 'update'])
+            ->name('api.tenants.update');
+        Route::delete('{tenant}', [TenantController::class, 'destroy'])
+            ->name('api.tenants.destroy');
         Route::get('{tenant}', [TenantController::class, 'show'])
             ->name('api.tenants.show');
     });
@@ -81,4 +91,14 @@ Route::middleware(['api', 'tenant'])
 
         Route::get('opscenter/summary', [OpsCenterSummaryController::class, 'show'])
             ->name('opscenter.summary');
+
+        Route::get('audit-logs', [AuditLogController::class, 'index'])
+            ->name('audit-logs.index');
+
+        Route::get('tracking/pings', [TrackingPingController::class, 'index'])
+            ->name('tracking.pings.index');
+        Route::get('tracking/pings/latest', [TrackingPingController::class, 'latest'])
+            ->name('tracking.pings.latest');
+        Route::post('tracking/pings', [TrackingPingController::class, 'store'])
+            ->name('tracking.pings.store');
     });

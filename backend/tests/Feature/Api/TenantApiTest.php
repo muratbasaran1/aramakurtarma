@@ -176,4 +176,106 @@ class TenantApiTest extends TestCase
             ->assertOk()
             ->assertJsonMissingPath('summary');
     }
+
+    public function test_it_creates_tenant_with_defaults(): void
+    {
+        $response = $this->postJson('/api/tenants', [
+            'name' => 'İzmir İl Afet',
+            'settings' => [
+                'language' => 'tr',
+            ],
+        ]);
+
+        $response
+            ->assertCreated()
+            ->assertJsonPath('data.slug', 'izmir-il-afet')
+            ->assertJsonPath('data.timezone', 'Europe/Istanbul')
+            ->assertJsonPath('summary.tenant.slug', 'izmir-il-afet');
+
+        $this->assertDatabaseHas('tenants', [
+            'slug' => 'izmir-il-afet',
+            'name' => 'İzmir İl Afet',
+            'timezone' => 'Europe/Istanbul',
+        ]);
+    }
+
+    public function test_it_requires_unique_slug_on_create(): void
+    {
+        Tenant::factory()->create([
+            'slug' => 'izmir',
+        ]);
+
+        $response = $this->postJson('/api/tenants', [
+            'name' => 'İzmir',
+            'slug' => 'izmir',
+            'timezone' => 'Europe/Istanbul',
+        ]);
+
+        $response->assertStatus(422);
+    }
+
+    public function test_it_updates_tenant_and_respects_summary_toggle(): void
+    {
+        $tenant = Tenant::factory()->create([
+            'slug' => 'ankara',
+            'name' => 'Ankara AFAD',
+            'timezone' => 'Europe/Istanbul',
+        ]);
+
+        $response = $this->patchJson('/api/tenants/ankara?include_summary=0', [
+            'name' => 'Ankara Başkent',
+            'slug' => 'ankara-baskent',
+            'timezone' => 'Europe/Paris',
+            'settings' => [
+                'language' => 'en',
+            ],
+        ]);
+
+        $response
+            ->assertOk()
+            ->assertJsonMissingPath('summary')
+            ->assertJsonPath('data.slug', 'ankara-baskent')
+            ->assertJsonPath('data.name', 'Ankara Başkent')
+            ->assertJsonPath('data.timezone', 'Europe/Paris')
+            ->assertJsonPath('data.settings.language', 'en');
+
+        $this->assertDatabaseHas('tenants', [
+            'id' => $tenant->id,
+            'slug' => 'ankara-baskent',
+            'name' => 'Ankara Başkent',
+            'timezone' => 'Europe/Paris',
+        ]);
+    }
+
+    public function test_it_prevents_deleting_tenant_with_dependencies(): void
+    {
+        $tenant = Tenant::factory()->create([
+            'slug' => 'ankara',
+        ]);
+
+        Unit::factory()->for($tenant)->create();
+
+        $response = $this->deleteJson('/api/tenants/ankara');
+
+        $response->assertStatus(422);
+
+        $this->assertDatabaseHas('tenants', [
+            'id' => $tenant->id,
+        ]);
+    }
+
+    public function test_it_deletes_tenant_without_dependencies(): void
+    {
+        $tenant = Tenant::factory()->create([
+            'slug' => 'ankara',
+        ]);
+
+        $response = $this->deleteJson('/api/tenants/ankara');
+
+        $response->assertNoContent();
+
+        $this->assertDatabaseMissing('tenants', [
+            'id' => $tenant->id,
+        ]);
+    }
 }

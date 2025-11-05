@@ -116,4 +116,27 @@ trait InterpretsFilters
             $key => \sprintf('%s değeri true veya false olmalıdır.', ucfirst(str_replace('_', ' ', $key))),
         ]);
     }
+
+    /**
+     * @return list<string>
+     */
+    private function extractStringList(Request $request, string $key): array
+    {
+        $raw = $request->query($key);
+
+        if ($raw === null) {
+            return [];
+        }
+
+        $values = \is_array($raw)
+            ? array_map(static fn (mixed $value): string => trim((string) $value), $raw)
+            : array_map(static fn (string $value): string => trim($value), explode(',', (string) $raw));
+
+        $values = array_values(array_filter(
+            $values,
+            static fn (string $value): bool => $value !== ''
+        ));
+
+        return array_values(array_unique($values));
+    }
 }

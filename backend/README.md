@@ -52,6 +52,7 @@ Testler için varsayılan `.env.testing` dosyası depoya eklendi; anahtar ve SQL
 
 ## Factory & Seeder
 - `database/factories/*.php` dosyaları çoklu tenant verisini uyumlu şekilde üretmek üzere birbirine bağlıdır.
+- `DatabaseSeeder` her tenant için üçer birim, ikişer kullanıcı, iki aktif olay, üçer görev, beş envanter kaydı ve çift örnekli izleme pingleri üretir. Görev atamaları ve pingler ilgili birim/kullanıcı eşleşmeleriyle uyumlu olacak biçimde rastgele seçilir.
 - `DatabaseSeeder` her tenant için üçer birim, ikişer kullanıcı, iki aktif olay, üçer görev ve beş envanter kaydı üretir. Görev atamaları, ilgili birim ve kullanıcılarla eşleşecek şekilde rastgele seçilir.
 
 Seeder çıktıları aşağıdaki akışları test etmek için kullanılabilir:
@@ -70,6 +71,9 @@ Tenant bağlamında çalışan REST uçları `routes/api.php` dosyasında tanım
 | --- | --- | --- |
 | Tenant Listesi | `GET /api/tenants` | Tenant’ların slug, ad ve temel metriklerini listeler; `search` veya `slug` parametreleriyle filtrelenebilir. |
 | Tenant Detayı | `GET /api/tenants/{tenant}` | Belirtilen tenant’ın sayaçlarını ve OpsCenter özetini JSON olarak döndürür (`include_summary=0` ile özet kapatılabilir). |
+| Tenant Oluştur | `POST /api/tenants` | Yeni tenant kaydı oluşturur; isim, slug ve timezone doğrulaması yapar, OpsCenter özetini başlangıç metrikleriyle döndürür. |
+| Tenant Güncelle | `PATCH /api/tenants/{tenant}` | Ad, slug, timezone ve ayar alanlarını günceller; `include_summary=0` parametresiyle özet çıktısı devre dışı bırakılabilir. |
+| Tenant Sil | `DELETE /api/tenants/{tenant}` | Bağlı birim, kullanıcı, olay, görev veya envanteri olmayan tenantları kalıcı olarak siler; bağımlılık varsa 422 döner. |
 | Olaylar | `GET /api/tenants/{tenant}/incidents` | Durum, öncelik ve kod filtreleriyle olay listesini döndürür. |
 | Olay Oluştur | `POST /api/tenants/{tenant}/incidents` | Benzersiz kod, GeoJSON (Polygon/MultiPolygon) ve zaman doğrulamasıyla yeni olay kaydı oluşturur. |
 | Olay Güncelle | `PATCH /api/tenants/{tenant}/incidents/{incident}` | Tenant doğrulamasıyla başlık, durum, öncelik ve GeoJSON alanlarını günceller; `closed` durumuna geçişte `closed_at` zorunludur. |
@@ -96,12 +100,28 @@ Tenant bağlamında çalışan REST uçları `routes/api.php` dosyasında tanım
 | Birim Güncelle | `PATCH /api/tenants/{tenant}/units/{unit}` | Slug, ad, tip ve metadata güncellemelerini tenant izolasyonu korunarak uygular (ID veya slug — sayısal slug’lar dahil). |
 | Birim Sil | `DELETE /api/tenants/{tenant}/units/{unit}` | Aktif görevi veya kullanıcı kaydı bulunmayan birimleri siler; koşullar sağlanmazsa 422 döner ve audit log kaydı oluşturur. |
 | OpsCenter Özeti | `GET /api/tenants/{tenant}/opscenter/summary` | Panelde gösterilen olay/görev/envanter sayıları ile son kayıtları JSON formatında döndürür. |
+| Audit Logları | `GET /api/tenants/{tenant}/audit-logs` | Tenant’a ait işlem geçmişini sayfalı olarak listeler; `event`, `auditable_type`, `auditable_id`, `since`, `until` ve `has_user` filtreleri desteklenir. |
+| Takip Pingleri | `GET /api/tenants/{tenant}/tracking/pings` | Kullanıcı/görev filtreleri ve zaman aralığıyla canlı takip pinglerini listeler; sonuçlar en yeni kayıt üzerinden sayfalanır. |
+| Son Konumlar | `GET /api/tenants/{tenant}/tracking/pings/latest` | Her kullanıcı için en güncel ping kaydını döndürür; kullanıcı/görev filtresi ve limit parametresi desteklenir. |
+| Takip Ping Oluştur | `POST /api/tenants/{tenant}/tracking/pings` | Tenant doğrulaması, konum aralığı ve opsiyonel hız/başlık doğrulamasıyla GPS pinglerini kaydeder; pingler yalnızca görevi aktif ve kullanıcı/birim eşleşmesi doğrulanmış kayıtlar için kabul edilir, audit log düşer ve hareketsizlik kuralı değerlendirilir. |
 
 ## Audit Log Olayları
 
 - `App\Support\Audit\AuditLogger` servisi olay, görev, envanter, birim ve kullanıcı uçlarında gerçekleşen `create`, `update` ve `delete` işlemlerini otomatik olarak `audit_logs` tablosuna yazar.
 - Payload içerisindeki `changes` alanı hassas değerleri (örn. `password`) maskeleyerek (`***`) saklar; ilişkili kaynak öznitelikleri `attributes` alanında tutulur.
 - Audit kayıtları tenant kimliği ve (varsa) kimliği doğrulanmış kullanıcı bilgisi ile ilişkilendirilir; böylece Faz 1 güvenlik ve Faz 11 izlenebilirlik hedefleri desteklenir.
+- `tracking.ping_recorded` olayı her ping girişinde, `tracking.no_motion` ise hareketsizlik kuralı tetiklendiğinde oluşur; her iki durumda da tenant, kullanıcı ve görev bilgileri audit log’a yazılır.
+
+> **Not:** Birim detayı uç noktası ID veya slug ile erişilebilir. Her iki durumda da istek bağlamındaki tenant doğrulanır ve farklı tenant’a ait kayıtlar 404 döner. Audit log API’si maskeleme kurallarını (`password` → `***`) uygulayarak veri döndürür; hassas alanlar payload içinde açıkta gösterilmez.
+
+## Canlı Takip & Hareketsizlik Kuralı
+
+- `TrackingPingController` GPS ping’lerini tenant bağlamında alır; kullanıcı ve (varsa) görev kimlikleri tenant doğrulamasından geçer, konum bilgisi aralık kontrollerinden sonra kaydedilir.
+- `StoreTrackingPingRequest`, görev belirtilen ping’lerde görevin durumunun `assigned`/`in_progress` olmasını ve kullanıcının doğrudan atama veya birim eşleşmesiyle ilişkilendirilmesini zorunlu kılar; aksi durumda istek 422 doğrulama hatası üretir.
+- `tracking/pings/latest` uç noktası, aynı tenant içinde her kullanıcı için en güncel ping’i hızlıca döndürmek amacıyla depodaki verileri sıralar; isteğe bağlı `user_id`, `task_id`, `since` ve `limit` parametreleri operasyonel listeleri sınırlandırmanızı sağlar.
+- `MotionMonitor` servisi, aynı kullanıcı ve görev için gelen önceki kayıtları inceler. Ping’ler arası süre ≥120 saniye, hız ≤0.3 m/s ve konum değişimi ≤5 m ise hareketsizlik kabul edilir. Önceki ping dizisi zaten hareketsizse tekrar alarm üretmez.
+- Hareketsizlik tetiklerinde `tracking.no_motion` audit olayı düşer ve payload içerisine süre, kullanıcı/görev kimliği ile referans ping bilgileri eklenir. Bu kayıt, Faz 4 hareketsizlik kuralı gereksinimini doğrulamak ve Faz 7 kural motoruna tetik sağlamak için kullanılabilir.
+- Seeder, örnek tenant verisi üretirken aktif görevlere iki örnek ping eklediğinden OpsCenter panelinde veya API üzerinden hazır veri ile senaryoları test edebilirsiniz.
 
 > **Not:** Birim detayı uç noktası ID veya slug ile erişilebilir. Her iki durumda da istek bağlamındaki tenant doğrulanır ve farklı tenant’a ait kayıtlar 404 döner.
 
@@ -123,6 +143,7 @@ Ardından tarayıcınızdan `http://localhost:8000/opscenter` adresine gidin. Bi
 Bu temel şema üzerine aşağıdaki yetenekler kademeli olarak eklenecektir:
 - Fortify tabanlı kimlik doğrulama, 2FA ve Spatie Permissions entegrasyonu
 - Görev doğrulama (çift onay), zimmet transaction’ları ve audit log iyileştirmeleri (aksiyon sınıflandırması, webhook tetikleri)
+- Geofence ihlali, SOS tetikleri ve canlı ping akışının WebSocket entegrasyonu
 - Canlı takip pingi, geofence ve hareketsizlik alarmı API uçları
 
 Detaylı yol haritası ve faz bağımlılıkları proje kökündeki `README.md` ve yönetişim dokümanlarında yer almaktadır.

@@ -142,3 +142,20 @@ Bu dosya, uygulama ve dokümantasyon değişikliklerinin özetini tutmak için k
 - İlgili controller’larda oluşturma/güncelleme/silme akışları audit servisine entegre edildi, payload eşleştirmeleri için maskeleme kuralları tanımlandı.
 - Feature testleri audit kayıtlarını doğrulayacak şekilde genişletildi; kullanıcı senaryosu parola maskelemesini kontrol ediyor.
 - Backend README, ana README ve Devam Et rehberi audit log altyapısını ve yeni sürüm bilgisini belgeledi.
+- `GET /api/tenants/{tenant}/audit-logs` ucu eklenerek tenant bazlı denetim kayıtlarının filtrelenmiş/sayfalı şekilde sorgulanması sağlandı; `event`, `auditable_type`, `since/until`, `has_user` ve `auditable_id` parametreleri doğrulama kontrolleriyle desteklendi.
+- Audit log kaydı fabrikası, kaynak sınıfı ve feature testleri eklenerek denetim geçmişinin JSON çıktısı ve maskeleme kurallarının API düzeyinde güvenceye alınması sağlandı; yönetişim rehberleri ve sürüm geçmişi yeni kabiliyeti referanslayacak şekilde güncellendi.
+### 2024-08-08
+- `POST /api/tenants`, `PATCH /api/tenants/{tenant}` ve `DELETE /api/tenants/{tenant}` uçları eklenerek tenant yönetimi (oluşturma, güncelleme, silme) doğrulama kuralları ve bağımlılık kontrolleriyle desteklendi.
+- Tenant yönetim istekleri için `StoreTenantRequest` ve `UpdateTenantRequest` sınıfları oluşturuldu; slug/takma ad üretimi, timezone doğrulaması ve boş ayarların temizlenmesi standartlaştırıldı.
+- `TenantController` yeniden düzenlenerek özet üretimi tek noktada toplandı, yeni uçlar için OpsCenter özeti opsiyonel hale getirildi ve bağımlılık kontrolleri tanımlandı.
+- Tenant API feature testleri oluşturma/güncelleme/silme senaryolarını kapsayacak şekilde genişletildi; benzersiz slug doğrulaması ve özet kapatma seçenekleri doğrulandı.
+- Backend README, ana README sürüm tablosu ve Devam Et yapı rehberi tenant yönetim uçlarını belgeleyerek dokümantasyon izi güncellendi.
+### 2024-08-09
+- `tracking_pings` tablosu, Eloquent modeli ve fabrika eklenerek GPS ping verileri tenant bağlamında saklanır hale getirildi; seeder örnek ping kayıtları üretir.
+- `GET/POST /api/tenants/{tenant}/tracking/pings` uçları yayımlanarak canlı takip sorguları ve ping kaydı sağlandı; doğrulama kuralları kullanıcı/görev tenant eşleşmesini garanti eder.
+- `MotionMonitor` servisi tanımlanarak 120 saniyelik hareketsizlik kuralı (mesafe ve hız eşikleriyle) otomatik audit olayına dönüştürüldü; `tracking.no_motion` kaydı maskelenmiş payload ile loglanır.
+- Tracking ping API feature testleri, audit kaydı doğrulamaları ve MotionMonitor davranışı kapsayacak şekilde eklendi; backend README, ana README ve yönetişim kayıtları yeni yetenekleri belgeledi.
+- `GET /api/tenants/{tenant}/tracking/pings/latest` uç noktası eklenerek her kullanıcı için en güncel ping kaydı tek çağrıda sunuldu; kullanıcı/görev/since filtresi ve limit parametresi desteklenir.
+- Feature testleri en güncel ping seçimini, filtreleri ve yanıt sıralamasını doğrulamak üzere genişletildi; backend README, ana README sürüm tablosu ve Devam Et rehberi yeni yeteneği referanslayacak şekilde güncellendi.
+- `StoreTrackingPingRequest` görevli pinglerde görevin `assigned/in_progress` statüde olmasını ve kullanıcı/birim eşleşmesini zorunlu kılacak şekilde genişletildi; uyumsuz istekler 422 doğrulama hatası üretir.
+- Tracking ping API feature testleri yeni doğrulama senaryolarıyla genişletildi; backend README, ana README ve Devam Et yönetişim rehberi güncel gereksinimleri yansıtacak biçimde revize edildi.

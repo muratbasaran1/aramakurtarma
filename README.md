@@ -2031,6 +2031,7 @@ _(Güncelleme: 2024-07-16)_
 - Kimlik doğrulama: Laravel Fortify.
 - 2FA: SMS veya mobil uygulama ile.
 - Rol & Yetki: Spatie Permissions, tenant bazlı unit yetkileri.
+- Audit Log: Her işlem kayıt altına alınır ve tenant bazlı `GET /api/tenants/{tenant}/audit-logs` ucu üzerinden incelenebilir.
 - Audit Log: Her işlem kayıt altına alınır.
 - Yedekleme: Günlük dump + şifreli saklama.
 - Felaket kurtarma: Disaster recovery scriptleri.
@@ -2134,6 +2135,7 @@ _(Güncelleme: 2024-07-16)_
 - Tekrarlanan pingler filtrelenir.
 - Hareketsizlik alarmı yanlış tetiklenirse (örn. telefon çantada sabit kalmış), doğrulama penceresi açılır.
 - SOS spam engellenir.
+- Göreve bağlı pingler yalnızca kullanıcı veya birim ataması doğrulanan ve `ASSIGNED/IN_PROGRESS` durumundaki görevler için kabul edilir; uyumsuz pingler 422 doğrulama hatasıyla reddedilir.
 
 ## Faz 5 — QR & Yoklama (Anti-Replay)
 **Amaç:** Personelin görev başı/yoklama kontrolünü güvenli ve hızlı hale getirmek.
@@ -2583,6 +2585,7 @@ _(Güncelleme: 2024-07-16)_
 | v0.27 | 2024-07-30 | Çoklu tenant çekirdek şemasının (tenant, birim, kullanıcı, olay, görev, envanter) ve örnek tohum verisinin eklenmesi | Teknik Liderlik |
 | v0.28 | 2024-07-31 | Tenant context/middleware altyapısının eklenmesi, modellerin otomatik tenant kapsamı ve SQLite test yapılandırmasının tamamlanması | Teknik Liderlik |
 | v0.29 | 2024-08-01 | Psalm kapsamının `backend/app/` dizinini içerecek şekilde genişletilmesi ve statik analiz rehberlerinin güncellenmesi | Teknik Liderlik |
+| v0.30 | 2024-08-02 | Canlı takip ping API’sinin, hareketsizlik alarm kaydının ve ilgili dokümantasyon bağlantılarının eklenmesi | Teknik Liderlik |
 | v0.30 | 2024-08-02 | Görev oluşturma/güncelleme API uçlarının eklenmesi, doğrulama kuralları ve test kapsamının genişletilmesi | Teknik Liderlik |
 | v0.30 | 2024-08-02 | Tenant slug doğrulamasıyla güçlendirilmiş API rotaları, `forTenantQuery` yardımcıları ve güncellenen kalite stubları | Teknik Liderlik |
 | v0.31 | 2024-08-02 | Olay oluşturma API ucu, GeoJSON doğrulaması ve tenant bazlı benzersiz kod kontrolleri ile test kapsamının genişletilmesi | Teknik Liderlik |
@@ -2592,10 +2595,14 @@ _(Güncelleme: 2024-07-16)_
 | v0.35 | 2024-08-03 | OpsCenter özet servisinin tekrar kullanılabilir hale getirilmesi ve JSON API ucunun eklenmesi | Teknik Liderlik |
 | v0.36 | 2024-08-04 | Tenant kullanıcı API’sine detay/oluştur/güncelle uçlarının eklenmesi ve doğrulama testlerinin genişletilmesi | Teknik Liderlik |
 | v0.37 | 2024-08-05 | Tenant birim API’sine oluştur/güncelle uçlarının eklenmesi, slug doğrulaması ve test kapsamının genişletilmesi | Teknik Liderlik |
+| v0.41 | 2024-08-09 | Takip ping son konum API’sinin eklenmesi, filtre/test kapsamının genişletilmesi ve dokümantasyonun güncellenmesi | Teknik Liderlik |
 | v0.38 | 2024-08-05 | Birim API slug çözümleyicisinin sayısal slug desteğiyle güçlendirilmesi ve PHP-CS-Fixer import sıralamasının PHPCS ile hizalanması | Teknik Liderlik |
 | v0.39 | 2024-08-06 | Tenant keşif API’sinin eklenmesi, OpsCenter özetinin tenant detay uçlarına taşınması ve ilgili dokümantasyon kayıtlarının güncellenmesi | Teknik Liderlik |
 | v0.40 | 2024-08-06 | Tenant kaynakları için silme uçları, durum bazlı güvenlik kontrolleri ve genişletilen API/test dokümantasyonu | Teknik Liderlik |
 | v0.41 | 2024-08-07 | Audit log altyapısı, tenant API işlemlerinde otomatik kayıt ve ilgili test/dokümantasyon güncellemeleri | Teknik Liderlik |
+| v0.42 | 2024-08-07 | Audit log API’si ile tenant bazlı denetim kayıtlarının filtrelenebilir/sayfalı olarak sunulması ve yönetişim referanslarının güncellenmesi | Teknik Liderlik |
+| v0.43 | 2024-08-08 | Tenant yönetim uçlarının (oluştur/güncelle/sil) eklenmesi, bağımlılık kontrolleri ve güncellenen test/dokümantasyon kayıtları | Teknik Liderlik |
+| v0.44 | 2024-08-09 | Takip ping doğrulamalarının görev durumu ve kullanıcı/birim eşleşmeleriyle sıkılaştırılması, ilgili test ve dokümantasyon revizyonları | Teknik Liderlik |
 
 > _Not: Yeni bir sürüm yayımlandığında bu tabloya satır eklenmeli ve ilgili bölümlerde revizyon tarihi güncellenmelidir._
 
