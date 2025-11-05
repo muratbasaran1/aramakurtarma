@@ -29,6 +29,9 @@ class AuditLog extends Model
     /** @use HasFactory<\Database\Factories\AuditLogFactory> */
     use HasFactory;
 
+ */
+class AuditLog extends Model
+{
     /**
      * @var list<string>
      */

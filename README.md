@@ -2032,6 +2032,7 @@ _(Güncelleme: 2024-07-16)_
 - 2FA: SMS veya mobil uygulama ile.
 - Rol & Yetki: Spatie Permissions, tenant bazlı unit yetkileri.
 - Audit Log: Her işlem kayıt altına alınır ve tenant bazlı `GET /api/tenants/{tenant}/audit-logs` ucu üzerinden incelenebilir.
+- Audit Log: Her işlem kayıt altına alınır.
 - Yedekleme: Günlük dump + şifreli saklama.
 - Felaket kurtarma: Disaster recovery scriptleri.
 

@@ -53,6 +53,7 @@ Testler için varsayılan `.env.testing` dosyası depoya eklendi; anahtar ve SQL
 ## Factory & Seeder
 - `database/factories/*.php` dosyaları çoklu tenant verisini uyumlu şekilde üretmek üzere birbirine bağlıdır.
 - `DatabaseSeeder` her tenant için üçer birim, ikişer kullanıcı, iki aktif olay, üçer görev, beş envanter kaydı ve çift örnekli izleme pingleri üretir. Görev atamaları ve pingler ilgili birim/kullanıcı eşleşmeleriyle uyumlu olacak biçimde rastgele seçilir.
+- `DatabaseSeeder` her tenant için üçer birim, ikişer kullanıcı, iki aktif olay, üçer görev ve beş envanter kaydı üretir. Görev atamaları, ilgili birim ve kullanıcılarla eşleşecek şekilde rastgele seçilir.
 
 Seeder çıktıları aşağıdaki akışları test etmek için kullanılabilir:
 1. Olay açma → görev atama → görev durumunu güncelleme
@@ -122,6 +123,8 @@ Tenant bağlamında çalışan REST uçları `routes/api.php` dosyasında tanım
 - Hareketsizlik tetiklerinde `tracking.no_motion` audit olayı düşer ve payload içerisine süre, kullanıcı/görev kimliği ile referans ping bilgileri eklenir. Bu kayıt, Faz 4 hareketsizlik kuralı gereksinimini doğrulamak ve Faz 7 kural motoruna tetik sağlamak için kullanılabilir.
 - Seeder, örnek tenant verisi üretirken aktif görevlere iki örnek ping eklediğinden OpsCenter panelinde veya API üzerinden hazır veri ile senaryoları test edebilirsiniz.
 
+> **Not:** Birim detayı uç noktası ID veya slug ile erişilebilir. Her iki durumda da istek bağlamındaki tenant doğrulanır ve farklı tenant’a ait kayıtlar 404 döner.
+
 ## OpsCenter Paneli (Ön İzleme)
 Tenant verilerini hızlıca gözlemlemek için `/opscenter` rotası altında hafif bir web paneli yayınlandı. Panel, seçilen tenant’a ait son olayları, görev güncellemelerini, envanter durumunu ve birim istatistiklerini tek ekranda listeler.
 
@@ -141,5 +144,6 @@ Bu temel şema üzerine aşağıdaki yetenekler kademeli olarak eklenecektir:
 - Fortify tabanlı kimlik doğrulama, 2FA ve Spatie Permissions entegrasyonu
 - Görev doğrulama (çift onay), zimmet transaction’ları ve audit log iyileştirmeleri (aksiyon sınıflandırması, webhook tetikleri)
 - Geofence ihlali, SOS tetikleri ve canlı ping akışının WebSocket entegrasyonu
+- Canlı takip pingi, geofence ve hareketsizlik alarmı API uçları
 
 Detaylı yol haritası ve faz bağımlılıkları proje kökündeki `README.md` ve yönetişim dokümanlarında yer almaktadır.

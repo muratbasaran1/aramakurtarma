@@ -22,6 +22,8 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Symfony\Component\HttpFoundation\Response;
 
 use function abort_if;
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class TenantController extends Controller
 {
@@ -94,6 +96,21 @@ class TenantController extends Controller
         $tenant->delete();
 
         return response()->noContent();
+    public function show(Request $request, Tenant $tenant): TenantResource
+    {
+        $tenant->loadCount($this->countDefinitions());
+
+        $resource = TenantResource::make($tenant);
+
+        if ($request->boolean('include_summary', true)) {
+            $summary = OpsCenterSummary::forTenant($tenant)->toApiArray($tenant);
+
+            $resource->additional([
+                'summary' => $summary,
+            ]);
+        }
+
+        return $resource;
     }
 
     /**

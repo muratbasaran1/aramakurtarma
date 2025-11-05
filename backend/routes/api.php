@@ -26,6 +26,8 @@ Route::middleware(['api'])
             ->name('api.tenants.update');
         Route::delete('{tenant}', [TenantController::class, 'destroy'])
             ->name('api.tenants.destroy');
+        Route::get('{tenant}', [TenantController::class, 'show'])
+            ->name('api.tenants.show');
     });
 
 Route::middleware(['api', 'tenant'])

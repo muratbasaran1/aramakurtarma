@@ -51,6 +51,7 @@ class DatabaseSeeder extends Seeder
 
                 $incidents->each(function (Incident $incident) use ($tenant, $units, $users): void {
                     $tasks = Task::factory()
+                    Task::factory()
                         ->count(3)
                         ->for($tenant)
                         ->for($incident)
