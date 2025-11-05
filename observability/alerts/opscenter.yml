@@ -1,0 +1,73 @@
+# OpsCenter Alarm Kuralları
+# Faz Referansları: Faz 4, Faz 6, Faz 7, Faz 11
+
+# OpsCenter WebSocket bağlantılarında ani düşüş
+- alert: OpsCenterWebsocketDrop
+  expr: |
+    (sum(rate(opscenter_ws_active_connections[5m])) by (tenant) < 0.6 * sum(rate(opscenter_ws_active_connections[30m])) by (tenant))
+  for: 10m
+  labels:
+    severity: critical
+    phase: "4,6,11"
+  annotations:
+    summary: "OpsCenter WS bağlantılarında ani düşüş"
+    description: |
+      Son 5 dakikadaki ortalama aktif WS bağlantıları, 30 dakikalık bazın %60'ının altına düştü.
+      Tenanta özel alarmdır. OpsCenter alarm konsolunu ve runbook'u kontrol edin.
+    runbook: "runbook/opscenter-degradation.md"
+
+# Kural motoru kuyruk gecikmesi
+- alert: RuleEngineQueueLatencyHigh
+  expr: |
+    histogram_quantile(0.95, sum(rate(rule_engine_queue_latency_bucket[5m])) by (le)) > 5
+  for: 5m
+  labels:
+    severity: high
+    phase: "7,11"
+  annotations:
+    summary: "Kural motoru kuyruğu 95p gecikmesi 5 saniyeyi aştı"
+    description: |
+      Kural motoru aksiyon kuyruğu gecikmesi kritik eşikleri aştı. Alarm doğrulaması ve retry kuyruğunu inceleyin.
+    runbook: "runbook/rule-engine-hotfix.md"
+
+# Hareketsizlik alarmı tetikleniyor fakat aksiyon alınmıyor
+- alert: NoMotionUnacknowledged
+  expr: |
+    increase(no_motion_alerts_total{acknowledged="false"}[10m]) > 0
+  for: 10m
+  labels:
+    severity: critical
+    phase: "4,7"
+  annotations:
+    summary: "Hareketsizlik alarmı 10 dakikadır yanıtsız"
+    description: |
+      Hareketsizlik alarmı tetiklendi fakat 10 dakika içinde yanıtlanmadı. OpsCenter alarm eskalasyon runbook'unu uygulayın.
+    runbook: "runbooks/tracking/no-motion-alert.md"
+
+# Database replikasyon gecikmesi
+- alert: DatabaseReplicaLag
+  expr: |
+    pg_replication_lag_seconds > 3
+  for: 5m
+  labels:
+    severity: high
+    phase: "2,11"
+  annotations:
+    summary: "Veritabanı replikasyon gecikmesi"
+    description: |
+      Replikasyon gecikmesi 3 saniyenin üzerine çıktı. Database yedekleme ve felaket kurtarma planlarını gözden geçirin.
+    runbook: "runbook/data-restore.md"
+
+# API latency artışı
+- alert: ApiLatencyP99High
+  expr: |
+    histogram_quantile(0.99, sum(rate(http_server_requests_duration_seconds_bucket{service="api"}[5m])) by (le)) > 1.5
+  for: 5m
+  labels:
+    severity: high
+    phase: "3,6,11"
+  annotations:
+    summary: "API P99 yanıt süresi 1.5 saniyeyi aştı"
+    description: |
+      Kritik API uçlarının P99 yanıt süresi eşik değerini aştı. Feature flag ve son deploy değişikliklerini inceleyin.
+    runbook: "runbooks/opscenter/alarm-console-escalation.md"

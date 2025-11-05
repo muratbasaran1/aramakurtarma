@@ -1,0 +1,19 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Illuminate\Http;
+
+class JsonResponse
+{
+    public function __construct(public mixed $data = null, public int $status = 200)
+    {
+    }
+
+    public function setStatusCode(int $code): self
+    {
+        $this->status = $code;
+
+        return $this;
+    }
+}

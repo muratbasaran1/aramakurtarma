@@ -1,0 +1,19 @@
+info:
+  service: example-service
+  version: v1.0
+  owner: integration-team
+endpoints:
+  - method: GET
+    path: /api/example
+    request:
+      query:
+        - name: bbox
+          required: true
+    response:
+      status: 200
+      body:
+        type: GeoJSON
+        description: Filtered incidents
+sla:
+  latency_ms_p95: 500
+  availability: 99.5

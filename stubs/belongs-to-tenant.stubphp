@@ -1,0 +1,38 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Models\Concerns;
+
+use App\Models\Tenant;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+trait BelongsToTenant
+{
+    /**
+     * @return Builder<Model>
+     */
+    public function scopeForTenant(Builder $builder, Tenant|int|string $tenant): Builder
+    {
+        return $builder;
+    }
+
+    /**
+     * @return Model|null
+     */
+    public static function findForTenantByIdentifier(Tenant|int|string $tenant, int|string $identifier)
+    {
+        return new Model();
+    }
+
+    public static function forTenantQuery(Tenant|int|string $tenant): Builder
+    {
+        return Model::query();
+    }
+
+    public static function forTenant(Tenant|int|string $tenant): Builder
+    {
+        return Model::query();
+    }
+}

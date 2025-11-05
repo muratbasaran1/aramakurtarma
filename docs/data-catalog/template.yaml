@@ -1,0 +1,17 @@
+collection: incidents
+owner: data-governance
+update_frequency: daily
+schema:
+  - name: id
+    type: uuid
+    description: Benzersiz kayıt kimliği
+  - name: tenant_id
+    type: uuid
+    description: Tenant referansı
+  - name: status
+    type: enum
+    description: Faz 3 durumları
+quality_rules:
+  - rule: status in ['OPEN','ACTIVE','CLOSED']
+  - rule: closed_at requires status == 'CLOSED'
+security_classification: RESTRICTED

@@ -1,0 +1,27 @@
+parameters:
+    paths:
+        - config
+        - backend/app
+    excludePaths:
+        analyse:
+            - vendor/*
+            - storage/*
+            - node_modules/*
+            - backend/vendor/*
+            - backend/storage/*
+            - backend/node_modules/*
+            - backend/bootstrap/*
+            - backend/config/*
+            - backend/routes/*
+    level: 5
+    checkMissingIterableValueType: true
+    checkGenericClassInNonGenericObjectType: true
+    treatPhpDocTypesAsCertain: false
+    reportUnmatchedIgnoredErrors: true
+    tmpDir: build/phpstan
+
+    parallel:
+        maximumNumberOfProcesses: 4
+
+    bootstrapFiles:
+        - backend/vendor/autoload.php

@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<ruleset name="TUDAK PHP Standards">
+    <description>PSR-12 tabanlı kod standartları; mevcut dizinlere göre dinamik kapsam.</description>
+
+    <file>config</file>
+    <file>.php-cs-fixer.dist.php</file>
+    <file>backend/app</file>
+    <file>backend/config</file>
+    <file>backend/database</file>
+    <file>backend/routes</file>
+
+    <exclude-pattern>vendor</exclude-pattern>
+    <exclude-pattern>storage</exclude-pattern>
+    <exclude-pattern>node_modules</exclude-pattern>
+    <exclude-pattern>backend/vendor</exclude-pattern>
+    <exclude-pattern>backend/storage</exclude-pattern>
+    <exclude-pattern>backend/node_modules</exclude-pattern>
+
+    <arg name="basepath" value="."/>
+    <arg name="extensions" value="php"/>
+
+    <rule ref="PSR12"/>
+
+    <rule ref="Generic.Files.LineLength">
+        <properties>
+            <property name="lineLimit" value="140"/>
+            <property name="absoluteLineLimit" value="0"/>
+        </properties>
+    </rule>
+
+    <rule ref="SlevomatCodingStandard.TypeHints.ParameterTypeHint"/>
+    <rule ref="SlevomatCodingStandard.TypeHints.ReturnTypeHint"/>
+    <rule ref="SlevomatCodingStandard.Classes.TraitUseDeclaration"/>
+</ruleset>
