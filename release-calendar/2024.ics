@@ -8,4 +8,18 @@ DTSTART:20240701T090000Z
 SUMMARY:Staging -> Production Deploy
 DESCRIPTION:Faz 6 OpsCenter iyileştirmeleri
 END:VEVENT
+BEGIN:VEVENT
+UID:release-20240801@tudak
+DTSTAMP:20240731T120000Z
+DTSTART:20240801T090000Z
+SUMMARY:Hareketsizlik Alarmı Analizi
+DESCRIPTION:Ağustos fazı hareketsizlik alarmı analizi
+END:VEVENT
+BEGIN:VEVENT
+UID:release-20240901@tudak
+DTSTAMP:20240831T120000Z
+DTSTART:20240901T090000Z
+SUMMARY:Dijital İkiz Etik Doğrulaması
+DESCRIPTION:Eylül fazı dijital ikiz etik doğrulaması
+END:VEVENT
 END:VCALENDAR
