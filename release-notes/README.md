@@ -10,3 +10,6 @@ Bu dizin, üretim ve staging yayınlarına ait resmi release notlarını içerir
 1. Sürüm planı onaylandığında klasörü oluşturun.
 2. Deploy tamamlandığında test sonuçlarını ve rollback planı özetini ekleyin.
 3. README içeriğindeki versiyon geçmişi güncellendiğinden emin olun.
+
+## Versiyon Geçmişi
+- `v2024.7.1/` — 1 Temmuz 2024 üretim dağıtımı (Faz 6 OpsCenter iyileştirmeleri).
